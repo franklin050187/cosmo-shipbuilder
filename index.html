@@ -20,10 +20,32 @@
     <button id="exportButton">Export JSON</button>
     <label for="spriteSelect">Select a Sprite:</label>
     <select id="spriteSelect"></select>
-    <button id="deleteButton" disabled>Delete</button>
+    <button id="deleteButton">Delete</button>
 
     <script>
-        // let selectedSpriteIndex = -1; // Initialize the selected sprite index to -1
+        // document.getElementById('deleteButton').addEventListener('click', clearPreviewSprite);
+
+
+        let deleteMode = false;
+
+        document.getElementById('deleteButton').addEventListener('click', toggleDeleteMode);
+
+        function toggleDeleteMode() {
+            deleteMode = !deleteMode;
+            if (deleteMode) {
+                clearPreviewSprite();
+                document.body.style.cursor = 'crosshair'; // Change the cursor to indicate deletion mode
+            } else {
+                unclearPreviewSprite();
+                document.body.style.cursor = 'default'; // Reset the cursor
+            }
+        }
+        function clearPreviewSprite() {
+            previewSprite.style.display = 'none'; // Hide the preview sprite
+        }
+        function unclearPreviewSprite() {
+            previewSprite.style.display = 'block'; // Hide the preview sprite
+        }
 
         const canvas = document.getElementById('spriteCanvas');
         const ctx = canvas.getContext('2d');
@@ -109,49 +131,62 @@
         function handleCanvasClick(event) {
             const x = event.offsetX;
             const y = event.offsetY;
-
             const mouseX = Math.floor(x / gridSize) * gridSize;
             const mouseY = Math.floor(y / gridSize) * gridSize;
-            const selectedSprite = document.getElementById('spriteSelect').value;
-            placeSprite(x, y, selectedSprite, rotation);
-        
-        }
 
-        // Function to find the index of a clicked sprite
-        function findClickedSpriteIndex(x, y) {
-            for (let i = sprites.length - 1; i >= 0; i--) {
-                const sprite = sprites[i];
-                const spriteX = sprite.x;
-                const spriteY = sprite.y;
-                const spriteWidth = sprite.width * gridSize;
-                const spriteHeight = sprite.height * gridSize;
+            if (deleteMode) {
+                // Check if any sprite's boundaries contain the clicked point
+                const indicesToRemove = sprites.reduce((indices, sprite, index) => {
+                    const [width, height] = spriteData[sprite.name].size;
+                    const spriteX = sprite.x;
+                    const spriteY = sprite.y;
+                    const spriteWidth = width * gridSize;
+                    const spriteHeight = height * gridSize;
 
-                if (x >= spriteX && x <= spriteX + spriteWidth && y >= spriteY && y <= spriteY + spriteHeight) {
-                    return i;
-                }
+                    // Calculate sprite boundaries after rotation
+                    const rotatedX = spriteX + gridSize;
+                    const rotatedY = spriteY + gridSize;
+                    const rotatedWidth = (sprite.rotation % 2 === 0) ? spriteWidth : spriteHeight;
+                    const rotatedHeight = (sprite.rotation % 2 === 0) ? spriteHeight : spriteWidth;
+
+                    // Check if the click is within the rotated sprite boundaries
+                    if (mouseX >= rotatedX && mouseX <= rotatedX + rotatedWidth &&
+                        mouseY >= rotatedY && mouseY <= rotatedY + rotatedHeight) {
+                        indices.push(index);
+                    }
+                    return indices;
+                }, []);
+
+                // Remove the matched sprites
+                indicesToRemove.forEach(index => {
+                    sprites.splice(index, 1);
+                });
+
+                redrawCanvas(); // Redraw the canvas without the removed sprites
+            } else {
+                const selectedSprite = document.getElementById('spriteSelect').value;
+                placeSprite(x, y, selectedSprite, rotation);
             }
-            return -1; // No sprite was clicked
         }
 
-        // Function to handle the delete button click
-        // document.getElementById('deleteButton').addEventListener('click', () => {
-        //     if (selectedSpriteIndex !== -1) {
-        //         // Remove the selected sprite from the canvas and JSON data
-        //         sprites.splice(selectedSpriteIndex, 1);
-        //         redrawCanvas();
-        //         // Disable the delete button again
-        //         document.getElementById('deleteButton').disabled = true;
-        //     }
-        // });
-        // // Function to handle canvas click and place sprites
-        // function handleCanvasClick(event) {
-        //     const x = event.offsetX;
-        //     const y = event.offsetY;
-        //     const mouseX = Math.floor(x / gridSize) * gridSize;
-        //     const mouseY = Math.floor(y / gridSize) * gridSize;
-        //     const selectedSprite = document.getElementById('spriteSelect').value;
-        //     placeSprite(x, y, selectedSprite, rotation);
-        // }
+
+        function redrawCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear the canvas
+            drawGrid(); // Redraw the grid
+
+            // Redraw all placed sprites
+            sprites.forEach(sprite => {
+                const imageName = sprite.name.replace("cosmoteer.", "");
+                const img = new Image();
+                img.src = `sprites/${imageName}.png`;
+                img.onload = () => {
+                    ctx.translate(sprite.x + gridSize, sprite.y + gridSize);
+                    ctx.rotate(sprite.rotation * (Math.PI / 2));
+                    ctx.drawImage(img, -sprite.width * gridSize, -sprite.height * gridSize, sprite.width * gridSize, sprite.height * gridSize);
+                    ctx.setTransform(1, 0, 0, 1, 0, 0);
+                };
+            });
+        }
 
         // Function to handle right-click and rotate the preview sprite
         function handleRightClick(event) {
@@ -190,7 +225,7 @@
                 }
 
                 // Adjust the placement to align with the bottom-right corner of the grid cell
-                const sprite = { x: mouseX , y: mouseY , width, height, name: spriteName, rotation };
+                const sprite = { x: mouseX+xOffset*gridSize , y: mouseY+yOffset*gridSize , width, height, name: spriteName, rotation };
                 sprites.push(sprite);
                 const imageName = spriteName.replace("cosmoteer.", "");
 
