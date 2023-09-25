@@ -225,7 +225,7 @@
                 }
 
                 // Adjust the placement to align with the bottom-right corner of the grid cell
-                const sprite = { x: mouseX+xOffset*gridSize , y: mouseY+yOffset*gridSize , width, height, name: spriteName, rotation };
+                const sprite = { x: (mouseX+xOffset*gridSize)/10-60 , y: (mouseY+yOffset*gridSize)/10-60 , width, height, name: spriteName, rotation };
                 sprites.push(sprite);
                 const imageName = spriteName.replace("cosmoteer.", "");
 
