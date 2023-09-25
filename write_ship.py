@@ -1,122 +1,57 @@
 from cosmoteer_save_tools import Ship
-
-"""
-
-print(ship.data.keys())
-print()
-print(ship.data["Author"])
-#print(ship.data["BuildCenterlineNESW"])
-#print(ship.data["BuildCenterlineNWSE"])
-#print(ship.data["BuildCenterlineX"])
-#print(ship.data["BuildCenterlineY"])
-
-#print(ship.data["CrewSourceTargets"])
-#print(ship.data["Decals1"])
-#print(ship.data["Decals2"])
-#print(ship.data["Decals3"])
-print(ship.data["DefaultAttackFollowAngle"]) #None
-print(ship.data["DefaultAttackRadius"]) #None
-print(ship.data["DefaultAttackRotation"]) #None
-print(ship.data["Description"]) #unset
-print(ship.data["Doors"]) #unset
-print(ship.data["FlightDirection"]) #1
-print(ship.data["FormationOrder"]) #3
-print(ship.data["Name"]) #unnamed ship
-print(ship.data["NewFlexResourceGridTypes"]) #unset
-#print(ship.data["PaintCenterlineNESW"])
-#print(ship.data["PaintCenterlineNWSE"])
-#print(ship.data["PaintCenterlineX"])
-#print(ship.data["PaintCenterlineY"])
-print(ship.data["PartControlGroups"]) #unset
-print(ship.data["Parts"])
-print(ship.data["PartUIColorValues"]) #unset
-print(ship.data["PartUIToggleStates"]) #unset
-print(ship.data["ResourceConsumptionToggles"]) #unset
-print(ship.data["ResourceSupplierTargets"]) #unset
-print(ship.data["ResourceSupplyToggles"]) #unset
-#print(ship.data["Roles"])
-print(ship.data["RoofBaseColor"]) #('0000803F', '28CD643F', '8AF5213F', '0000803F')
-print(ship.data["RoofBaseTexture"]) # camo
-print(ship.data["RoofDecalColor1"]) #('0000803F', '28CD643F', '8AF5213F', '0000803F')
-print(ship.data["RoofDecalColor2"]) #('0000803F', '28CD643F', '8AF5213F', '0000803F')
-print(ship.data["RoofDecalColor3"]) #('0000803F', '28CD643F', '8AF5213F', '0000803F')
-print(ship.data["ShipRulesID"]) #cosmoteer.terran
-print(ship.data["Version"]) #3
-print(ship.data["WeaponDirectControlBindings"]) #unset
-print(ship.data["WeaponSelfTargets"]) #unset
-print(ship.data["WeaponShipRelativeTargets"]) #unset
-"""
-"""
 from PIL import Image
+import json
 
-#ship=Ship("ships/engine.ship.png")
-new_ship=Ship("ships/engine.ship.png")
-new_ship.write()
-#print(ship.data)
-"""
-"""
-from PIL import Image
-import numpy as np
-import gzip
+json_file_path = 'out.json'
+with open(json_file_path, "r") as f:
+    json_data = json.load(f)
 
-def read_bytes(image_data) -> bytes:
-    data = [byte for pixel in image_data for byte in pixel[:3]]
-    length = int.from_bytes(bytes([get_byte(i, data) for i in range(4)]), "big")
-    return bytes([get_byte(i + 4, data) for i in range(length)])
 
-def get_byte(offset, data) -> int:
-    out_byte = 0
-    for bits_right in range(8):
-        out_byte |= (data[offset * 8 + bits_right] & 1) << bits_right
-    return out_byte
+# Convert lists to tuples in the JSON data
+# thing to tuple
+tuple_data = ["RoofBaseColor", "RoofDecalColor1", "RoofDecalColor2", "RoofDecalColor3"]
+for key, value in json_data.items():
+    if key in tuple_data:
+        if isinstance(value, list):
+            json_data[key] = tuple(value)
+if "Roles" in json_data:
+    for role in json_data["Roles"]:
+        if "Color" in role and isinstance(role["Color"], list):
+            role["Color"] = tuple(role["Color"])
+if "WeaponShipRelativeTargets" in json_data:
+    for WeaponShipRelativeTargets in json_data["WeaponShipRelativeTargets"]:
+        if "Value" in WeaponShipRelativeTargets and isinstance(WeaponShipRelativeTargets["Value"], list):
+            WeaponShipRelativeTargets["Value"] = tuple(WeaponShipRelativeTargets["Value"])     
 
-if __name__ == "__main__":
-    image_path = "ships/engine.ship.png"  # Replace with the path to your image
-    try:
-        # Open the image in the main function
-        img_data=np.array(Image.open(image_path).getdata())
-        data=read_bytes(img_data)
-        if data[:9] == b'COSMOSHIP':
-            data = data[9:]
-            version = 2
-        print(data)
-        uncompressed_data = gzip.decompress(data)
-        print(uncompressed_data)
-    except Exception as e:
-        print("An error occurred while opening the image:", str(e))
-
-        ['Author', 'BuildCenterlineNESW', 'BuildCenterlineNWSE', 'BuildCenterlineX', 'BuildCenterlineY', 'CrewSourceRoles', 'CrewSourceTargets', 'Decals1', 'Decals2', 'Decals3', 'DefaultAttackFollowAngle', 'DefaultAttackRadius', 'DefaultAttackRotation', 'Description', 'Doors', 'FlightDirection', 'FormationOrder', 'Name', 'NewFlexResourceGridTypes', 'PaintCenterlineNESW', 'PaintCenterlineNWSE', 'PaintCenterlineX', 'PaintCenterlineY', 'PartControlGroups', 'Parts', 'PartUIColorValues', 'PartUIToggleStates', 'ResourceConsumptionToggles', 'ResourceSupplierTargets', 'ResourceSupplyToggles', 'Roles', 'RoofBaseColor', 'RoofBaseTexture', 'RoofDecalColor1', 'RoofDecalColor2', 'RoofDecalColor3', 'ShipRulesID', 'Version', 'WeaponDirectControlBindings', 'WeaponSelfTargets', 'WeaponShipRelativeTargets']
-
-"""
-from PIL import Image
+# Now, json_data contains tuples instead of lists
+# print(json_data)
 
 image_path = "ionv2.ship.png"  # Replace with the path to your image
-my_ship1=Ship(image_path)
-#print(my_ship.__str__()[:1000])
-new_image=my_ship1.write(Image.open("test99.png"))
-#save the image
-new_image.save("out.ship.png")
+my_ship1=Ship(image_path) # read image
+my_ship1.data = json_data # replace the data
+new_image=my_ship1.write(Image.open("test99.png")) # write image
+new_image.save("outtest.ship.png") # save image
+my_ship2=Ship("outtest.ship.png") # read image
 
-my_ship2=Ship("out.ship.png")
-print(my_ship1.raw_data==my_ship2.raw_data)
-#print the data around the first difference in hex
-for i in range(len(my_ship1.raw_data)):
-    if my_ship1.raw_data[i]!=my_ship2.raw_data[i]:
-        #print(my_ship1.raw_data[i-100:i+100])
-        #print the bytes separated by spaces but if the byte is a character, print the character
-        print(" ".join([chr(x) if x>=32 and x<=126 else hex(x) for x in my_ship1.raw_data[i-100:i+50]]))
-        #print(" ".join([hex(x) for x in my_ship1.raw_data[i-100:i+50]]))
-        print("===================================")
-        print(" ".join([chr(x) if x>=32 and x<=126 else hex(x) for x in my_ship2.raw_data[i-100:i+50]]))
-        #print(" ".join([hex(x) for x in my_ship2.raw_data[i-10:i+50]]))
-        break
 
 print(my_ship1.data==my_ship2.data)
 #print all of the differences
 for key in my_ship1.data.keys():
     if my_ship1.data[key]!=my_ship2.data[key]:
+        print("ship 1")
         print(key)
         print(my_ship1.data[key])
         print("===================================")
+        print("ship 2")
         print(my_ship2.data[key])
+        print()
+
+for key in my_ship1.data.keys():
+    if my_ship1.data[key]!=json_data[key]:
+        print("ship 1")
+        print(key)
+        print(my_ship1.data[key])
+        print("===================================")
+        print("ship 2")
+        print(json_data[key])
         print()

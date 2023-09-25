@@ -99,7 +99,6 @@ class Ship():
             self.set_byte(offset, byte)
 
     def set_byte(self, offset, byte) -> None:
-        # print(self, offset, byte)
         for bits_right in range(8):
             image_offset = offset * 8 + bits_right
             rgb = image_offset % 3
@@ -233,6 +232,10 @@ class Ship():
                     elif key == 'Value' and len(value) == 8: # ion aim data
                         x, y = struct.unpack('<ff', value)
                         value = (x, y)
+                        # print(type(value))
+                        # # convert value to a list
+                        # value = list(value)
+                        # print(type(value))
                     elif key in ('ID', 'Name', 'Author', 'RoofBaseTexture', 'ShipRulesID', 'Description', 'ComponentID', 'PartID', 'IDString', "Value"):
                         value = self.read_string(io.BytesIO(value))
                     elif key in ('Color', 'RoofBaseColor', 'RoofDecalColor1', 'RoofDecalColor2', 'RoofDecalColor3', 'CrewUniformColor') and len(value) == 16:
@@ -245,10 +248,10 @@ class Ship():
                         print('Unhandled key with binary value:', {key: value})
                         continue
                 d[key] = value
-                try:
-                    print(key, value, len(value))
-                except:
-                    print(key, value)
+                # try:
+                #     print(key, value, len(value))
+                # except:
+                #     print(key, value)
             return d
         elif _type == OBNodeType.Link.value:
             subtype = self.buffer.read(1)[0]
@@ -287,17 +290,15 @@ class Ship():
                     data = struct.pack("<i", data_node)
                 else:
                     data = struct.pack("<I", data_node)
-      
             elif isinstance(data_node, float):
                 data = struct.pack("<f", data_node)
             elif isinstance(data_node, tuple):
-                print(data_node[1])
-                if isinstance(data_node[1], float):
-                    data = struct.pack("<ff", data_node[0], data_node[1])
+                if len(data_node) == 2:
+                    data = struct.pack("<ff", *data_node)
                 else:
-                    data = bytearray.fromhex("".join(data_node))
+                    data = bytearray.fromhex("".join(data_node))                
             elif isinstance(data_node, list):
-                data = struct.pack("<ll", *data_node)
+                data = struct.pack("<ll", *data_node)                
             else: 
                 data = data_node
 
