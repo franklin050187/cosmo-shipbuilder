@@ -407,7 +407,7 @@ if __name__ == "__main__":
     # get png file in \png folder
     for ship_png in os.listdir("png"):
         if ship_png.endswith(".png"):
-            ship_data = Ship(SHIP).data
+            ship_data = Ship(f'png/{ship_png}').data
             with open(f"json/{ship_png}-parts.json", "w", encoding="utf-8") as f:
                 part_data = ship_data["Parts"]
                 json.dump(part_data, f, cls=JSONEncoderWithBytes)
