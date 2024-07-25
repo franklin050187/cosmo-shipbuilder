@@ -9,6 +9,12 @@
 * copy the content of ship-parts.json to the input box
 * click load json
 
+# Debugging
+* folder ship-in-game contains ship provided as example as they are in game
+* all ships have the bottom left corner of the control room at 0,0 in the game editor
+* examples are provided for all 4 rotations
+* flip version will come later
+
 # Exporting data
 * not available yet
 
