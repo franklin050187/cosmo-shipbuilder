@@ -1,1 +1,65 @@
-[{"FlipX": false, "ID": "cosmoteer.disruptor", "Location": [-2, -2], "Rotation": 3}, {"FlipX": false, "ID": "cosmoteer.armor_2x1", "Location": [-2, -1], "Rotation": 3}, {"FlipX": false, "ID": "cosmoteer.laser_blaster_small", "Location": [-1, 1], "Rotation": 3}, {"FlipX": false, "ID": "cosmoteer.control_room_small", "Location": [-1, -1], "Rotation": 3}, {"FlipX": false, "ID": "cosmoteer.reactor_small", "Location": [1, -2], "Rotation": 0}, {"FlipX": false, "ID": "cosmoteer.crew_quarters_med", "Location": [1, 0], "Rotation": 3}, {"FlipX": false, "ID": "cosmoteer.thruster_large", "Location": [3, -1], "Rotation": 3}]
+[
+    {
+        "FlipX": false,
+        "ID": "cosmoteer.disruptor",
+        "Location": [
+            -2,
+            -2
+        ],
+        "Rotation": 3
+    },
+    {
+        "FlipX": false,
+        "ID": "cosmoteer.armor_2x1",
+        "Location": [
+            -2,
+            -1
+        ],
+        "Rotation": 3
+    },
+    {
+        "FlipX": false,
+        "ID": "cosmoteer.laser_blaster_small",
+        "Location": [
+            -1,
+            1
+        ],
+        "Rotation": 3
+    },
+    {
+        "FlipX": false,
+        "ID": "cosmoteer.control_room_small",
+        "Location": [
+            -1,
+            -1
+        ],
+        "Rotation": 3
+    },
+    {
+        "FlipX": false,
+        "ID": "cosmoteer.reactor_small",
+        "Location": [
+            1,
+            -2
+        ],
+        "Rotation": 0
+    },
+    {
+        "FlipX": false,
+        "ID": "cosmoteer.crew_quarters_med",
+        "Location": [
+            1,
+            0
+        ],
+        "Rotation": 3
+    },
+    {
+        "FlipX": false,
+        "ID": "cosmoteer.thruster_large",
+        "Location": [
+            3,
+            -1
+        ],
+        "Rotation": 3
+    }
+]
