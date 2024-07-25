@@ -1,1 +1,290 @@
-{"Author": "", "BuildCenterlineNESW": null, "BuildCenterlineNWSE": null, "BuildCenterlineX": null, "BuildCenterlineY": null, "BuildMirrorAxis": 1, "BuildMirrorEnabled": false, "CrewSourceRoles": [{"Key": {"FlipX": false, "ID": "cosmoteer.crew_quarters_med", "Location": [-2, -1], "Rotation": 1}, "Value": 2147483648}], "CrewSourceTargets": "Unset", "Decals1": "Unset", "Decals2": "Unset", "Decals3": "Unset", "DefaultAttackFollowAngle": null, "DefaultAttackRadius": null, "DefaultAttackRotation": null, "Description": "", "Doors": [{"Cell": [0, 0], "ID": "cosmoteer.door", "Orientation": 1}, {"Cell": [0, 2], "ID": "cosmoteer.door", "Orientation": 0}, {"Cell": [0, 0], "ID": "cosmoteer.door", "Orientation": 0}, {"Cell": [-2, 1], "ID": "cosmoteer.door", "Orientation": 1}, {"Cell": [0, 1], "ID": "cosmoteer.door", "Orientation": 1}], "FlightDirection": 1, "FormationOrder": 3, "Name": "r0", "NewFlexResourceGridTypes": "Unset", "PaintCenterlineNESW": null, "PaintCenterlineNWSE": null, "PaintCenterlineX": null, "PaintCenterlineY": null, "PaintMirrorAxis": 1, "PaintMirrorEnabled": false, "PartControlGroups": "Unset", "Parts": [{"FlipX": false, "ID": "cosmoteer.thruster_large", "Location": [-4, 0], "Rotation": 1}, {"FlipX": false, "ID": "cosmoteer.crew_quarters_med", "Location": [-2, -1], "Rotation": 1}, {"FlipX": false, "ID": "cosmoteer.reactor_small", "Location": [-2, 1], "Rotation": 0}, {"FlipX": false, "ID": "cosmoteer.laser_blaster_small", "Location": [0, -1], "Rotation": 1}, {"FlipX": false, "ID": "cosmoteer.control_room_small", "Location": [0, 0], "Rotation": 1}, {"FlipX": false, "ID": "cosmoteer.disruptor", "Location": [0, 2], "Rotation": 1}, {"FlipX": false, "ID": "cosmoteer.armor_2x1", "Location": [2, 0], "Rotation": 1}], "PartUIColorValues": "Unset", "PartUIToggleStates": [{"Key": [{"FlipX": false, "ID": "cosmoteer.disruptor", "Location": [0, 2], "Rotation": 1}, "on_off"], "Value": 1}, {"Key": [{"FlipX": false, "ID": "cosmoteer.disruptor", "Location": [0, 2], "Rotation": 1}, "fire_mode"], "Value": 1}, {"Key": [{"FlipX": false, "ID": "cosmoteer.control_room_small", "Location": [0, 0], "Rotation": 1}, "on_off"], "Value": 1}, {"Key": [{"FlipX": false, "ID": "cosmoteer.thruster_large", "Location": [-4, 0], "Rotation": 1}, "on_off"], "Value": 1}, {"Key": [{"FlipX": false, "ID": "cosmoteer.laser_blaster_small", "Location": [0, -1], "Rotation": 1}, "on_off"], "Value": 1}, {"Key": [{"FlipX": false, "ID": "cosmoteer.laser_blaster_small", "Location": [0, -1], "Rotation": 1}, "fire_mode"], "Value": 1}], "ResourceConsumptionToggles": "Unset", "ResourceSupplierTargets": "Unset", "ResourceSupplyToggles": "Unset", "Roles": [{"AssignmentPriority": 5, "AutoFillFromLower": false, "Color": ["0000803F", "00000000", "00000000", "0000803F"], "ID": -2147483648, "Name": "Redshirt", "Priorities": "Unset"}], "RoofBaseColor": ["0000803F", "0000803F", "0000803F", "FFFEFE3E"], "RoofBaseTexture": "_none_", "RoofDecalColor1": ["00000000", "00000000", "00000000", "0000803F"], "RoofDecalColor2": ["0000003F", "0000003F", "0000003F", "0000803F"], "RoofDecalColor3": ["0000803F", "00000000", "00000000", "0000803F"], "ShipRulesID": "cosmoteer.terran", "Version": 3, "WeaponDirectControlBindings": "Unset", "WeaponSelfTargets": "Unset", "WeaponShipRelativeTargets": "Unset"}
+{
+    "Author": "",
+    "BuildCenterlineNESW": null,
+    "BuildCenterlineNWSE": null,
+    "BuildCenterlineX": null,
+    "BuildCenterlineY": null,
+    "BuildMirrorAxis": 1,
+    "BuildMirrorEnabled": false,
+    "CrewSourceRoles": [
+        {
+            "Key": {
+                "FlipX": false,
+                "ID": "cosmoteer.crew_quarters_med",
+                "Location": [
+                    -2,
+                    -1
+                ],
+                "Rotation": 1
+            },
+            "Value": 2147483648
+        }
+    ],
+    "CrewSourceTargets": "Unset",
+    "Decals1": "Unset",
+    "Decals2": "Unset",
+    "Decals3": "Unset",
+    "DefaultAttackFollowAngle": null,
+    "DefaultAttackRadius": null,
+    "DefaultAttackRotation": null,
+    "Description": "",
+    "Doors": [
+        {
+            "Cell": [
+                0,
+                0
+            ],
+            "ID": "cosmoteer.door",
+            "Orientation": 1
+        },
+        {
+            "Cell": [
+                0,
+                2
+            ],
+            "ID": "cosmoteer.door",
+            "Orientation": 0
+        },
+        {
+            "Cell": [
+                0,
+                0
+            ],
+            "ID": "cosmoteer.door",
+            "Orientation": 0
+        },
+        {
+            "Cell": [
+                -2,
+                1
+            ],
+            "ID": "cosmoteer.door",
+            "Orientation": 1
+        },
+        {
+            "Cell": [
+                0,
+                1
+            ],
+            "ID": "cosmoteer.door",
+            "Orientation": 1
+        }
+    ],
+    "FlightDirection": 1,
+    "FormationOrder": 3,
+    "Name": "r0",
+    "NewFlexResourceGridTypes": "Unset",
+    "PaintCenterlineNESW": null,
+    "PaintCenterlineNWSE": null,
+    "PaintCenterlineX": null,
+    "PaintCenterlineY": null,
+    "PaintMirrorAxis": 1,
+    "PaintMirrorEnabled": false,
+    "PartControlGroups": "Unset",
+    "Parts": [
+        {
+            "FlipX": false,
+            "ID": "cosmoteer.thruster_large",
+            "Location": [
+                -4,
+                0
+            ],
+            "Rotation": 1
+        },
+        {
+            "FlipX": false,
+            "ID": "cosmoteer.crew_quarters_med",
+            "Location": [
+                -2,
+                -1
+            ],
+            "Rotation": 1
+        },
+        {
+            "FlipX": false,
+            "ID": "cosmoteer.reactor_small",
+            "Location": [
+                -2,
+                1
+            ],
+            "Rotation": 0
+        },
+        {
+            "FlipX": false,
+            "ID": "cosmoteer.laser_blaster_small",
+            "Location": [
+                0,
+                -1
+            ],
+            "Rotation": 1
+        },
+        {
+            "FlipX": false,
+            "ID": "cosmoteer.control_room_small",
+            "Location": [
+                0,
+                0
+            ],
+            "Rotation": 1
+        },
+        {
+            "FlipX": false,
+            "ID": "cosmoteer.disruptor",
+            "Location": [
+                0,
+                2
+            ],
+            "Rotation": 1
+        },
+        {
+            "FlipX": false,
+            "ID": "cosmoteer.armor_2x1",
+            "Location": [
+                2,
+                0
+            ],
+            "Rotation": 1
+        }
+    ],
+    "PartUIColorValues": "Unset",
+    "PartUIToggleStates": [
+        {
+            "Key": [
+                {
+                    "FlipX": false,
+                    "ID": "cosmoteer.disruptor",
+                    "Location": [
+                        0,
+                        2
+                    ],
+                    "Rotation": 1
+                },
+                "on_off"
+            ],
+            "Value": 1
+        },
+        {
+            "Key": [
+                {
+                    "FlipX": false,
+                    "ID": "cosmoteer.disruptor",
+                    "Location": [
+                        0,
+                        2
+                    ],
+                    "Rotation": 1
+                },
+                "fire_mode"
+            ],
+            "Value": 1
+        },
+        {
+            "Key": [
+                {
+                    "FlipX": false,
+                    "ID": "cosmoteer.control_room_small",
+                    "Location": [
+                        0,
+                        0
+                    ],
+                    "Rotation": 1
+                },
+                "on_off"
+            ],
+            "Value": 1
+        },
+        {
+            "Key": [
+                {
+                    "FlipX": false,
+                    "ID": "cosmoteer.thruster_large",
+                    "Location": [
+                        -4,
+                        0
+                    ],
+                    "Rotation": 1
+                },
+                "on_off"
+            ],
+            "Value": 1
+        },
+        {
+            "Key": [
+                {
+                    "FlipX": false,
+                    "ID": "cosmoteer.laser_blaster_small",
+                    "Location": [
+                        0,
+                        -1
+                    ],
+                    "Rotation": 1
+                },
+                "on_off"
+            ],
+            "Value": 1
+        },
+        {
+            "Key": [
+                {
+                    "FlipX": false,
+                    "ID": "cosmoteer.laser_blaster_small",
+                    "Location": [
+                        0,
+                        -1
+                    ],
+                    "Rotation": 1
+                },
+                "fire_mode"
+            ],
+            "Value": 1
+        }
+    ],
+    "ResourceConsumptionToggles": "Unset",
+    "ResourceSupplierTargets": "Unset",
+    "ResourceSupplyToggles": "Unset",
+    "Roles": [
+        {
+            "AssignmentPriority": 5,
+            "AutoFillFromLower": false,
+            "Color": [
+                "0000803F",
+                "00000000",
+                "00000000",
+                "0000803F"
+            ],
+            "ID": -2147483648,
+            "Name": "Redshirt",
+            "Priorities": "Unset"
+        }
+    ],
+    "RoofBaseColor": [
+        "0000803F",
+        "0000803F",
+        "0000803F",
+        "FFFEFE3E"
+    ],
+    "RoofBaseTexture": "_none_",
+    "RoofDecalColor1": [
+        "00000000",
+        "00000000",
+        "00000000",
+        "0000803F"
+    ],
+    "RoofDecalColor2": [
+        "0000003F",
+        "0000003F",
+        "0000003F",
+        "0000803F"
+    ],
+    "RoofDecalColor3": [
+        "0000803F",
+        "00000000",
+        "00000000",
+        "0000803F"
+    ],
+    "ShipRulesID": "cosmoteer.terran",
+    "Version": 3,
+    "WeaponDirectControlBindings": "Unset",
+    "WeaponSelfTargets": "Unset",
+    "WeaponShipRelativeTargets": "Unset"
+}
