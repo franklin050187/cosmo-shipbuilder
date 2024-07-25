@@ -8,6 +8,7 @@ import gzip
 import io
 import re
 import struct
+import os
 from io import BytesIO
 
 import numpy as np
@@ -403,10 +404,13 @@ def check_input_type(input_value):
 
 
 if __name__ == "__main__":
-    if JSON_ON:
-        with open("parts.json", "w") as f:
+    # get png file in \png folder
+    for ship_png in os.listdir("png"):
+        if ship_png.endswith(".png"):
             ship_data = Ship(SHIP).data
-            part_data = ship_data['Parts']
-            json.dump(part_data, f, cls=JSONEncoderWithBytes)
-    else:
-        print(Ship(SHIP).data)
+            with open(f"json/{ship_png}-parts.json", "w", encoding="utf-8") as f:
+                part_data = ship_data["Parts"]
+                json.dump(part_data, f, cls=JSONEncoderWithBytes)
+
+            with open(f"json/{ship_png}-data.json", "w", encoding="utf-8") as f:
+                json.dump(ship_data, f, cls=JSONEncoderWithBytes)
