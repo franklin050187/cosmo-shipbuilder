@@ -1,9 +1,14 @@
-from cosmoteer_save_tools import Ship
-from PIL import Image
+''' tool to write json data to a png file '''
+
 import json
 
-json_file_path = 'out.json'
-with open(json_file_path, "r") as f:
+from PIL import Image
+
+from cosmoteer_save_tools import Ship
+
+# load generated json
+GEN_JSON = "out.json"
+with open(GEN_JSON, "r", encoding="utf-8") as f:
     json_data = json.load(f)
 
 
@@ -20,24 +25,26 @@ if "Roles" in json_data:
             role["Color"] = tuple(role["Color"])
 if "WeaponShipRelativeTargets" in json_data:
     for WeaponShipRelativeTargets in json_data["WeaponShipRelativeTargets"]:
-        if "Value" in WeaponShipRelativeTargets and isinstance(WeaponShipRelativeTargets["Value"], list):
-            WeaponShipRelativeTargets["Value"] = tuple(WeaponShipRelativeTargets["Value"])     
+        if "Value" in WeaponShipRelativeTargets and isinstance(
+            WeaponShipRelativeTargets["Value"], list
+        ):
+            WeaponShipRelativeTargets["Value"] = tuple(WeaponShipRelativeTargets["Value"])
 
 # Now, json_data contains tuples instead of lists
 # print(json_data)
 
-image_path = "ionv2.ship.png"  # Replace with the path to your image
-my_ship1=Ship(image_path) # read image
-my_ship1.data = json_data # replace the data
-new_image=my_ship1.write(Image.open("test99.png")) # write image
-new_image.save("outtest.ship.png") # save image
-my_ship2=Ship("outtest.ship.png") # read image
+ORG_IMG = "ionv2.ship.png"  # Replace with the path to your image
+my_ship1 = Ship(ORG_IMG)  # read image
+my_ship1.data = json_data  # replace the data
+new_image = my_ship1.write(Image.open("test99.png"))  # write image
+new_image.save("outtest.ship.png")  # save image
+my_ship2 = Ship("outtest.ship.png")  # read image
 
 
-print(my_ship1.data==my_ship2.data)
-#print all of the differences
+print(my_ship1.data == my_ship2.data)
+# print all of the differences
 for key in my_ship1.data.keys():
-    if my_ship1.data[key]!=my_ship2.data[key]:
+    if my_ship1.data[key] != my_ship2.data[key]:
         print("ship 1")
         print(key)
         print(my_ship1.data[key])
@@ -47,11 +54,11 @@ for key in my_ship1.data.keys():
         print()
 
 for key in my_ship1.data.keys():
-    if my_ship1.data[key]!=json_data[key]:
+    if my_ship1.data[key] != json_data[key]:
         print("ship 1")
         print(key)
         print(my_ship1.data[key])
         print("===================================")
-        print("ship 2")
+        print("json data")
         print(json_data[key])
         print()

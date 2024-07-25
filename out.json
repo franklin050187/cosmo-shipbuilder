@@ -1,0 +1,741 @@
+{
+    "Author": "Poney!",
+    "BuildCenterlineNESW": null,
+    "BuildCenterlineNWSE": null,
+    "BuildCenterlineX": {
+        "Max": -3,
+        "Min": -3
+    },
+    "BuildCenterlineY": null,
+    "BuildMirrorAxis": 1,
+    "BuildMirrorEnabled": true,
+    "CrewSourceRoles": [
+        {
+            "Key": {
+                "FlipX": false,
+                "ID": "cosmoteer.crew_quarters_med",
+                "Location": [
+                    -4,
+                    1
+                ],
+                "Rotation": 0
+            },
+            "Value": 2147483648
+        }
+    ],
+    "CrewSourceTargets": "Unset",
+    "Decals1": "Unset",
+    "Decals2": "Unset",
+    "Decals3": "Unset",
+    "DefaultAttackFollowAngle": null,
+    "DefaultAttackRadius": null,
+    "DefaultAttackRotation": null,
+    "Description": "",
+    "Doors": [
+        {
+            "Cell": [
+                -3,
+                1
+            ],
+            "ID": "cosmoteer.door",
+            "Orientation": 0
+        },
+        {
+            "Cell": [
+                -3,
+                -1
+            ],
+            "ID": "cosmoteer.door",
+            "Orientation": 0
+        }
+    ],
+    "FlightDirection": 1,
+    "FormationOrder": 3,
+    "Name": "Unnamed Ship",
+    "NewFlexResourceGridTypes": "Unset",
+    "PaintCenterlineNESW": null,
+    "PaintCenterlineNWSE": null,
+    "PaintCenterlineX": null,
+    "PaintCenterlineY": null,
+    "PaintMirrorAxis": 1,
+    "PaintMirrorEnabled": false,
+    "PartControlGroups": "Unset",
+    "Parts": [
+        {
+            "FlipX": false,
+            "ID": "cosmoteer.structure",
+            "Location": [
+                -15,
+                -15
+            ],
+            "Rotation": 0
+        },
+        {
+            "FlipX": false,
+            "ID": "cosmoteer.structure",
+            "Location": [
+                -15,
+                -14
+            ],
+            "Rotation": 0
+        },
+        {
+            "FlipX": false,
+            "ID": "cosmoteer.structure",
+            "Location": [
+                -15,
+                -13
+            ],
+            "Rotation": 0
+        },
+        {
+            "FlipX": false,
+            "ID": "cosmoteer.structure",
+            "Location": [
+                -15,
+                -12
+            ],
+            "Rotation": 0
+        },
+        {
+            "FlipX": false,
+            "ID": "cosmoteer.structure",
+            "Location": [
+                -15,
+                -11
+            ],
+            "Rotation": 0
+        },
+        {
+            "FlipX": false,
+            "ID": "cosmoteer.structure",
+            "Location": [
+                -15,
+                -10
+            ],
+            "Rotation": 0
+        },
+        {
+            "FlipX": false,
+            "ID": "cosmoteer.structure",
+            "Location": [
+                -15,
+                -9
+            ],
+            "Rotation": 0
+        },
+        {
+            "FlipX": false,
+            "ID": "cosmoteer.structure",
+            "Location": [
+                -15,
+                -8
+            ],
+            "Rotation": 0
+        },
+        {
+            "FlipX": false,
+            "ID": "cosmoteer.structure",
+            "Location": [
+                -15,
+                -7
+            ],
+            "Rotation": 0
+        },
+        {
+            "FlipX": false,
+            "ID": "cosmoteer.structure",
+            "Location": [
+                -15,
+                -6
+            ],
+            "Rotation": 0
+        },
+        {
+            "FlipX": false,
+            "ID": "cosmoteer.structure",
+            "Location": [
+                -15,
+                -5
+            ],
+            "Rotation": 0
+        },
+        {
+            "FlipX": false,
+            "ID": "cosmoteer.ion_beam_prism",
+            "Location": [
+                -14,
+                -15
+            ],
+            "Rotation": 0
+        },
+        {
+            "FlipX": false,
+            "ID": "cosmoteer.structure",
+            "Location": [
+                -14,
+                -5
+            ],
+            "Rotation": 0
+        },
+        {
+            "FlipX": false,
+            "ID": "cosmoteer.structure",
+            "Location": [
+                -13,
+                -5
+            ],
+            "Rotation": 0
+        },
+        {
+            "FlipX": false,
+            "ID": "cosmoteer.structure",
+            "Location": [
+                -12,
+                -5
+            ],
+            "Rotation": 0
+        },
+        {
+            "FlipX": false,
+            "ID": "cosmoteer.structure",
+            "Location": [
+                -11,
+                -5
+            ],
+            "Rotation": 0
+        },
+        {
+            "FlipX": false,
+            "ID": "cosmoteer.structure",
+            "Location": [
+                -10,
+                -5
+            ],
+            "Rotation": 0
+        },
+        {
+            "FlipX": false,
+            "ID": "cosmoteer.structure",
+            "Location": [
+                -9,
+                -5
+            ],
+            "Rotation": 0
+        },
+        {
+            "FlipX": false,
+            "ID": "cosmoteer.ion_beam_prism",
+            "Location": [
+                -8,
+                -7
+            ],
+            "Rotation": 0
+        },
+        {
+            "FlipX": false,
+            "ID": "cosmoteer.structure",
+            "Location": [
+                -8,
+                -5
+            ],
+            "Rotation": 0
+        },
+        {
+            "FlipX": false,
+            "ID": "cosmoteer.structure",
+            "Location": [
+                -7,
+                -5
+            ],
+            "Rotation": 0
+        },
+        {
+            "FlipX": false,
+            "ID": "cosmoteer.structure",
+            "Location": [
+                -6,
+                -5
+            ],
+            "Rotation": 0
+        },
+        {
+            "FlipX": false,
+            "ID": "cosmoteer.structure",
+            "Location": [
+                -5,
+                -5
+            ],
+            "Rotation": 0
+        },
+        {
+            "FlipX": false,
+            "ID": "cosmoteer.ion_beam_prism",
+            "Location": [
+                -4,
+                -5
+            ],
+            "Rotation": 0
+        },
+        {
+            "FlipX": false,
+            "ID": "cosmoteer.control_room_small",
+            "Location": [
+                -4,
+                -3
+            ],
+            "Rotation": 0
+        },
+        {
+            "FlipX": false,
+            "ID": "cosmoteer.reactor_small",
+            "Location": [
+                -4,
+                -1
+            ],
+            "Rotation": 0
+        },
+        {
+            "FlipX": false,
+            "ID": "cosmoteer.crew_quarters_med",
+            "Location": [
+                -4,
+                1
+            ],
+            "Rotation": 0
+        },
+        {
+            "FlipX": false,
+            "ID": "cosmoteer.structure",
+            "Location": [
+                -2,
+                -5
+            ],
+            "Rotation": 0
+        },
+        {
+            "FlipX": false,
+            "ID": "cosmoteer.structure",
+            "Location": [
+                -1,
+                -5
+            ],
+            "Rotation": 0
+        },
+        {
+            "FlipX": false,
+            "ID": "cosmoteer.ion_beam_prism",
+            "Location": [
+                0,
+                -7
+            ],
+            "Rotation": 0
+        },
+        {
+            "FlipX": false,
+            "ID": "cosmoteer.structure",
+            "Location": [
+                0,
+                -5
+            ],
+            "Rotation": 0
+        },
+        {
+            "FlipX": false,
+            "ID": "cosmoteer.structure",
+            "Location": [
+                1,
+                -5
+            ],
+            "Rotation": 0
+        },
+        {
+            "FlipX": false,
+            "ID": "cosmoteer.structure",
+            "Location": [
+                2,
+                -5
+            ],
+            "Rotation": 0
+        },
+        {
+            "FlipX": false,
+            "ID": "cosmoteer.structure",
+            "Location": [
+                3,
+                -5
+            ],
+            "Rotation": 0
+        },
+        {
+            "FlipX": false,
+            "ID": "cosmoteer.structure",
+            "Location": [
+                4,
+                -5
+            ],
+            "Rotation": 0
+        },
+        {
+            "FlipX": false,
+            "ID": "cosmoteer.structure",
+            "Location": [
+                5,
+                -5
+            ],
+            "Rotation": 0
+        },
+        {
+            "FlipX": false,
+            "ID": "cosmoteer.ion_beam_prism",
+            "Location": [
+                6,
+                -15
+            ],
+            "Rotation": 0
+        },
+        {
+            "FlipX": false,
+            "ID": "cosmoteer.structure",
+            "Location": [
+                6,
+                -5
+            ],
+            "Rotation": 0
+        },
+        {
+            "FlipX": false,
+            "ID": "cosmoteer.structure",
+            "Location": [
+                7,
+                -5
+            ],
+            "Rotation": 0
+        },
+        {
+            "FlipX": false,
+            "ID": "cosmoteer.structure",
+            "Location": [
+                8,
+                -15
+            ],
+            "Rotation": 0
+        },
+        {
+            "FlipX": false,
+            "ID": "cosmoteer.structure",
+            "Location": [
+                8,
+                -14
+            ],
+            "Rotation": 0
+        },
+        {
+            "FlipX": false,
+            "ID": "cosmoteer.structure",
+            "Location": [
+                8,
+                -13
+            ],
+            "Rotation": 0
+        },
+        {
+            "FlipX": false,
+            "ID": "cosmoteer.structure",
+            "Location": [
+                8,
+                -12
+            ],
+            "Rotation": 0
+        },
+        {
+            "FlipX": false,
+            "ID": "cosmoteer.structure",
+            "Location": [
+                8,
+                -11
+            ],
+            "Rotation": 0
+        },
+        {
+            "FlipX": false,
+            "ID": "cosmoteer.structure",
+            "Location": [
+                8,
+                -10
+            ],
+            "Rotation": 0
+        },
+        {
+            "FlipX": false,
+            "ID": "cosmoteer.structure",
+            "Location": [
+                8,
+                -9
+            ],
+            "Rotation": 0
+        },
+        {
+            "FlipX": false,
+            "ID": "cosmoteer.structure",
+            "Location": [
+                8,
+                -8
+            ],
+            "Rotation": 0
+        },
+        {
+            "FlipX": false,
+            "ID": "cosmoteer.structure",
+            "Location": [
+                8,
+                -7
+            ],
+            "Rotation": 0
+        },
+        {
+            "FlipX": false,
+            "ID": "cosmoteer.structure",
+            "Location": [
+                8,
+                -6
+            ],
+            "Rotation": 0
+        },
+        {
+            "FlipX": false,
+            "ID": "cosmoteer.structure",
+            "Location": [
+                8,
+                -5
+            ],
+            "Rotation": 0
+        }
+    ],
+    "PartUIColorValues": "Unset",
+    "PartUIToggleStates": "Unset",
+    "ResourceConsumptionToggles": "Unset",
+    "ResourceSupplierTargets": "Unset",
+    "ResourceSupplyToggles": "Unset",
+    "Roles": [
+        {
+            "AssignmentPriority": 5,
+            "AutoFillFromLower": false,
+            "Color": [
+                "0000803F",
+                "00000000",
+                "00000000",
+                "0000803F"
+            ],
+            "ID": -2147483648,
+            "Name": "Redshirt",
+            "Priorities": "Unset"
+        }
+    ],
+    "RoofBaseColor": [
+        "0000803F",
+        "0000803F",
+        "0000803F",
+        "FFFEFE3E"
+    ],
+    "RoofBaseTexture": "_none_",
+    "RoofDecalColor1": [
+        "00000000",
+        "00000000",
+        "00000000",
+        "0000803F"
+    ],
+    "RoofDecalColor2": [
+        "0000003F",
+        "0000003F",
+        "0000003F",
+        "0000803F"
+    ],
+    "RoofDecalColor3": [
+        "0000803F",
+        "00000000",
+        "00000000",
+        "0000803F"
+    ],
+    "ShipRulesID": "cosmoteer.terran",
+    "Version": 3,
+    "WeaponDirectControlBindings": "Unset",
+    "WeaponSelfTargets": [
+        {
+            "Key": [
+                {
+                    "FlipX": false,
+                    "ID": "cosmoteer.ion_beam_prism",
+                    "Location": [
+                        -14,
+                        -15
+                    ],
+                    "Rotation": 0
+                },
+                "Turret"
+            ],
+            "Value": {
+                "FlipX": false,
+                "ID": "cosmoteer.ion_beam_prism",
+                "Location": [
+                    -8,
+                    -7
+                ],
+                "Rotation": 0
+            }
+        },
+        {
+            "Key": [
+                {
+                    "FlipX": false,
+                    "ID": "cosmoteer.ion_beam_prism",
+                    "Location": [
+                        -14,
+                        -15
+                    ],
+                    "Rotation": 0
+                },
+                "IonBeamChainToggle"
+            ],
+            "Value": {
+                "FlipX": false,
+                "ID": "cosmoteer.ion_beam_prism",
+                "Location": [
+                    -8,
+                    -7
+                ],
+                "Rotation": 0
+            }
+        },
+        {
+            "Key": [
+                {
+                    "FlipX": false,
+                    "ID": "cosmoteer.ion_beam_prism",
+                    "Location": [
+                        6,
+                        -15
+                    ],
+                    "Rotation": 0
+                },
+                "Turret"
+            ],
+            "Value": {
+                "FlipX": false,
+                "ID": "cosmoteer.ion_beam_prism",
+                "Location": [
+                    0,
+                    -7
+                ],
+                "Rotation": 0
+            }
+        },
+        {
+            "Key": [
+                {
+                    "FlipX": false,
+                    "ID": "cosmoteer.ion_beam_prism",
+                    "Location": [
+                        6,
+                        -15
+                    ],
+                    "Rotation": 0
+                },
+                "IonBeamChainToggle"
+            ],
+            "Value": {
+                "FlipX": false,
+                "ID": "cosmoteer.ion_beam_prism",
+                "Location": [
+                    0,
+                    -7
+                ],
+                "Rotation": 0
+            }
+        },
+        {
+            "Key": [
+                {
+                    "FlipX": false,
+                    "ID": "cosmoteer.ion_beam_prism",
+                    "Location": [
+                        -8,
+                        -7
+                    ],
+                    "Rotation": 0
+                },
+                "Turret"
+            ],
+            "Value": {
+                "FlipX": false,
+                "ID": "cosmoteer.ion_beam_prism",
+                "Location": [
+                    -4,
+                    -5
+                ],
+                "Rotation": 0
+            }
+        },
+        {
+            "Key": [
+                {
+                    "FlipX": false,
+                    "ID": "cosmoteer.ion_beam_prism",
+                    "Location": [
+                        -8,
+                        -7
+                    ],
+                    "Rotation": 0
+                },
+                "IonBeamChainToggle"
+            ],
+            "Value": {
+                "FlipX": false,
+                "ID": "cosmoteer.ion_beam_prism",
+                "Location": [
+                    -4,
+                    -5
+                ],
+                "Rotation": 0
+            }
+        }
+    ],
+    "WeaponShipRelativeTargets": [
+        {
+            "Key": [
+                {
+                    "FlipX": false,
+                    "ID": "cosmoteer.ion_beam_prism",
+                    "Location": [
+                        0,
+                        -7
+                    ],
+                    "Rotation": 0
+                },
+                "Turret"
+            ],
+            "Value": [
+                -7.140508651733398,
+                -2.0250167846679688
+            ]
+        },
+        {
+            "Key": [
+                {
+                    "FlipX": false,
+                    "ID": "cosmoteer.ion_beam_prism",
+                    "Location": [
+                        0,
+                        -7
+                    ],
+                    "Rotation": 0
+                },
+                "IonBeamChainToggle"
+            ],
+            "Value": [
+                -7.140508651733398,
+                -2.0250167846679688
+            ]
+        }
+    ]
+}
