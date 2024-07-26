@@ -207,6 +207,9 @@
                     ctx.strokeRect(x, y, gridSize, gridSize);
                 }
             }
+            // Mark the (0;0) square
+            ctx.fillStyle = 'red'; 
+            ctx.fillRect(300, 300, gridSize, gridSize);
         }
 
         // Function to handle mousemove and show the preview sprite
@@ -357,6 +360,8 @@
                         yOffset = -1;
                         break;
                 }
+                xOffset = 0;
+                yOffset = 0;
 
                 // Adjust the placement to align with the bottom-right corner of the grid cell
                 const sprite = { x: mouseX + xOffset * gridSize, y: mouseY + yOffset * gridSize, width, height, name: spriteName, rotation };

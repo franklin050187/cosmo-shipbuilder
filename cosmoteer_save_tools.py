@@ -406,7 +406,7 @@ if __name__ == "__main__":
     if JSON_ON:
         with open("parts.json", "w") as f:
             ship_data = Ship(SHIP).data
-            part_data = ship_data['Parts']
+            part_data = ship_data#['Parts']
             json.dump(part_data, f, cls=JSONEncoderWithBytes)
     else:
         print(Ship(SHIP).data)
