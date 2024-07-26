@@ -1,6 +1,8 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\json",
+    "\\png"
   ],
   "SelectedNode": "\\cosmoteer_save_tools.py",
   "PreviewInSolutionExplorer": false
