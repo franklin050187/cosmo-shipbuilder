@@ -311,6 +311,64 @@
             return canvas;
         }
 
+        function get_all_locations() {
+            const json = json_import_text.value;
+            const data = JSON.parse(json);
+            const part_data = data.Parts
+
+            let locations = []
+            let width;
+            let height;
+
+            part_data.forEach(sprite => {
+                const sprite_size = spriteData[sprite["ID"]].sprite_size || spriteData[sprite["ID"]].size;
+
+                if (sprite.Rotation % 2 == 0) {
+                    width = sprite_size[0];
+                    height = sprite_size[1];
+                } else {
+                    width = sprite_size[1];
+                    height = sprite_size[0];
+                }
+
+                for (let i = 0; i < width; i++) {
+                    for (let j = 0; j < height; j++) {
+                        locations.push([sprite.Location[0] + i, sprite.Location[1] + j]);
+                    }
+                } 
+
+                locations.push(sprite.Location)
+            });
+            return locations;
+        }
+
+        function draw_resources() {
+            const json = json_import_text.value;
+            const data = JSON.parse(json);
+            const part_data = data.Parts
+            const resource_data = data.NewFlexResourceGridTypes
+
+            get_all_locations().forEach(location => {
+                resource_data.forEach(resource => {
+                    if (location[0] == resource.Key[0] && location[1] == resource.Key[1]) {
+                        const imageName = resource.Value;
+                        const img = new Image();
+
+                        img.src = `sprites/${imageName}.png`;
+
+                        img.onload = () => {
+                            console.log(location[0])
+                            console.log(resource.Key[0])
+                            x = location[0];
+                            y = location[1];
+                            const rotatedImage = rotate_img(img, 0, false);
+                            ctx.drawImage(rotatedImage, (x - minX) * gridSize + 1, (y - minY) * gridSize + 1, rotatedImage.width - 2, rotatedImage.height - 2);
+                        };
+                    }
+                })
+            })
+        }
+
         function redrawCanvas() {
             ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear the canvas
             drawGrid(); // Redraw the grid
@@ -341,6 +399,7 @@
                     square_map(sprite);
                 };
             });
+            draw_resources();
         }
 
         let gridMap = {}; // To store the grid map

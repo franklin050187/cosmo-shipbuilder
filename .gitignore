@@ -1,6 +1,9 @@
 # Created by https://www.toptal.com/developers/gitignore/api/python,vs
 # Edit at https://www.toptal.com/developers/gitignore?templates=python,vs
 
+/json
+/png
+
 ### Python ###
 # Byte-compiled / optimized / DLL files
 __pycache__/
