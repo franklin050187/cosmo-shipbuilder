@@ -23,6 +23,8 @@
     <canvas id="spriteCanvas" width="64" height="64"></canvas>
     <textarea id="jsonInput"></textarea>
     <button id="loadButton">Load JSON</button>
+    <label for="spriteSelect">Select a Sprite:</label>
+    <select id="spriteSelect"></select>
 
     <script>
         const spriteData = {
@@ -303,17 +305,38 @@
                     img.src = `sprites/${imageName}.png`;
                 }
 
-
-
                 img.onload = () => {
                     let [x, y] = sprite_position(sprite, [sprite.Location[0], sprite.Location[1]]);
                     const rotatedImage = rotate_img(img, sprite.Rotation, sprite.FlipX);
                     ctx.drawImage(rotatedImage, (x - minX) * gridSize + 1, (y - minY) * gridSize + 1, rotatedImage.width - 2, rotatedImage.height - 2);
+                    sprite.width = rotatedImage.width;
+                    sprite.height = rotatedImage.height;
+                    square_map(sprite);
                 };
             });
         }
 
+        let gridMap = {}; // To store the grid map
 
+        function square_map(sprite) {
+            const [x, y] = sprite_position(sprite, [sprite.Location[0], sprite.Location[1]]);
+            const width = Math.ceil(sprite.width / gridSize);
+            const height = Math.ceil(sprite.height / gridSize);
+
+            for (let i = 0; i < width; i++) {
+                for (let j = 0; j < height; j++) {
+                    const squareX = x + i;
+                    const squareY = y + j;
+                    const key = `${squareX},${squareY}`;
+
+                    gridMap[key] = {
+                        square_x: squareX,
+                        square_y: squareY,
+                        is_drawn_by_sprite: sprite
+                    };
+                }
+            }
+        }
 
         //Get interesting data from a part
         function getPartData(part) {
@@ -354,6 +377,200 @@
 
         }
 
+
+        // Create preview sprite
+        const previewSprite = document.createElement('img');
+        previewSprite.id = 'previewSprite';
+        document.body.appendChild(previewSprite);
+        canvas.addEventListener('mousemove', handleCanvasMouseMove);
+        // add sprite to canvas when clicked
+        canvas.addEventListener('click', handleCanvasClick);
+        canvas.addEventListener('contextmenu', handleRightClick); // Listen for right-click
+
+        let deleteMode = false;
+        let rotation = 0; // Initial rotation (0 degrees)
+        let lastX = 0;
+        let lastY = 0;
+        let lastRotation = 0;
+        let lastDrawX = 0;
+        let lastDrawY = 0;
+        let lastWidth = 0;
+        let lastHeight = 0;
+
+        const previewSpriteImage = new Image();
+        let isPreviewSpriteLoaded = false;
+
+
+        // Function to load the selected sprite image
+        function loadPreviewSpriteImage() {
+            const selectedSprite = document.getElementById('spriteSelect').value;
+            const imageName = selectedSprite.replace("cosmoteer.", "");
+            previewSpriteImage.src = `sprites/${imageName}.png`;
+
+            previewSpriteImage.onload = () => {
+                isPreviewSpriteLoaded = true;
+            };
+        }
+
+        // Call the function to load the initial preview sprite
+        loadPreviewSpriteImage();
+
+        let affectedSquares = [];
+
+        function handleCanvasMouseMove(event) {
+            if (!isPreviewSpriteLoaded) return;
+
+            const x = event.offsetX;
+            const y = event.offsetY;
+            const mouseX = Math.floor(x / gridSize) * gridSize;
+            const mouseY = Math.floor(y / gridSize) * gridSize;
+            const canvasPositionX = (mouseX / gridSize) + minX;
+            const canvasPositionY = (mouseY / gridSize) + minY;
+
+            if (lastX === canvasPositionX && lastY === canvasPositionY && lastRotation === rotation) {
+                return;
+            }
+
+            const spriteDataPreview = {
+                FlipX: false,
+                ID: document.getElementById('spriteSelect').value,
+                Location: [canvasPositionX, canvasPositionY],
+                Rotation: rotation
+            };
+
+            let [drawX, drawY] = sprite_position(spriteDataPreview, [spriteDataPreview.Location[0], spriteDataPreview.Location[1]]);
+            const rotatedImage = rotate_img(previewSpriteImage, spriteDataPreview.Rotation, spriteDataPreview.FlipX);
+
+            // Clear the previous preview sprite and redraw affected sprites
+            clearPreview();
+
+            // Draw the new preview sprite
+            drawPreview(spriteDataPreview, (drawX - minX) * gridSize + 1, (drawY - minY) * gridSize + 1, rotatedImage);
+
+            // Update last known position and dimensions
+            lastX = canvasPositionX;
+            lastY = canvasPositionY;
+            lastRotation = rotation;
+            lastDrawX = (drawX - minX) * gridSize + 1;
+            lastDrawY = (drawY - minY) * gridSize + 1;
+            lastWidth = rotatedImage.width - 2;
+            lastHeight = rotatedImage.height - 2;
+
+            // Store affected grid squares
+            affectedSquares = [];
+            const width = Math.ceil(rotatedImage.width / gridSize);
+            const height = Math.ceil(rotatedImage.height / gridSize);
+
+            for (let i = 0; i < width; i++) {
+                for (let j = 0; j < height; j++) {
+                    const squareX = canvasPositionX + i;
+                    const squareY = canvasPositionY + j;
+                    const key = `${squareX},${squareY}`;
+                    affectedSquares.push(key);
+                }
+            }
+        }
+
+
+        function clearPreview() {
+            ctx.clearRect(lastDrawX, lastDrawY, lastWidth, lastHeight);
+
+            // Redraw the sprites that were overwritten by the preview sprite
+            affectedSquares.forEach(key => {
+                if (gridMap[key]) {
+                    const sprite = gridMap[key].is_drawn_by_sprite;
+                    const imageName = sprite["ID"].replace("cosmoteer.", "");
+                    const img = new Image();
+
+                    const partData = getPartData(sprite);
+                    const missileType = partData.get("missile_type");
+
+                    if (missileType === 2) {
+                        img.src = `sprites/nuke_launcher.png`;
+                    } else if (missileType === 1) {
+                        img.src = `sprites/emp_launcher.png`;
+                    } else if (missileType === 3) {
+                        img.src = `sprites/mine_launcher.png`;
+                    } else {
+                        img.src = `sprites/${imageName}.png`;
+                    }
+
+                    img.onload = () => {
+                        let [x, y] = sprite_position(sprite, [sprite.Location[0], sprite.Location[1]]);
+                        const rotatedImage = rotate_img(img, sprite.Rotation, sprite.FlipX);
+                        ctx.clearRect((x - minX) * gridSize + 1, (y - minY) * gridSize + 1, rotatedImage.width - 2, rotatedImage.height - 2);
+                        ctx.drawImage(rotatedImage, (x - minX) * gridSize + 1, (y - minY) * gridSize + 1, rotatedImage.width - 2, rotatedImage.height - 2);
+                    };
+                }
+            });
+        }
+
+
+        // Function to draw the preview sprite
+        function drawPreview(spriteDataPreview, drawX, drawY, rotatedImage) {
+            ctx.globalAlpha = 0.5;
+            ctx.drawImage(rotatedImage, drawX, drawY, rotatedImage.width - 2, rotatedImage.height - 2);
+            ctx.globalAlpha = 1.0;
+        }
+
+        // Function to handle sprite selection change
+        function handleSpriteSelectionChange() {
+            loadPreviewSpriteImage();
+        }
+
+        // Attach the mousemove event listener to the canvas
+        canvas.addEventListener('mousemove', handleCanvasMouseMove);
+
+        // Attach the sprite selection change event listener
+        document.getElementById('spriteSelect').addEventListener('change', handleSpriteSelectionChange);
+
+
+        // Function to handle canvas click to place the sprite
+        function handleCanvasClick(event) {
+            const selectedSprite = document.getElementById('spriteSelect').value;
+            const x = event.offsetX;
+            const y = event.offsetY;
+            const mouseX = Math.floor(x / gridSize);
+            const mouseY = Math.floor(y / gridSize);
+            const canvas_position_x = Math.floor(mouseX - maxX + 1)
+            const canvas_position_y = Math.floor(mouseY - maxY + 1)
+            console.log("mouseX", mouseX, "mouseY", mouseY);
+            console.log("canvas_position_x", canvas_position_x, "canvas_position_y", canvas_position_y);
+            const spriteDataEntry = {
+                FlipX: false,
+                ID: selectedSprite,
+                Location: [canvas_position_x, canvas_position_y],
+                Rotation: rotation
+            };
+            console.log(spriteDataEntry);
+            sprites.push(spriteDataEntry);
+            console.log(sprites);
+            redrawCanvas();
+        }
+
+        // Function to handle right-click to change rotation
+        function handleRightClick(event) {
+            event.preventDefault();
+            rotation = (rotation + 1) % 4;
+            handleCanvasMouseMove(event); // Update the preview with new rotation
+        }
+
+
+        function clearPreviewSprite() {
+            previewSprite.style.display = 'none'; // Hide the preview sprite
+        }
+        function unclearPreviewSprite() {
+            previewSprite.style.display = 'block'; // Hide the preview sprite
+        }
+
+        // Populate the sprite select dropdown with sprite names
+        const spriteSelect = document.getElementById('spriteSelect');
+        for (const spriteName in spriteData) {
+            const option = document.createElement('option');
+            option.value = spriteName;
+            option.textContent = spriteName;
+            spriteSelect.appendChild(option);
+        }
 
         // Initialize the grid
         drawGrid();
