@@ -25,6 +25,9 @@
     <button id="loadButton">Load JSON</button>
     <label for="spriteSelect">Select a Sprite:</label>
     <select id="spriteSelect"></select>
+    <button id="exportButton">Export json</button>
+    <textarea name="json_export" id="json_export" disabled width="200" height="200"></textarea>
+
 
     <script>
         const spriteData = {
@@ -147,12 +150,35 @@
 
         const json_import_text = document.getElementById('jsonInput');
         const load_json_button = document.getElementById('loadButton');
+        const export_json_button = document.getElementById('exportButton');
+        // add event listener to export json button
+        export_json_button.addEventListener('click', export_json);
         load_json_button.addEventListener('click', loadJson);
         const canvas = document.getElementById('spriteCanvas');
         const ctx = canvas.getContext('2d');
         const gridSize = 64; // Size of each grid cell
         let sprites = [];
         let minX = 0, minY = 0, maxX = 0, maxY = 0; // adjust canvas size
+        let shipdata = {};
+        function export_json() {
+            // get shipdata, update shipdata.parts with sprites then export
+            // drop "width" and "height" from sprite data
+            new_parts = []
+            sprites.forEach((sprite) => {
+                delete sprite.width;
+                delete sprite.height;
+                new_parts.push(sprite)
+            })
+            shipdata.Parts = new_parts
+            console.log(shipdata)
+            // convert shipdata to json
+            const json = JSON.stringify(shipdata);
+            console.log(json);
+            // clear textarea
+            document.getElementById("json_export").value = "";
+            // fill textarea id="json_export" with json string
+            document.getElementById("json_export").value = json;
+        }
 
         // Function to draw the grid
         function drawGrid() {
@@ -175,11 +201,12 @@
         function loadJson() {
             // Clear the sprite data
             sprites = [];
+            shipdata = {};
             const json = json_import_text.value;
             console.log(json);
             const data = JSON.parse(json);
             const part_data = data.Parts
-
+            shipdata = data
             // Calculate the min and max positions
             minX = Infinity;
             minY = Infinity;
