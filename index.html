@@ -158,8 +158,12 @@
         const ctx = canvas.getContext('2d');
         const gridSize = 64; // Size of each grid cell
         let sprites = [];
+        let doors = []
+        let resources = []
         let minX = 0, minY = 0, maxX = 0, maxY = 0; // adjust canvas size
         let shipdata = {};
+
+
         function export_json() {
             // get shipdata, update shipdata.parts with sprites then export
             // drop "width" and "height" from sprite data
@@ -169,7 +173,11 @@
                 delete sprite.height;
                 new_parts.push(sprite)
             })
+
             shipdata.Parts = new_parts
+            shipdata.Doors = doors;
+            shipdata.NewFlexResourceGridTypes = resources;
+
             console.log(shipdata)
             // convert shipdata to json
             const json = JSON.stringify(shipdata);
@@ -201,12 +209,16 @@
         function loadJson() {
             // Clear the sprite data
             sprites = [];
-            shipdata = {};
+            doors = [];
+            resources = [];
+
             const json = json_import_text.value;
             console.log(json);
             const data = JSON.parse(json);
-            const part_data = data.Parts
-            shipdata = data
+            const part_data = data.Parts|| [];
+            const doordata = Array.isArray(data.Doors) ? data.Doors : [];
+            const resource_data = Array.isArray(data.NewFlexResourceGridTypes) ? data.NewFlexResourceGridTypes : [];
+
             // Calculate the min and max positions
             minX = Infinity;
             minY = Infinity;
@@ -220,6 +232,14 @@
                 if (x > maxX) maxX = x;
                 if (y > maxY) maxY = y;
                 sprites.push(sprite);
+            });
+
+            doordata.forEach(door => {
+                doors.push(door)
+            });
+
+            resource_data.forEach(resource => {
+                resources.push(resource)
             });
 
             // Extend the grid by 10 squares in each direction
@@ -346,10 +366,9 @@
             const json = json_import_text.value;
             const data = JSON.parse(json);
             const part_data = data.Parts
-            const resource_data = data.NewFlexResourceGridTypes
 
             get_all_locations().forEach(location => {
-                resource_data.forEach(resource => {
+                resources.forEach(resource => {
                     if (location[0] == resource.Key[0] && location[1] == resource.Key[1]) {
                         const imageName = resource.Value;
                         const img = new Image();
@@ -357,8 +376,6 @@
                         img.src = `sprites/${imageName}.png`;
 
                         img.onload = () => {
-                            console.log(location[0])
-                            console.log(resource.Key[0])
                             x = location[0];
                             y = location[1];
                             const rotatedImage = rotate_img(img, 0, false);
@@ -367,6 +384,30 @@
                     }
                 })
             })
+        }
+
+        function draw_doors() {
+            console.log(doors)
+            doors.forEach(door => {
+                    const img = new Image();
+
+                    img.src = `sprites/door.png`;
+                    console.log("door")
+                    img.onload = () => {
+                        console.log("loaded")
+                        x = door.Cell[0];
+                        y = door.Cell[1];
+                        let angle = 0
+                        if (door.Orientation==0) {
+                            y -= 0.5
+                            angle = 1
+                        } else {
+                            x -= 0.5 
+                        }
+                        const rotatedImage = rotate_img(img, angle, false);
+                        ctx.drawImage(rotatedImage, (x - minX) * gridSize + 1, (y - minY) * gridSize + 1, rotatedImage.width - 2, rotatedImage.height - 2);
+                    };
+                })
         }
 
         function redrawCanvas() {
@@ -399,6 +440,7 @@
                     square_map(sprite);
                 };
             });
+            draw_doors();
             draw_resources();
         }
 
