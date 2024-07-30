@@ -46,8 +46,16 @@
             <label for="Move">Move</label>
         </div>
     </fieldset>
-
-
+    <textarea name="b64_input" id="b64_input"></textarea>
+    <button id="load_b64">Load b64</button>
+    <textarea name="b64_export" id="b64_export" disabled width="200" height="200"></textarea>
+    <button id="export_b64">Export b64</button>
+    <a href="" id="export_link" style="display: none;">Link to edit ship</a>
+    <!-- gzip b64 util -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js"
+        integrity="sha512-g2TeAWw5GPnX7z0Kn8nFbYfeHcvAu/tx6d6mrLe/90mkCxO+RcptyYpksUz35EO337F83bZwcmUyHiHamspkfg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <!-- actual script -->
     <script>
         const spriteData = {
             "cosmoteer.corridor": { "mass": 1, "size": [1, 1] },
@@ -167,6 +175,8 @@
         const json_import_text = document.getElementById('jsonInput');
         const load_json_button = document.getElementById('loadButton');
         const export_json_button = document.getElementById('exportButton');
+
+
         const canvas = document.getElementById('spriteCanvas');
         const ctx = canvas.getContext('2d');
         const gridSize = 64; // Size of each grid cell
@@ -192,6 +202,8 @@
         canvas.addEventListener('mousemove', handleCanvasMouseMove);
         document.getElementById('spriteSelect').addEventListener('change', handleSpriteSelectionChange);
 
+
+
         let isPreviewSpriteLoaded = false; // init sprite preview
         let gridMap = {}; // To store the grid map
         let affectedSquares = []; // To store the affected squares
@@ -212,6 +224,66 @@
         let cursorMode = "Place"; // Initial cursor mode
         let doors = []; // To store the doors
         let resources = []; // To store the resources
+
+        // input and output for b64
+        const b64Input = document.getElementById('b64_input');
+        const b64Output = document.getElementById('b64_export');
+        const loadB64Button = document.getElementById('load_b64');
+        const exportB64Button = document.getElementById('export_b64');
+
+        // event listeners for buttons b64
+        loadB64Button.addEventListener('click', decompressString);
+        exportB64Button.addEventListener('click', compressString);
+
+
+        // get url parameter b64
+        const queryString = window.location.search;
+        console.log(queryString);
+        const urlParams = new URLSearchParams(queryString);
+        const b64 = urlParams.get('b64');
+        if (b64) {
+            b64Input.value = b64;
+            decompressString();
+        }
+
+        function compressString() {
+            export_json();
+            const jsonExportText = document.getElementById('json_export');
+            const jsonImportText = document.getElementById('json_import_text');
+            console.log(jsonExportText.value)
+            const string = jsonExportText.value;
+            const bytes = new TextEncoder().encode(string);
+            const compressedBytes = pako.gzip(bytes);
+            const b64 = btoa(String.fromCharCode(...new Uint8Array(compressedBytes)));
+            // make b64 url compatible
+            const b64_url = b64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+            b64Output.value = b64_url;
+            const edit_link = document.getElementById('export_link');
+            // set href to location + ?b64=b64_url
+            edit_link.href = window.location.href + '?b64=' + b64_url;
+            // remove display none
+            edit_link.style.display = 'block';
+        }
+
+        function decompressString() {
+            const b64Input = document.getElementById('b64_input');
+            // unquote b64
+            b64Input.value = b64Input.value.replace(/-/g, '+').replace(/_/g, '/');
+            console.log(b64Input.value)
+            const json_import_text = document.getElementById('jsonInput');
+            console.log("b64 input", b64Input.value)
+            console.log("json input", json_import_text.value)
+            const string = b64Input.value;
+            const bytes = pako.inflate(
+                Uint8Array.from(atob(string), c => c.charCodeAt(0))
+            );
+            // const jsonImportText = document.getElementById('json_import_text');
+            json_import_text.value = new TextDecoder().decode(bytes);
+            loadJson();
+        }
+
+
+
 
         function handleCursorMode() {
             const cursor_mode = document.getElementsByName('cursor_mode');
