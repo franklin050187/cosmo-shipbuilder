@@ -27,6 +27,10 @@
     <select id="spriteSelect"></select>
     <button id="exportButton">Export json</button>
     <textarea name="json_export" id="json_export" disabled width="200" height="200"></textarea>
+    <label id="selected_parts">Selected Part(s):</label>
+    <select id="propertySelect"></select>
+    <textarea id="propertyEdit"></textarea>
+    <button id="applyPropertyButton">Apply</button>
     <fieldset>
         <legend>Select a mode:</legend>
         <div>
@@ -177,6 +181,9 @@
             option.textContent = spriteName;
             spriteSelect.appendChild(option);
         }
+        const property_select = document.getElementById('propertySelect');
+        const property_edit = document.getElementById('propertyEdit');
+        const apply_property_button = document.getElementById('applyPropertyButton');
         const previewSpriteImage = new Image();
         const previewSprite = document.createElement('img');
         previewSprite.id = 'previewSprite';
@@ -186,17 +193,20 @@
         canvas.addEventListener('contextmenu', handleRightClick); // Listen for right-click
         export_json_button.addEventListener('click', export_json);
         load_json_button.addEventListener('click', loadJson);
+        apply_property_button.addEventListener('click', applyProperty);
         cursor_mode.forEach((radio) => {
             radio.addEventListener('click', handleCursorMode);
         })
         canvas.addEventListener('mousemove', handleCanvasMouseMove);
         document.getElementById('spriteSelect').addEventListener('change', handleSpriteSelectionChange);
+        property_select.addEventListener('change', handlePropertySelectionChange);
 
         let isPreviewSpriteLoaded = false; // init sprite preview
         let gridMap = {}; // To store the grid map
         let affectedSquares = []; // To store the affected squares
         let sprite_delete_mode = []; // To store the sprite delete mode
         let sprite_to_place = []; // To store the sprite to place
+        let selected_sprites = [];
         let sprites = []; // To store the sprites
         let minX = 0, minY = 0, maxX = 0, maxY = 0; // adjust canvas size
         let shipdata = {}; // To store the ship data
@@ -212,6 +222,7 @@
         let cursorMode = "Place"; // Initial cursor mode
         let doors = []; // To store the doors
         let resources = []; // To store the resources
+        let part_toggles = [];
 
         function handleCursorMode() {
             const cursor_mode = document.getElementsByName('cursor_mode');
@@ -221,7 +232,10 @@
                     handleCursorModeChange()
                 }
             })
-            // console.log(cursorMode)
+        }
+
+        function handlePropertySelectionChange () {
+            property_edit.value = JSON.parse(property_select.value).Value
         }
 
         function handleCursorModeChange() {
@@ -248,10 +262,9 @@
             shipdata.Doors = doors;
             shipdata.NewFlexResourceGridTypes = resources;
             shipdata.Parts = new_parts;
-            // console.log(shipdata)
+            shipdata.PartUIToggleStates = part_toggles;
             // convert shipdata to json
             const json = JSON.stringify(shipdata);
-            // console.log(json);
             // clear textarea
             document.getElementById("json_export").value = "";
             // fill textarea id="json_export" with json string
@@ -281,12 +294,13 @@
             shipdata = {};
             doors = [];
             resources = [];
+            part_toggles = [];
             const json = json_import_text.value;
-            // console.log(json);
             const data = JSON.parse(json);
-            const part_data = data.Parts || [];
+            const part_data = Array.isArray(data.Parts) ? data.Parts : [];
             const doordata = Array.isArray(data.Doors) ? data.Doors : [];
             const resource_data = Array.isArray(data.NewFlexResourceGridTypes) ? data.NewFlexResourceGridTypes : [];
+            const partUIToggleStates = Array.isArray(data.PartUIToggleStates) ? data.PartUIToggleStates : [];
 
             shipdata = data
             // Calculate the min and max positions
@@ -312,6 +326,10 @@
                 resources.push(resource)
             });
 
+            partUIToggleStates.forEach(toggle => {
+                part_toggles.push(toggle)
+            });
+
             // Extend the grid by 10 squares in each direction
             minX -= 10;
             minY -= 10;
@@ -325,6 +343,20 @@
             canvas.height = height;
 
             redrawCanvas();
+        }
+
+        function applyProperty () {
+            new_value = property_edit.value;
+
+            for (sprite of selected_sprites) {
+                for (toggle of part_toggles) {
+                    if (isSameToggleType(toggle, JSON.parse(property_select.value)) && toggleBelongsToSprite(toggle, sprite)) {
+                        toggle.Value  = new_value;
+                    }
+                }
+            }
+ 
+            redrawCanvas()
         }
 
         function sprite_position(part, position) {
@@ -363,7 +395,7 @@
                     }
                 }
             }
-            if (part["ID"] == "cosmoteer.missile_launcher" && getPartData(part).get("missile_type") != 0) {
+            if (part["ID"] == "cosmoteer.missile_launcher" && getPartDataMap(part).get("missile_type") != 0) {
 
                 if (part_rotation == 0) {
                     position[1] -= 1;
@@ -411,23 +443,8 @@
             let height;
 
             part_data.forEach(sprite => {
-                const sprite_size = spriteData[sprite["ID"]].sprite_size || spriteData[sprite["ID"]].size;
-
-                if (sprite.Rotation % 2 == 0) {
-                    width = sprite_size[0];
-                    height = sprite_size[1];
-                } else {
-                    width = sprite_size[1];
-                    height = sprite_size[0];
-                }
-
-                for (let i = 0; i < width; i++) {
-                    for (let j = 0; j < height; j++) {
-                        locations.push([sprite.Location[0] + i, sprite.Location[1] + j]);
-                    }
-                }
-
-                locations.push(sprite.Location)
+                getSpriteTileLocations(sprite)
+                Array.prototype.push.apply(locations, sprite.Location);
             });
             return locations;
         }
@@ -436,8 +453,7 @@
             const json = json_import_text.value;
             const data = JSON.parse(json);
             const part_data = data.Parts
-            // const resource_data = data.NewFlexResourceGridTypes
-            // console.log(resource_data)
+
             if (resources == "Unset") {
                 return
             }
@@ -451,8 +467,6 @@
                         img.src = `sprites/${imageName}.png`;
 
                         img.onload = () => {
-                            // console.log(location[0])
-                            // console.log(resource.Key[0])
                             x = location[0];
                             y = location[1];
                             const rotatedImage = rotate_img(img, 0, false);
@@ -464,14 +478,11 @@
         }
 
         function draw_doors() {
-            console.log(doors)
             doors.forEach(door => {
                 const img = new Image();
 
                 img.src = `sprites/door.png`;
-                // console.log("door")
                 img.onload = () => {
-                    // console.log("loaded")
                     x = door.Cell[0];
                     y = door.Cell[1];
                     let angle = 0
@@ -495,8 +506,8 @@
                 const imageName = sprite["ID"].replace("cosmoteer.", "");
                 const img = new Image();
 
-                const partData = getPartData(sprite);
-                const missileType = partData.get("missile_type");
+                const partData = getPartDataMap(sprite);
+                const missileType = parseInt(partData.get("missile_type"));
 
                 if (missileType === 2) {
                     img.src = `sprites/nuke_launcher.png`;
@@ -507,6 +518,8 @@
                 } else {
                     img.src = `sprites/${imageName}.png`;
                 }
+
+                console.log(img.src);
 
                 img.onload = () => {
                     let [x, y] = sprite_position(sprite, [sprite.Location[0], sprite.Location[1]]);
@@ -542,37 +555,27 @@
             }
         }
 
-        function getPartData(part) {
+        function getPartDataMap(part) {
             let part_data = new Map()
-            const json = json_import_text.value;
-            const data = JSON.parse(json);
-            const partUIToggleStates = data.PartUIToggleStates || [];
+            let raw_data = getPartData(part)
 
-            // if "PartUIToggleStates": "Unset", then skip
-            if (partUIToggleStates === "Unset") {
-                return part_data
-            }
-            for (const entry of partUIToggleStates) {
+            for (const entry of raw_data) {
                 const key = entry.Key || {};
 
-
-                if (part.Location[0] == key[0].Location[0] && part.Location[1] == key[0].Location[1]) {
-
-                    // Power toggle (1 is on 0 is off)
-                    if (key.includes("on_off")) {
-                        part_data.set("on_off", entry.Value);
-                    }
-
-                    //fire mode (hold fire:2^32-1, fire at target: 1, fire at will: 0, autofire: 2)
-                    if (key.includes("fire_mode")) {
-                        part_data.set("fire_mode", entry.Value);
-                    }
-
-                    //missile type (3 is mine, 1 is emp, 2 is nuke, 0 is he)
-                    if (key.includes("missile_type")) {
-                        part_data.set("missile_type", entry.Value);
-                    }
+                // Power toggle (1 is on 0 is off)
+                if (key.includes("on_off")) {
+                    part_data.set("on_off", entry.Value);
                 }
+
+                //fire mode (hold fire:2^32-1, fire at target: 1, fire at will: 0, autofire: 2)
+                if (key.includes("fire_mode")) {
+                    part_data.set("fire_mode", entry.Value);
+                }
+
+                //missile type (3 is mine, 1 is emp, 2 is nuke, 0 is he)
+                if (key.includes("missile_type")) {
+                    part_data.set("missile_type", entry.Value);
+                } 
 
             }
 
@@ -627,19 +630,14 @@
                 affectedSquares = [];
                 const width = 1;
                 const height = 1;
-                // console.log("width", width, "height", height);
-                // console.log("canvasPositionX", canvasPositionX, "canvasPositionY", canvasPositionY);
                 for (let i = 0; i < width; i++) {
                     for (let j = 0; j < height; j++) {
                         const squareX = canvasPositionX + i;
                         const squareY = canvasPositionY + j;
                         const key = `${squareX},${squareY}`;
                         affectedSquares.push(key);
-                        // console.log("key", key);
-
                     }
                 }
-                // console.log("affectedSquares", affectedSquares);
                 // Find sprite data for affected squares and store it in sprite_delete_mode
                 sprite_delete_mode = [];
                 affectedSquares.forEach(key => {
@@ -647,7 +645,6 @@
                         sprite_delete_mode.push(gridMap[key].is_drawn_by_sprite);
                     }
                 });
-                // console.log("sprite_delete_mode", sprite_delete_mode);
                 lastX = canvasPositionX;
                 lastY = canvasPositionY;
                 lastRotation = rotation;
@@ -741,7 +738,6 @@
         }
 
         function clearPreview() {
-            // console.log("clearPreview")
             ctx.clearRect(lastDrawX, lastDrawY, lastWidth, lastHeight);
 
             // Redraw the sprites that were overwritten by the preview sprite
@@ -751,7 +747,7 @@
                     const imageName = sprite["ID"].replace("cosmoteer.", "");
                     const img = new Image();
 
-                    const partData = getPartData(sprite);
+                    const partData = getPartDataMap(sprite);
                     const missileType = partData.get("missile_type");
 
                     if (missileType === 2) {
@@ -810,9 +806,6 @@
             if (cursorMode == "Move") {
                 document.getElementById("spriteSelect").value = sprite_delete_mode[0].ID;
                 rotation = sprite_delete_mode[0].Rotation;
-                // console.log("sprite_move", sprite_delete_mode);
-                // console.log("rotation", rotation);
-                // console.log("sprite_ID", sprite_delete_mode[0].ID);
                 remove_from_sprites(sprite_delete_mode);
                 redrawCanvas();
                 loadPreviewSpriteImage();
@@ -822,25 +815,75 @@
                 document.getElementById("Move").checked = false;
                 document.getElementById("Place").checked = true;
             }
-
+            // select sprite
+            if (cursorMode == "Select") {
+                let pos = mousePos(event) 
+                let selected_sprite = findSprite(pos[0], pos[1]);
+                if (selected_sprite != null) {
+                    select_sprite(selected_sprite)
+                }          
+            }
         }
 
         function place_sprite(sprite_to_place) {
-            // console.log("sprite_to_place", sprite_to_place);
             sprites.push(sprite_to_place);
         }
 
+        function select_sprite (sprite_to_select) { 
+            for (sprite of selected_sprites) {
+                if (isSameSprite(sprite, sprite_to_select)) {
+                    return;
+                }
+            }
+            selected_sprites.push(sprite_to_select);
+            updateSpriteSelection();
+        }
+
+        function resetSelectedSprites() {
+            selected_sprites = [];
+            updateSpriteSelection();
+        }
+
+        function updateSpriteSelection() {   
+            document.getElementById("selected_parts").innerText = `Selected sprites: `; //Update label
+            let old_toggles = [];
+            include_toggle = true;
+
+            propertySelect.innerHTML = ''; //Update Selection 
+
+
+            for (sprite of selected_sprites) {
+                document.getElementById("selected_parts").innerText += sprite.ID + ", ";
+                getPartData(sprite).forEach(toggle => {
+                    for (old_toggle of old_toggles) {
+                        if (isSameToggleType(old_toggle, toggle)) {
+                            include_toggle = false;
+                        }
+                    } 
+                    if (include_toggle) {
+                        const option = document.createElement('option');
+                        let toggle_name = toggle.Key[1];
+
+                        option.value = JSON.stringify(toggle);
+                        option.textContent = toggle_name;
+                        propertySelect.appendChild(option);
+
+                        old_toggles.push(toggle)
+                    } else {
+                        include_toggle = true;
+                    }    
+
+                })
+            }
+
+        }
+
         function remove_from_sprites(sprite_to_remove) {
-            // console.log("sprite_to_remove", sprite_to_remove);
             sprite_to_remove = sprite_to_remove[0];
-            // console.log("sprites (rm)", sprites);
             for (const sprite of sprites) {
-                // console.log("sprite_rm", sprite_to_remove[0]);
-                // console.log("sprite (rm)", sprite);
                 // find the sprite in sprites and remove it
                 // check id and location
-                if (sprite.ID === sprite_to_remove.ID && sprite.Location[0] === sprite_to_remove.Location[0] && sprite.Location[1] === sprite_to_remove.Location[1]) {
-                    // console.log("sprite removed", sprite);
+                if (isSameSprite(sprite, sprite_to_remove)) {
                     sprites.splice(sprites.indexOf(sprite), 1);
                     break;
                 }
@@ -850,6 +893,7 @@
         function handleRightClick(event) {
             event.preventDefault();
             rotation = (rotation + 1) % 4;
+            resetSelectedSprites()
             handleCanvasMouseMove(event); // Update the preview with new rotation
         }
 
@@ -861,10 +905,78 @@
             previewSprite.style.display = 'block'; // Hide the preview sprite
         }
 
+        function findSprite(x,y) {
+            for (let sprite of sprites) {
+                for (let location of getSpriteTileLocations(sprite)) {
+                    if (location[0] == x && location[1] == y) {
+                        return sprite;
+                    }
+                }
+            }
+            return null; 
+        }
+
+        function getSpriteTileLocations(sprite) {
+            const sprite_size = spriteData[sprite["ID"]].sprite_size || spriteData[sprite["ID"]].size;
+            let locations = [];
+
+            if (sprite.Rotation % 2 == 0) {
+                width = sprite_size[0];
+                height = sprite_size[1];
+            } else {
+                width = sprite_size[1];
+                height = sprite_size[0];
+            }
+
+            for (let i = 0; i < width; i++) {
+                for (let j = 0; j < height; j++) {
+                    locations.push([sprite.Location[0] + i, sprite.Location[1] + j]);
+                }
+            }
+            return locations;
+        }
+
+        function getPartData(part) {
+            data = []
+            for (const entry of part_toggles) {
+                const key = entry.Key || {};
+                if (part.Location[0] == key[0].Location[0] && part.Location[1] == key[0].Location[1]) {
+                    data.push(entry);
+                }
+            }
+            return data;
+        }
+
+        function mousePos(event) {
+            const x = event.offsetX;
+            const y = event.offsetY;
+            const mouseX = Math.floor(x / gridSize);
+            const mouseY = Math.floor(y / gridSize);
+            const canvas_position_x = Math.floor(mouseX - maxX-2)
+            const canvas_position_y = Math.floor(mouseY - maxY)
+            return [canvas_position_x, canvas_position_y]
+        }
+
         // Initialize the canvas
         loadPreviewSpriteImage();
         // Initialize the grid
         drawGrid();
+
+        function isSameSprite(sprite1, sprite2) {
+            if (sprite1.ID === sprite2.ID && sprite1.Location[0] == sprite2.Location[0] && sprite1.Location[1] == sprite2.Location[1]) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        function isSameToggleType (toggle1, toggle2) {
+             return toggle1.Key[1] == toggle2.Key[1];
+        }
+
+        function toggleBelongsToSprite (toggle, sprite) {
+            return isSameSprite(toggle.Key[0], sprite)
+        }
     </script>
 </body>
 
