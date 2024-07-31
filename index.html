@@ -31,6 +31,9 @@
     <select id="propertySelect"></select>
     <textarea id="propertyEdit"></textarea>
     <button id="applyPropertyButton">Apply</button>
+    <select id="shipPropertySelect"></select>
+    <textarea id="shipPropertyEdit"></textarea>
+    <button id="applyShipPropertyButton">Apply</button>
     <fieldset>
         <legend>Select a mode:</legend>
         <div>
@@ -184,6 +187,9 @@
         const property_select = document.getElementById('propertySelect');
         const property_edit = document.getElementById('propertyEdit');
         const apply_property_button = document.getElementById('applyPropertyButton');
+        const ship_property_select = document.getElementById('shipPropertySelect');
+        const ship_property_edit = document.getElementById('shipPropertyEdit');
+        const apply_ship_property_button = document.getElementById('applyShipPropertyButton');
         const previewSpriteImage = new Image();
         const previewSprite = document.createElement('img');
         previewSprite.id = 'previewSprite';
@@ -194,12 +200,14 @@
         export_json_button.addEventListener('click', export_json);
         load_json_button.addEventListener('click', loadJson);
         apply_property_button.addEventListener('click', applyProperty);
+        apply_ship_property_button.addEventListener('click', applyShipProperty);
         cursor_mode.forEach((radio) => {
             radio.addEventListener('click', handleCursorMode);
         })
         canvas.addEventListener('mousemove', handleCanvasMouseMove);
         document.getElementById('spriteSelect').addEventListener('change', handleSpriteSelectionChange);
         property_select.addEventListener('change', handlePropertySelectionChange);
+        ship_property_select.addEventListener('change', handleShipPropertySelectionChange);
 
         let isPreviewSpriteLoaded = false; // init sprite preview
         let gridMap = {}; // To store the grid map
@@ -238,6 +246,10 @@
             property_edit.value = JSON.parse(property_select.value).Value
         }
 
+        function handleShipPropertySelectionChange () {
+            ship_property_edit.value = ship_property_select.value
+        }
+
         function handleCursorModeChange() {
             if (cursorMode == "Place") {
                 // set <select id="spriteSelect"></select> to cosmoteer.corridor
@@ -263,6 +275,9 @@
             shipdata.NewFlexResourceGridTypes = resources;
             shipdata.Parts = new_parts;
             shipdata.PartUIToggleStates = part_toggles;
+            for ([key, value] of getShipDataMap()) {
+                shipdata[key] = value;
+            }
             // convert shipdata to json
             const json = JSON.stringify(shipdata);
             // clear textarea
@@ -270,6 +285,8 @@
             // fill textarea id="json_export" with json string
             document.getElementById("json_export").value = json;
         }
+
+
 
         function drawGrid() {
             ctx.strokeStyle = '#ccc';
@@ -329,6 +346,7 @@
             partUIToggleStates.forEach(toggle => {
                 part_toggles.push(toggle)
             });
+            updateShipToggleSelection();
 
             // Extend the grid by 10 squares in each direction
             minX -= 10;
@@ -357,6 +375,25 @@
             }
  
             redrawCanvas()
+        }
+
+        function applyShipProperty () {
+            let new_value = ship_property_edit.value;
+            let toggle = ship_property_select.options[ship_property_select.selectedIndex].text
+            shipdata[toggle] = new_value
+            updateShipToggleSelection();
+            redrawCanvas();
+        }
+
+        function updateShipToggleSelection () {
+            ship_property_select.innerHTML = '';
+            for (let [key, toggle] of getShipDataMap()) {
+                const option = document.createElement('option');
+                option.value = toggle;
+                option.textContent = key;
+                ship_property_select.appendChild(option);
+            }
+            handleShipPropertySelectionChange ();
         }
 
         function sprite_position(part, position) {
@@ -518,8 +555,6 @@
                 } else {
                     img.src = `sprites/${imageName}.png`;
                 }
-
-                console.log(img.src);
 
                 img.onload = () => {
                     let [x, y] = sprite_position(sprite, [sprite.Location[0], sprite.Location[1]]);
@@ -947,14 +982,28 @@
             return data;
         }
 
+        function getShipDataMap() {
+            let filtered_ship_data = new Map();
+            
+            filtered_ship_data.set("Author", shipdata.Author);
+            filtered_ship_data.set("FlightDirection", shipdata.FlightDirection);
+            filtered_ship_data.set("Name", shipdata.Name);
+            filtered_ship_data.set("DefaultAttackFollowAngle", shipdata.DefaultAttackFollowAngle);
+            filtered_ship_data.set("DefaultAttackRadius", shipdata.DefaultAttackRadius);
+            filtered_ship_data.set("DefaultAttackRotation", shipdata.DefaultAttackRotation);
+
+            return filtered_ship_data;
+        }
+
         function mousePos(event) {
             const x = event.offsetX;
             const y = event.offsetY;
-            const mouseX = Math.floor(x / gridSize);
-            const mouseY = Math.floor(y / gridSize);
-            const canvas_position_x = Math.floor(mouseX - maxX-2)
-            const canvas_position_y = Math.floor(mouseY - maxY)
-            return [canvas_position_x, canvas_position_y]
+            const mouseX = Math.floor(x / gridSize) * gridSize;
+            const mouseY = Math.floor(y / gridSize) * gridSize;
+            const canvasPositionX = (mouseX / gridSize) + minX;
+            const canvasPositionY = (mouseY / gridSize) + minY;
+            let result = [canvasPositionX, canvasPositionY]
+            return result
         }
 
         // Initialize the canvas
