@@ -52,14 +52,8 @@
     </fieldset>
     <textarea name="b64_input" id="b64_input"></textarea>
     <button id="load_b64">Load from URL</button>
-    <!-- <textarea name="b64_export" id="b64_export" disabled width="200" height="200"></textarea>
-    <button id="export_b64">Export b64</button> -->
-    <!-- <a href="" id="export_link" style="display: none;">Link to edit ship</a> -->
-    <!-- gzip b64 util -->
-    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js"
-        integrity="sha512-g2TeAWw5GPnX7z0Kn8nFbYfeHcvAu/tx6d6mrLe/90mkCxO+RcptyYpksUz35EO337F83bZwcmUyHiHamspkfg=="
-        crossorigin="anonymous" referrerpolicy="no-referrer"></script> -->
-    <!-- actual script -->
+    <a href="" id="ship_link" style="display: none">Generated Ship, click here</a>
+    <button id="post_json">Generate Ship File</button>
     <script>
         const spriteData = {
             "cosmoteer.corridor": { "mass": 1, "size": [1, 1] },
@@ -180,6 +174,9 @@
         const load_json_button = document.getElementById('loadButton');
         const export_json_button = document.getElementById('exportButton');
 
+        const shiplink = document.getElementById('ship_link');
+        const generate_ship = document.getElementById('post_json');
+        generate_ship.addEventListener('click', generateShip);
 
         const canvas = document.getElementById('spriteCanvas');
         const ctx = canvas.getContext('2d');
@@ -278,6 +275,31 @@
         }
 
 
+        function generateShip() {
+            // send post request to generate ship
+            // use export json function to get shipdata
+            export_json()
+            // get the data
+            const json_to_post = document.getElementById("json_export").value
+
+            const xhr = new XMLHttpRequest();
+            const url = 'https://cosmo-api-git-docker-franklin050187s-projects.vercel.app/generate';
+            // const url = 'http://127.0.0.1:8001/generate';
+
+            xhr.open('POST', url, true);
+            // xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.send(json_to_post);
+
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    // console.log(xhr.responseText);
+                    const ship_link = document.getElementById('ship_link');
+                    const url = JSON.parse(xhr.responseText).url
+                    ship_link.href = url
+                    ship_link.style.display = 'block'
+                }
+            };
+        }
 
 
         function handleCursorMode() {
