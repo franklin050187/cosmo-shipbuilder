@@ -66,6 +66,7 @@
     <script>
         const spriteData = {
             "cosmoteer.corridor": { "mass": 1, "size": [1, 1], "cost": 0.1, "category": ""} ,
+            "cosmoteer.door": {"size": [1, 1], "cost": 0.1, "category": ""} ,
             "cosmoteer.delete": { "mass": 1, "size": [1, 1]} ,
             "cosmoteer.structure": { "mass": 0.33, "size": [1, 1], "cost": 0.05, "category": ""} ,
             "cosmoteer.structure_wedge": { "mass": 0.17, "size": [1, 1], "cost": 0.025, "category": ""} ,
@@ -433,8 +434,6 @@
             canvas.height = height;
 
             redrawCanvas();
-            console.log(getShipCost());
-            console.log(getShipCommandCost());
         }
 
         function applyProperty () {
@@ -515,6 +514,14 @@
                     position[0] -= 1;
                 }
             }
+            if (part["ID"] == "cosmoteer.door") {
+                console.log(part.Orientation)
+                if (part.Orientation == 0) {
+                        position[1] -= 0.5;
+                    } else {
+                        position[0] -= 0.5;
+                    }
+            }
             return position;
         }
 
@@ -593,16 +600,16 @@
                 const img = new Image();
 
                 img.src = `sprites/door.png`;
+
                 img.onload = () => {
-                    x = door.Cell[0];
-                    y = door.Cell[1];
-                    let angle = 0
-                    if (door.Orientation == 0) {
-                        y -= 0.5
-                        angle = 1
-                    } else {
-                        x -= 0.5
-                    }
+                    rotation = (door.Orientation+1)%2;
+                    let door_location = []
+                    door_location[0] = door.Cell[0]
+                    door_location[1] = door.Cell[1]
+                    let location = sprite_position(door, door_location)
+                    x = location[0];
+                    y = location[1];
+                    let angle = rotation
                     const rotatedImage = rotate_img(img, angle, false);
                     ctx.drawImage(rotatedImage, (x - minX) * gridSize + 1, (y - minY) * gridSize + 1, rotatedImage.width - 2, rotatedImage.height - 2);
                 };
@@ -641,7 +648,6 @@
             });
             draw_doors();
             draw_resources();
-            draw_doors();
         }
 
         function square_map(sprite) {
@@ -935,7 +941,13 @@
         }
 
         function place_sprite(sprite_to_place) {
-            sprites.push(sprite_to_place);
+            let location = sprite_to_place.Location
+            if (sprite_to_place["ID"] == "cosmoteer.door") {
+                let string = JSON.parse(`{"Cell": [${location}], "ID": "cosmoteer.door", "Orientation": ${(sprite_to_place.Rotation+1) % 2}}`)
+                doors.push(string);
+            } else {
+                sprites.push(sprite_to_place); 
+            }
         }
 
         function select_sprite (sprite_to_select) { 
@@ -1103,18 +1115,64 @@
 
         function getShipCost(category = null) {
             sum = 0;
+            //regular part price
             for (sprite of sprites) {
                 if (category == null || category == spriteData[sprite["ID"]].category) {
                     sum += spriteData[sprite["ID"]].cost;
                 }
             }
+            //extra costs from loaded missiles
+            for (toggle of part_toggles) {
+                        if (toggle.Key[1] == "missile_type") {
+                            if (toggle.Value == 0) {
+                                sum += 0.096;
+                            }
+                            if (toggle.Value == 1) {
+                                sum += 0.18;
+                            }
+                            if (toggle.Value == 2) {
+                                sum += 0.432;
+                            }
+                            if (toggle.Value == 3) {
+                                sum += 1.248;
+                            }
+                        } 
+                    }
+                    //Door costs 
+                    for (door of doors) {
+                        sum += 0.1;
+                    }
             return sum;
         }
 
-        function getShipCommandCost(category = null) {
+        function getPartToggles(part) {
+            toggles = [];
+            for (toggle of part_toggles) {
+                if (toggle.Key[0].ID == part["ID"]) {
+                    toggles.push(toggle);
+                }
+            }
+            return toggles;
+        }
+
+        function getShipCommandCost() {
             sum = 0
             for (sprite of sprites) {
-                sum += spriteData[sprite["ID"]].cp_cost;       
+                sum += spriteData[sprite["ID"]].cp_cost;     
+            }
+            return sum;
+        }
+
+        function getShipCommandPoints() {
+            sum = 0
+            for (sprite of sprites) {
+                if (sprite["ID"] == "cosmoteer.control_room_small") {
+                    sum += 50
+                } else if (sprite["ID"] == "cosmoteer.control_room_med") {
+                    sum += 250
+                } else if (sprite["ID"] == "cosmoteer.control_room_large") {
+                    sum += 1000
+                }    
             }
             return sum;
         }
