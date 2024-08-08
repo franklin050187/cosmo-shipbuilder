@@ -34,6 +34,7 @@
     <select id="shipPropertySelect"></select>
     <textarea id="shipPropertyEdit"></textarea>
     <button id="applyShipPropertyButton">Apply</button>
+    <label id="shipStatsLabel">Ship Stats: </label>
     <fieldset>
         <legend>Select a mode:</legend>
         <div>
@@ -107,17 +108,17 @@
             "cosmoteer.armor_1x3_wedge": { "mass": 4.5, "size": [1, 3], "cost": 0.3, "category": ""} ,
             "cosmoteer.armor_tri": { "mass": 0.75, "size": [1, 1], "cost": 0.05, "category": ""} ,
             "cosmoteer.shield_gen_large": { "mass": 12.65, "size": [3, 6], "cost": 20, "category": "", "cp_cost": 6},
-            "cosmoteer.thruster_small": { "mass": 1.3, "size": [1, 1], "sprite_size": [1, 2], "cost": 0.5, "category": "", "cp_cost": 1},
-            "cosmoteer.thruster_med": { "mass": 2.45, "size": [1, 2], "sprite_size": [1, 3], "cost": 1.5, "category": "", "cp_cost": 2},
-            "cosmoteer.thruster_large": { "mass": 4.99, "size": [2, 2], "sprite_size": [2, 3], "cost": 4, "category": "", "cp_cost": 4},
-            "cosmoteer.thruster_boost": { "mass": 8.88, "size": [2, 3], "sprite_size": [2, 5], "cost": 6, "category": "", "cp_cost": 6},
+            "cosmoteer.thruster_small": { "mass": 1.3, "size": [1, 1], "sprite_size": [1, 2], "cost": 0.5, "category": "thruster", "cp_cost": 1, "thrust": [0,0,0.4,0]},
+            "cosmoteer.thruster_med": { "mass": 2.45, "size": [1, 2], "sprite_size": [1, 3], "cost": 1.5, "category": "thruster", "cp_cost": 2, "thrust": [0,0,1.2,0]},
+            "cosmoteer.thruster_large": { "mass": 4.99, "size": [2, 2], "sprite_size": [2, 3], "cost": 4, "category": "thruster", "cp_cost": 4, "thrust": [0,0,3.2,0]},
+            "cosmoteer.thruster_boost": { "mass": 8.88, "size": [2, 3], "sprite_size": [2, 5], "cost": 6, "category": "thruster", "cp_cost": 6, "thrust": [0,0,3.2,0]},
             "cosmoteer.fire_extinguisher": { "mass": 1, "size": [1, 1], "cost": 0.3, "category": ""} ,
-            "cosmoteer.thruster_huge": { "mass": 11, "size": [3, 3], "sprite_size": [3, 5], "cost": 10, "category": "", "cp_cost": 8},
+            "cosmoteer.thruster_huge": { "mass": 11, "size": [3, 3], "sprite_size": [3, 5], "cost": 10, "category": "thruster", "cp_cost": 8, "thrust": [0,0,8,0]},
             "cosmoteer.control_room_small": { "mass": 4, "size": [2, 2], "cost": 10, "category": "", "cp_cost": 0},
             "cosmoteer.control_room_med": { "mass": 9, "size": [3, 3], "cost": 25, "category": "", "cp_cost": 0},
-            "cosmoteer.thruster_small_2way": { "mass": 1.61, "size": [1, 1], "sprite_size": [2, 2], "cost": 1, "category": "", "cp_cost": 2},
+            "cosmoteer.thruster_small_2way": { "mass": 1.61, "size": [1, 1], "sprite_size": [2, 2], "cost": 1, "category": "thruster", "cp_cost": 2, "thrust": [0,0.4,0.4,0]},
             "cosmoteer.control_room_large": { "mass": 16, "size": [4, 4], "cost": 50, "category": "", "cp_cost": 0},
-            "cosmoteer.thruster_small_3way": { "mass": 1.91, "size": [1, 1], "sprite_size": [3, 2], "cost": 1.5, "category": "", "cp_cost": 3},
+            "cosmoteer.thruster_small_3way": { "mass": 1.91, "size": [1, 1], "sprite_size": [3, 2], "cost": 1.5, "category": "thruster", "cp_cost": 3, "thrust": [0,0.4,0.4,0.4]},
             "cosmoteer.hyperdrive_small": { "mass": 4, "size": [2, 2], "cost": 10, "category": ""},
             "cosmoteer.engine_room": { "mass": 9, "size": [3, 3], "cost": 12, "category": "", "cp_cost": 6},
             "cosmoteer.crew_quarters_small": { "mass": 2, "size": [1, 2], "cost": 1.6, "category": ""} ,
@@ -149,8 +150,8 @@
             "cosmoteer.chaingun_magazine": { "mass": 2, "size": [1, 2], "cost": 1, "category": ""} ,
             "cosmoteer.hyperdrive_large": { "mass": 16, "size": [4, 4], "cost": 34, "category": ""},
             "cosmoteer.thruster_rocket_battery": { "mass": 2, "size": [1, 2], "cost": 3, "category": ""},
-            "cosmoteer.thruster_rocket_extender": { "mass": 6, "size": [3, 2], "cost": 6, "category": ""} ,
-            "cosmoteer.thruster_rocket_nozzle": { "mass": 14.4, "size": [3, 4], "sprite_size": [3, 5], "cost": 15, "category": "", "cp_cost": 16},
+            "cosmoteer.thruster_rocket_extender": { "mass": 6, "size": [3, 2], "cost": 6, "category": "thruster", "thrust": [0,0,8,0]} ,
+            "cosmoteer.thruster_rocket_nozzle": { "mass": 14.4, "size": [3, 4], "sprite_size": [3, 5], "cost": 15, "category": "thruster", "cp_cost": 16, "thrust": [0,0,8,0]},
             "cosmoteer.hyperdrive_med": { "mass": 9, "size": [3, 3], "cost": 20, "category": ""},
             "cosmoteer.manipulator_beam_emitter": { "mass": 4, "size": [2, 2], "cost": 3, "category": "", "cp_cost": 4},
             "cosmoteer.crew_quarters_large": { "mass": 12, "size": [3, 4], "cost": 15.6, "category": ""} 
@@ -203,6 +204,7 @@
         const apply_ship_property_button = document.getElementById('applyShipPropertyButton');
         const previewSpriteImage = new Image();
         const previewSprite = document.createElement('img');
+        let ship_stats_label = document.getElementById('shipStatsLabel')
         previewSprite.id = 'previewSprite';
         document.body.appendChild(previewSprite);
         canvas.addEventListener('mousemove', handleCanvasMouseMove);
@@ -258,7 +260,6 @@
 
         // get url parameter b64
         const queryString = window.location.search;
-        console.log(queryString);
         const urlParams = new URLSearchParams(queryString);
         const b64 = urlParams.get('b64');
         if (b64) {
@@ -270,7 +271,6 @@
             export_json();
             const jsonExportText = document.getElementById('json_export');
             const jsonImportText = document.getElementById('json_import_text');
-            console.log(jsonExportText.value)
             const string = jsonExportText.value;
             const bytes = new TextEncoder().encode(string);
             const compressedBytes = pako.gzip(bytes);
@@ -289,10 +289,7 @@
             const b64Input = document.getElementById('b64_input');
             // unquote b64
             b64Input.value = b64Input.value.replace(/-/g, '+').replace(/_/g, '/');
-            console.log(b64Input.value)
             const json_import_text = document.getElementById('jsonInput');
-            console.log("b64 input", b64Input.value)
-            console.log("json input", json_import_text.value)
             const string = b64Input.value;
             const bytes = pako.inflate(
                 Uint8Array.from(atob(string), c => c.charCodeAt(0))
@@ -407,7 +404,7 @@
                 if (y > maxY) maxY = y;
                 sprites.push(sprite);
             });
-
+            
             doordata.forEach(door => {
                 doors.push(door)
             });
@@ -434,6 +431,7 @@
             canvas.height = height;
 
             redrawCanvas();
+            console.log(shipMaxSpeed(0));
         }
 
         function applyProperty () {
@@ -515,7 +513,6 @@
                 }
             }
             if (part["ID"] == "cosmoteer.door") {
-                console.log(part.Orientation)
                 if (part.Orientation == 0) {
                         position[1] -= 0.5;
                     } else {
@@ -646,8 +643,17 @@
                     square_map(sprite);
                 };
             });
+            updateShipStats();
             draw_doors();
             draw_resources();
+        }
+
+        function updateShipStats() {
+            ship_stats_label.innerHTML = 'stats:' + '<br>'
+            ship_stats_label.innerHTML += 'weight:' + shipWeight().toString()+ 'kg<br>'
+            ship_stats_label.innerHTML += 'acceleration:' + shipAcceleration(0).toString()+ 'm/s^2<br>'
+            ship_stats_label.innerHTML += 'max speed:' + shipMaxSpeed(0).toString()+ 'm/s<br>'
+            ship_stats_label.innerHTML += 'thrust:' + shipThrustVector(0).toString()+ 'N<br>'
         }
 
         function square_map(sprite) {
@@ -1104,7 +1110,7 @@
                 return false;
             }
         }
-
+ 
         function isSameToggleType (toggle1, toggle2) {
              return toggle1.Key[1] == toggle2.Key[1];
         }
@@ -1113,13 +1119,11 @@
             return isSameSprite(toggle.Key[0], sprite)
         }
 
-        function getShipCost(category = null) {
+        function getShipCost(id = null, category = null) {
             sum = 0;
             //regular part price
-            for (sprite of sprites) {
-                if (category == null || category == spriteData[sprite["ID"]].category) {
-                    sum += spriteData[sprite["ID"]].cost;
-                }
+            for (sprite of getParts(id, category)) {
+                sum += spriteData[sprite["ID"]].cost;     
             }
             //extra costs from loaded missiles
             for (toggle of part_toggles) {
@@ -1175,6 +1179,127 @@
                 }    
             }
             return sum;
+        }
+
+        //Unfinished cause it seemed annoying to do and its not very important right now
+        /*function getCGsMagsMap() {
+            let mags = getParts("cosmoteer.chaingun_magazine")
+            let cgs = getParts("cosmoteer.chaingun_magazine")
+            let location = [0,0]
+            for (cg_part of cgs) {
+                for (mag_part of mags) {
+                    if () {
+
+                    }
+                }
+            }
+        }*/
+
+        function getParts(id = null, category = null) {
+            parts = []
+            for (sprite of sprites) {
+                if ((sprite.ID == id || id == null) && (category == null || category == spriteData[sprite["ID"]].category)) {
+                    parts.push(sprite)
+                }
+            }
+            return parts
+        }
+
+        function shipWeight() {
+            let sum = 0
+            for (sprite of sprites) {
+                sum += spriteData[sprite["ID"]].mass
+            }
+            return sum*1000
+        }
+
+        function part_com_location(sprite) {
+            let com_location = [0,0]
+            let part_rotation = sprite.Rotation
+            let sprite_location = sprite.Location
+            part_size = spriteData[sprite["ID"]].size
+
+            if (part_rotation == 0 || part_rotation == 2) {
+                com_location[0] = sprite_location[0] + part_size[0]/2
+                com_location[1] = sprite_location[1] + part_size[1]/2
+            } else {
+                com_location[0] = sprite_location[0] + part_size[1]/2
+                com_location[1] = sprite_location[1] + part_size[0]/2
+            }
+            return com_location
+        }
+
+        function ship_com_location() {
+            let com = [0,0]
+            let part_com
+            total_weight = shipWeight()
+            for (part of sprites) {
+                part_com = part_com_location(part)
+                com[0] += part_com[0]
+                com[1] += part_com[1]
+            }
+            com[0] /= total_weight
+            com[1] /= total_weight
+            return com
+        }
+
+        //Only supports whole number angles 
+        function partThrustVector(part, angle) {
+            let part_rotation = part.Rotation
+            let thrust_vector = [0,0,0,0]
+            for (i of [0,1,2,3]) {
+                thrust_vector[i] = spriteData[part["ID"]].thrust[(i+part_rotation+2)%4]*1000000;
+                
+            }
+            console.log(thrust_vector)
+            console.log(angle)
+            return thrust_vector[angle]
+        }
+
+        function shipThrustVector(angle) {
+            let thrust_vector = [0,0,0,0]
+            for (part of getParts(null, "thruster")) { 
+                thrust_vector[0] += partThrustVector(part, angle)
+                //console.log(thrust_vector[0])
+                //console.log(partThrustVector(part, angle))
+            }
+            
+            return thrust_vector
+        }
+
+        function shipMaxSpeed(angle) {
+            let acceleration = shipAcceleration(angle)
+            let speed_steps = 0.1
+            for (i of Array(10000).keys()) {
+                if (Math.max(i/75,1)**2*0.4*i>acceleration) {
+                    return i;
+                }
+            }
+        }
+
+        function  shipAcceleration(angle) {
+            let thrust = vecLength(shipThrustVector(angle))
+            let mass = shipWeight()
+            return thrust/mass
+        }
+
+        function vecLength(vec) {
+            return Math.sqrt(vec[0]**2+vec[1]**2)
+        }
+
+        function momentOfInertiaPart(part) {
+            let [x0,y0] = ship_com_location()
+            let location = part.Location
+            let mass = spriteData[part["ID"]].mass
+            return vecLength(location(0)-x0,location(1)-y0)*mass
+        }
+
+        function momentOfInertiaShip() {
+            sum = 0
+            for (part of sprites) {
+                sum += momentOfInertiaPart(part)
+            }
+            return sum
         }
     </script>
 </body>
