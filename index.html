@@ -31,10 +31,12 @@
     <select id="propertySelect"></select>
     <textarea id="propertyEdit"></textarea>
     <button id="applyPropertyButton">Apply</button>
+
     <select id="shipPropertySelect"></select>
     <textarea id="shipPropertyEdit"></textarea>
     <button id="applyShipPropertyButton">Apply</button>
     <label id="shipStatsLabel">Ship Stats: </label>
+
     <fieldset>
         <legend>Select a mode:</legend>
         <div>
@@ -55,15 +57,9 @@
         </div>
     </fieldset>
     <textarea name="b64_input" id="b64_input"></textarea>
-    <button id="load_b64">Load b64</button>
-    <textarea name="b64_export" id="b64_export" disabled width="200" height="200"></textarea>
-    <button id="export_b64">Export b64</button>
-    <a href="" id="export_link" style="display: none;">Link to edit ship</a>
-    <!-- gzip b64 util -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js"
-        integrity="sha512-g2TeAWw5GPnX7z0Kn8nFbYfeHcvAu/tx6d6mrLe/90mkCxO+RcptyYpksUz35EO337F83bZwcmUyHiHamspkfg=="
-        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <!-- actual script -->
+    <button id="load_b64">Load from URL</button>
+    <a href="" id="ship_link" style="display: none">Generated Ship, click here</a>
+    <button id="post_json">Generate Ship File</button>
     <script>
         const spriteData = {
             "cosmoteer.corridor": { "mass": 1, "size": [1, 1], "cost": 0.1, "category": ""} ,
@@ -185,6 +181,9 @@
         const load_json_button = document.getElementById('loadButton');
         const export_json_button = document.getElementById('exportButton');
 
+        const shiplink = document.getElementById('ship_link');
+        const generate_ship = document.getElementById('post_json');
+        generate_ship.addEventListener('click', generateShip);
 
         const canvas = document.getElementById('spriteCanvas');
         const ctx = canvas.getContext('2d');
@@ -199,9 +198,11 @@
         const property_select = document.getElementById('propertySelect');
         const property_edit = document.getElementById('propertyEdit');
         const apply_property_button = document.getElementById('applyPropertyButton');
+
         const ship_property_select = document.getElementById('shipPropertySelect');
         const ship_property_edit = document.getElementById('shipPropertyEdit');
         const apply_ship_property_button = document.getElementById('applyShipPropertyButton');
+
         const previewSpriteImage = new Image();
         const previewSprite = document.createElement('img');
         let ship_stats_label = document.getElementById('shipStatsLabel')
@@ -213,14 +214,18 @@
         export_json_button.addEventListener('click', export_json);
         load_json_button.addEventListener('click', loadJson);
         apply_property_button.addEventListener('click', applyProperty);
+
         apply_ship_property_button.addEventListener('click', applyShipProperty);
+
         cursor_mode.forEach((radio) => {
             radio.addEventListener('click', handleCursorMode);
         })
         canvas.addEventListener('mousemove', handleCanvasMouseMove);
         document.getElementById('spriteSelect').addEventListener('change', handleSpriteSelectionChange);
         property_select.addEventListener('change', handlePropertySelectionChange);
+
         ship_property_select.addEventListener('change', handleShipPropertySelectionChange);
+
 
 
 
@@ -249,57 +254,70 @@
 
         // input and output for b64
         const b64Input = document.getElementById('b64_input');
-        const b64Output = document.getElementById('b64_export');
+        // const b64Output = document.getElementById('b64_export');
         const loadB64Button = document.getElementById('load_b64');
-        const exportB64Button = document.getElementById('export_b64');
+        // const exportB64Button = document.getElementById('export_b64');
 
         // event listeners for buttons b64
-        loadB64Button.addEventListener('click', decompressString);
-        exportB64Button.addEventListener('click', compressString);
+
+        // exportB64Button.addEventListener('click', compressString);
 
 
         // get url parameter b64
         const queryString = window.location.search;
         const urlParams = new URLSearchParams(queryString);
-        const b64 = urlParams.get('b64');
+        const b64 = urlParams.get('url');
         if (b64) {
             b64Input.value = b64;
-            decompressString();
+            get_json();
         }
 
-        function compressString() {
-            export_json();
-            const jsonExportText = document.getElementById('json_export');
-            const jsonImportText = document.getElementById('json_import_text');
-            const string = jsonExportText.value;
-            const bytes = new TextEncoder().encode(string);
-            const compressedBytes = pako.gzip(bytes);
-            const b64 = btoa(String.fromCharCode(...new Uint8Array(compressedBytes)));
-            // make b64 url compatible
-            const b64_url = b64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
-            b64Output.value = b64_url;
-            const edit_link = document.getElementById('export_link');
-            // set href to location + ?b64=b64_url
-            edit_link.href = window.location.href + '?b64=' + b64_url;
-            // remove display none
-            edit_link.style.display = 'block';
-        }
-
-        function decompressString() {
+        loadB64Button.addEventListener('click', get_json);
+        function get_json() {
             const b64Input = document.getElementById('b64_input');
-            // unquote b64
-            b64Input.value = b64Input.value.replace(/-/g, '+').replace(/_/g, '/');
-            const json_import_text = document.getElementById('jsonInput');
-            const string = b64Input.value;
-            const bytes = pako.inflate(
-                Uint8Array.from(atob(string), c => c.charCodeAt(0))
-            );
-            // const jsonImportText = document.getElementById('json_import_text');
-            json_import_text.value = new TextDecoder().decode(bytes);
-            loadJson();
+            const encodedB64 = b64Input.value.replace(/-/g, '+').replace(/_/g, '/');
+            const jsonInput = document.getElementById('jsonInput');
+
+            const xhr = new XMLHttpRequest();
+            const url = `https://cosmo-api-git-docker-franklin050187s-projects.vercel.app/edit?url=${encodedB64}`;
+            xhr.open('GET', url, true);
+
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    jsonInput.value = xhr.responseText;
+                    loadJson();
+                }
+            };
+
+            xhr.send();
         }
 
 
+        function generateShip() {
+            // send post request to generate ship
+            // use export json function to get shipdata
+            export_json()
+            // get the data
+            const json_to_post = document.getElementById("json_export").value
+
+            const xhr = new XMLHttpRequest();
+            const url = 'https://cosmo-api-git-docker-franklin050187s-projects.vercel.app/generate';
+            // const url = 'http://127.0.0.1:8001/generate';
+
+            xhr.open('POST', url, true);
+            // xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.send(json_to_post);
+
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    // console.log(xhr.responseText);
+                    const ship_link = document.getElementById('ship_link');
+                    const url = JSON.parse(xhr.responseText).url
+                    ship_link.href = url
+                    ship_link.style.display = 'block'
+                }
+            };
+        }
 
 
         function handleCursorMode() {
@@ -311,6 +329,7 @@
                 }
             })
         }
+
 
         function handlePropertySelectionChange () {
             property_edit.value = JSON.parse(property_select.value).Value
@@ -345,9 +364,11 @@
             shipdata.NewFlexResourceGridTypes = resources;
             shipdata.Parts = new_parts;
             shipdata.PartUIToggleStates = part_toggles;
+
             for ([key, value] of getShipDataMap()) {
                 shipdata[key] = value;
             }
+
             // convert shipdata to json
             const json = JSON.stringify(shipdata);
             // clear textarea
@@ -416,7 +437,9 @@
             partUIToggleStates.forEach(toggle => {
                 part_toggles.push(toggle)
             });
+
             updateShipToggleSelection();
+
 
             // Extend the grid by 10 squares in each direction
             minX -= 10;
@@ -465,6 +488,20 @@
                 ship_property_select.appendChild(option);
             }
             handleShipPropertySelectionChange ();
+        }
+
+        function applyProperty() {
+            new_value = property_edit.value;
+
+            for (sprite of selected_sprites) {
+                for (toggle of part_toggles) {
+                    if (isSameToggleType(toggle, JSON.parse(property_select.value)) && toggleBelongsToSprite(toggle, sprite)) {
+                        toggle.Value = new_value;
+                    }
+                }
+            }
+
+            redrawCanvas()
         }
 
         function sprite_position(part, position) {
@@ -598,6 +635,7 @@
 
                 img.src = `sprites/door.png`;
 
+
                 img.onload = () => {
                     rotation = (door.Orientation+1)%2;
                     let door_location = []
@@ -607,6 +645,7 @@
                     x = location[0];
                     y = location[1];
                     let angle = rotation
+
                     const rotatedImage = rotate_img(img, angle, false);
                     ctx.drawImage(rotatedImage, (x - minX) * gridSize + 1, (y - minY) * gridSize + 1, rotatedImage.width - 2, rotatedImage.height - 2);
                 };
@@ -634,6 +673,8 @@
                     img.src = `sprites/${imageName}.png`;
                 }
 
+                console.log(img.src);
+
                 img.onload = () => {
                     let [x, y] = sprite_position(sprite, [sprite.Location[0], sprite.Location[1]]);
                     const rotatedImage = rotate_img(img, sprite.Rotation, sprite.FlipX);
@@ -643,7 +684,9 @@
                     square_map(sprite);
                 };
             });
+
             updateShipStats();
+
             draw_doors();
             draw_resources();
         }
@@ -938,15 +981,18 @@
             }
             // select sprite
             if (cursorMode == "Select") {
+
                 let pos = mousePos(event) 
                 let selected_sprite = findSprite(pos[0], pos[1]);
                 if (selected_sprite != null) {
                     select_sprite(selected_sprite)
                 }          
+
             }
         }
 
         function place_sprite(sprite_to_place) {
+
             let location = sprite_to_place.Location
             if (sprite_to_place["ID"] == "cosmoteer.door") {
                 let string = JSON.parse(`{"Cell": [${location}], "ID": "cosmoteer.door", "Orientation": ${(sprite_to_place.Rotation+1) % 2}}`)
@@ -1005,6 +1051,55 @@
 
         }
 
+        function select_sprite(sprite_to_select) {
+            for (sprite of selected_sprites) {
+                if (isSameSprite(sprite, sprite_to_select)) {
+                    return;
+                }
+            }
+            selected_sprites.push(sprite_to_select);
+            updateSpriteSelection();
+        }
+
+        function resetSelectedSprites() {
+            selected_sprites = [];
+            updateSpriteSelection();
+        }
+
+        function updateSpriteSelection() {
+            document.getElementById("selected_parts").innerText = `Selected sprites: `; //Update label
+            let old_toggles = [];
+            include_toggle = true;
+
+            propertySelect.innerHTML = ''; //Update Selection 
+
+
+            for (sprite of selected_sprites) {
+                document.getElementById("selected_parts").innerText += sprite.ID + ", ";
+                getPartData(sprite).forEach(toggle => {
+                    for (old_toggle of old_toggles) {
+                        if (isSameToggleType(old_toggle, toggle)) {
+                            include_toggle = false;
+                        }
+                    }
+                    if (include_toggle) {
+                        const option = document.createElement('option');
+                        let toggle_name = toggle.Key[1];
+
+                        option.value = JSON.stringify(toggle);
+                        option.textContent = toggle_name;
+                        propertySelect.appendChild(option);
+
+                        old_toggles.push(toggle)
+                    } else {
+                        include_toggle = true;
+                    }
+
+                })
+            }
+
+        }
+
         function remove_from_sprites(sprite_to_remove) {
             sprite_to_remove = sprite_to_remove[0];
             for (const sprite of sprites) {
@@ -1032,7 +1127,9 @@
             previewSprite.style.display = 'block'; // Hide the preview sprite
         }
 
+
         function findSprite(x,y) {
+
             for (let sprite of sprites) {
                 for (let location of getSpriteTileLocations(sprite)) {
                     if (location[0] == x && location[1] == y) {
@@ -1040,7 +1137,9 @@
                     }
                 }
             }
+
             return null; 
+
         }
 
         function getSpriteTileLocations(sprite) {
@@ -1096,6 +1195,7 @@
             const canvasPositionY = (mouseY / gridSize) + minY;
             let result = [canvasPositionX, canvasPositionY]
             return result
+
         }
 
         // Initialize the canvas
@@ -1110,6 +1210,7 @@
                 return false;
             }
         }
+
  
         function isSameToggleType (toggle1, toggle2) {
              return toggle1.Key[1] == toggle2.Key[1];
@@ -1300,6 +1401,7 @@
                 sum += momentOfInertiaPart(part)
             }
             return sum
+
         }
     </script>
 </body>
