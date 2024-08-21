@@ -65,6 +65,9 @@
                     <input type="radio" id="Move" name="cursor_mode" value="Move" />
                     <label for="Move">Move</label>
                 </div>
+                <div>
+                    <label id="coord_on_canvas"></label>
+                </div>
             </fieldset>
 
             <fieldset>
@@ -266,6 +269,8 @@
         const previewSpriteImage = new Image();
         const previewSprite = document.createElement('img');
         let ship_stats_label = document.getElementById('shipStatsLabel')
+        let coordinates_label = document.getElementById('coord_on_canvas')
+
         previewSprite.id = 'previewSprite';
         document.body.appendChild(previewSprite);
         canvas.addEventListener('mousemove', handleCanvasMouseMove);
@@ -285,7 +290,6 @@
         property_select.addEventListener('change', handlePropertySelectionChange);
 
         ship_property_select.addEventListener('change', handleShipPropertySelectionChange);
-
 
         let isPreviewSpriteLoaded = false; // init sprite preview
         let gridMap = {}; // To store the grid map
@@ -327,11 +331,9 @@
             const b64Input = document.getElementById('b64_input');
             const encodedB64 = b64Input.value.replace(/-/g, '+').replace(/_/g, '/');
             const jsonInput = document.getElementById('jsonInput');
-
             const xhr = new XMLHttpRequest();
             const url = `https://cosmo-api-git-docker-franklin050187s-projects.vercel.app/edit?url=${encodedB64}`;
             xhr.open('GET', url, true);
-
             xhr.onload = function () {
                 if (xhr.status === 200) {
                     jsonInput.value = xhr.responseText;
@@ -341,7 +343,6 @@
 
             xhr.send();
         }
-
 
         function generateShip() {
             // send post request to generate ship
@@ -369,7 +370,6 @@
             };
         }
 
-
         function handleCursorMode() {
             const cursor_mode = document.getElementsByName('cursor_mode');
             cursor_mode.forEach((radio) => {
@@ -379,7 +379,6 @@
                 }
             })
         }
-
 
         function handlePropertySelectionChange() {
             property_edit.value = JSON.parse(property_select.value).Value
@@ -425,25 +424,6 @@
             document.getElementById("json_export").value = "";
             // fill textarea id="json_export" with json string
             document.getElementById("json_export").value = json;
-        }
-
-
-
-        function drawGrid() {
-            ctx.strokeStyle = '#ccc';
-            ctx.font = '12px Arial';
-            ctx.fillStyle = '#000';
-
-            for (let x = minX; x <= maxX; x++) {
-                for (let y = minY; y <= maxY; y++) {
-                    const xPos = (x - minX) * gridSize;
-                    const yPos = (y - minY) * gridSize;
-                    ctx.strokeRect(xPos, yPos, gridSize, gridSize);
-
-                    // Draw coordinates
-                    ctx.fillText(`(${x},${y})`, xPos + 2, yPos + 12);
-                }
-            }
         }
 
         function loadJson() {
@@ -702,17 +682,30 @@
             })
         }
 
+        let spritesDrawn = new Set();
+
         function redrawCanvas() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear the canvas
-            drawGrid(); // Redraw the grid
-            gridMap = {}; // Reset the grid map
-            sprites.forEach(sprite => {
+            const newSprites = sprites.filter(
+                sprite => !spritesDrawn.has(sprite)
+            );
+            const oldSprites = Array.from(spritesDrawn);
+            spritesDrawn = new Set(sprites);
+            oldSprites.forEach(sprite => {
+                if (!spritesDrawn.has(sprite)) {
+                    const [x, y] = sprite_position(sprite, [sprite.Location[0], sprite.Location[1]]);
+                    ctx.clearRect(
+                        (x - minX) * gridSize + 1,
+                        (y - minY) * gridSize + 1,
+                        sprite.width,
+                        sprite.height
+                    );
+                }
+            });
+            newSprites.forEach(sprite => {
                 const imageName = sprite["ID"].replace("cosmoteer.", "");
                 const img = new Image();
-
                 const partData = getPartDataMap(sprite);
                 const missileType = parseInt(partData.get("missile_type"));
-
                 if (missileType === 2) {
                     img.src = `sprites/nuke_launcher.png`;
                 } else if (missileType === 1) {
@@ -723,8 +716,6 @@
                     img.src = `sprites/${imageName}.png`;
                 }
 
-                // console.log(img.src);
-
                 img.onload = () => {
                     let [x, y] = sprite_position(sprite, [sprite.Location[0], sprite.Location[1]]);
                     const rotatedImage = rotate_img(img, sprite.Rotation, sprite.FlipX);
@@ -734,11 +725,10 @@
                     square_map(sprite);
                 };
             });
-
             updateShipStats();
-
             draw_doors();
             draw_resources();
+            // drawGrid();
         }
 
         function updateShipStats() {
@@ -748,9 +738,7 @@
             ship_stats_label.innerHTML += 'Thrust :' + shipThrustVector(0).toString() + 'N<br>'
             ship_stats_label.innerHTML += 'Cost :' + getShipCost().toFixed(0).toString() + '₡<br>'
             const commandPoints = getShipCommandPoints();
-            console.log("commandPoints" + commandPoints);
             const commandCost = getShipCommandCost();
-            console.log("commandCost" + commandCost);
             const commandPointText = `Command Points : ${commandCost}/${commandPoints}`;
             if (commandCost > commandPoints) {
                 ship_stats_label.innerHTML += `<span style="color: red">${commandPointText}</span><br>`;
@@ -760,6 +748,10 @@
             ship_stats_label.innerHTML += 'Crew :' + getCrew().toString() + '웃<br>'
 
             // ship_stats_label.innerHTML += 'Hyperdrive efficiency :' + getHyperdrive().toString() + '%<br>'
+        }
+
+        function updateCoordinates(canvasPositionX, canvasPositionY) {
+            coordinates_label.innerHTML = 'Coordinates : ' + canvasPositionX.toFixed(0).toString() + ',' + canvasPositionY.toFixed(0).toString();
         }
 
         function square_map(sprite) {
@@ -832,21 +824,18 @@
             // Calculate mouse position relative to the canvas, taking into account the scaling
             const x = (event.clientX - rect.left) * scaleX;
             const y = (event.clientY - rect.top) * scaleY;
-            // console.log("x", x)
-            // init mouse and cavas location
-            // const x = event.offsetX;
-            // const y = event.offsetY;
             const mouseX = Math.floor(x / gridSize) * gridSize;
             const mouseY = Math.floor(y / gridSize) * gridSize;
             const canvasPositionX = (mouseX / gridSize) + minX;
             const canvasPositionY = (mouseY / gridSize) + minY;
-            // console.log("mouse x", mouseX)
-            // console.log("canvas x", canvasPositionX)
+
             // update if square location changes
             if (lastX === canvasPositionX && lastY === canvasPositionY && lastRotation === rotation) {
                 return;
             }
-
+            
+            updateCoordinates(canvasPositionX, canvasPositionY);
+            
             if (cursorMode === 'Delete') {
 
                 // load sprite
@@ -1288,7 +1277,7 @@
         // Initialize the canvas
         loadPreviewSpriteImage();
         // Initialize the grid
-        drawGrid();
+        // drawGrid();
 
         function isSameSprite(sprite1, sprite2) {
             if (sprite1.ID === sprite2.ID && sprite1.Location[0] == sprite2.Location[0] && sprite1.Location[1] == sprite2.Location[1]) {
