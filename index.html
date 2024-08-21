@@ -516,7 +516,7 @@
             canvas.height = height;
 
             redrawCanvas();
-            console.log(shipMaxSpeed(0));
+            // console.log(shipMaxSpeed(0));
         }
 
         function applyProperty() {
@@ -735,7 +735,7 @@
                     img.src = `sprites/${imageName}.png`;
                 }
 
-                console.log(img.src);
+                // console.log(img.src);
 
                 img.onload = () => {
                     let [x, y] = sprite_position(sprite, [sprite.Location[0], sprite.Location[1]]);
@@ -831,7 +831,7 @@
             // Calculate mouse position relative to the canvas, taking into account the scaling
             const x = (event.clientX - rect.left) * scaleX;
             const y = (event.clientY - rect.top) * scaleY;
-            console.log("x", x)
+            // console.log("x", x)
             // init mouse and cavas location
             // const x = event.offsetX;
             // const y = event.offsetY;
@@ -839,8 +839,8 @@
             const mouseY = Math.floor(y / gridSize) * gridSize;
             const canvasPositionX = (mouseX / gridSize) + minX;
             const canvasPositionY = (mouseY / gridSize) + minY;
-            console.log("mouse x", mouseX)
-            console.log("canvas x", canvasPositionX)
+            // console.log("mouse x", mouseX)
+            // console.log("canvas x", canvasPositionX)
             // update if square location changes
             if (lastX === canvasPositionX && lastY === canvasPositionY && lastRotation === rotation) {
                 return;
@@ -1438,8 +1438,8 @@
                 thrust_vector[i] = spriteData[part["ID"]].thrust[(i + part_rotation + 2) % 4] * 1000000;
 
             }
-            console.log(thrust_vector)
-            console.log(angle)
+            // console.log(thrust_vector)
+            // console.log(angle)
             return thrust_vector[angle]
         }
 
