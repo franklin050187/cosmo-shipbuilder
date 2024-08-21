@@ -774,15 +774,14 @@
                 ship_stats_label.innerHTML += `${commandPointText}<br>`;
             }
             ship_stats_label.innerHTML += 'Crew :' + getCrew().toString() + '웃<br>'
-
-            // ship_stats_label.innerHTML += 'Hyperdrive efficiency :' + getHyperdrive().toString() + '%<br>'
+            ship_stats_label.innerHTML += 'moment of inertia:' + momentOfInertiaShip().toString()+ 'kgm^2<br>'
+            ship_stats_label.innerHTML += 'hyperdrive efficiency:' + (getShipHyperdriveEfficiency()*100).toString() + '%<br>'
+            ship_stats_label.innerHTML += 'crew count:' + crewCount().toString() + '<br>'
+            
         }
 
         function updateCoordinates(canvasPositionX, canvasPositionY) {
             coordinates_label.innerHTML = 'Coordinates : ' + canvasPositionX.toFixed(0).toString() + ',' + canvasPositionY.toFixed(0).toString();
-            ship_stats_label.innerHTML += 'moment of inertia:' + momentOfInertiaShip().toString()+ 'kgm^2<br>'
-            ship_stats_label.innerHTML += 'hyperdrive efficiency:' + (getShipHyperdriveEfficiency()*100).toString() + '%<br>'
-            ship_stats_label.innerHTML += 'crew count:' + crewCount().toString() + '<br>'
         }
 
         function square_map(sprite) {
