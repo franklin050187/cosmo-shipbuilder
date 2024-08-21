@@ -119,10 +119,10 @@
             "cosmoteer.thruster_small_2way": { "mass": 1.61, "size": [1, 1], "sprite_size": [2, 2], "cost": 1, "category": "thruster", "cp_cost": 2, "thrust": [0,0.4,0.4,0]},
             "cosmoteer.control_room_large": { "mass": 16, "size": [4, 4], "cost": 50, "category": "", "cp_cost": 0},
             "cosmoteer.thruster_small_3way": { "mass": 1.91, "size": [1, 1], "sprite_size": [3, 2], "cost": 1.5, "category": "thruster", "cp_cost": 3, "thrust": [0,0.4,0.4,0.4]},
-            "cosmoteer.hyperdrive_small": { "mass": 4, "size": [2, 2], "cost": 10, "category": ""},
+            "cosmoteer.hyperdrive_small": { "mass": 4, "size": [2, 2], "cost": 10, "category": "hyperdrive"},
             "cosmoteer.engine_room": { "mass": 9, "size": [3, 3], "cost": 12, "category": "", "cp_cost": 6},
-            "cosmoteer.crew_quarters_small": { "mass": 2, "size": [1, 2], "cost": 1.6, "category": ""} ,
-            "cosmoteer.crew_quarters_med": { "mass": 4, "size": [2, 2], "cost": 4.2, "category": ""} ,
+            "cosmoteer.crew_quarters_small": { "mass": 2, "size": [1, 2], "cost": 1.6, "category": "crew"} ,
+            "cosmoteer.crew_quarters_med": { "mass": 4, "size": [2, 2], "cost": 4.2, "category": "crew"} ,
             "cosmoteer.airlock": { "mass": 1, "size": [1, 1], "cost": 0.6, "category": ""} ,
             "cosmoteer.conveyor": { "mass": 1, "size": [1, 1], "cost": 0.2, "category": ""} ,
             "cosmoteer.reactor_small": { "mass": 4, "size": [2, 2], "cost": 25, "category": ""} ,
@@ -148,13 +148,13 @@
             "cosmoteer.storage_4x4": { "mass": 16, "size": [4, 4], "cost": 4.8, "category": ""} ,
             "cosmoteer.chaingun": { "mass": 17.77, "size": [3, 5], "sprite_size": [3, 7], "dps": 18000, "burst_damage": 0, "cost": 24, "category": "weapon", "cp_cost": 6},
             "cosmoteer.chaingun_magazine": { "mass": 2, "size": [1, 2], "cost": 1, "category": ""} ,
-            "cosmoteer.hyperdrive_large": { "mass": 16, "size": [4, 4], "cost": 34, "category": ""},
+            "cosmoteer.hyperdrive_large": { "mass": 16, "size": [4, 4], "cost": 34, "category": "hyperdrive"},
             "cosmoteer.thruster_rocket_battery": { "mass": 2, "size": [1, 2], "cost": 3, "category": ""},
             "cosmoteer.thruster_rocket_extender": { "mass": 6, "size": [3, 2], "cost": 6, "category": "thruster", "thrust": [0,0,8,0]} ,
             "cosmoteer.thruster_rocket_nozzle": { "mass": 14.4, "size": [3, 4], "sprite_size": [3, 5], "cost": 15, "category": "thruster", "cp_cost": 16, "thrust": [0,0,8,0]},
-            "cosmoteer.hyperdrive_med": { "mass": 9, "size": [3, 3], "cost": 20, "category": ""},
+            "cosmoteer.hyperdrive_med": { "mass": 9, "size": [3, 3], "cost": 20, "category": "hyperdrive"},
             "cosmoteer.manipulator_beam_emitter": { "mass": 4, "size": [2, 2], "cost": 3, "category": "", "cp_cost": 4},
-            "cosmoteer.crew_quarters_large": { "mass": 12, "size": [3, 4], "cost": 15.6, "category": ""} 
+            "cosmoteer.crew_quarters_large": { "mass": 12, "size": [3, 4], "cost": 15.6, "category": "crew"} 
         };
         const upTurrets = [
             "cosmoteer.laser_blaster_small",
@@ -431,7 +431,6 @@
             canvas.height = height;
 
             redrawCanvas();
-            console.log(shipMaxSpeed(0));
         }
 
         function applyProperty () {
@@ -654,6 +653,9 @@
             ship_stats_label.innerHTML += 'acceleration:' + shipAcceleration(0).toString()+ 'm/s^2<br>'
             ship_stats_label.innerHTML += 'max speed:' + shipMaxSpeed(0).toString()+ 'm/s<br>'
             ship_stats_label.innerHTML += 'thrust:' + shipThrustVector(0).toString()+ 'N<br>'
+            ship_stats_label.innerHTML += 'moment of inertia:' + momentOfInertiaShip().toString()+ 'kgm^2<br>'
+            ship_stats_label.innerHTML += 'hyperdrive efficiency:' + (getShipHyperdriveEfficiency()*100).toString() + '%<br>'
+            ship_stats_label.innerHTML += 'crew count:' + crewCount().toString() + '<br>'
         }
 
         function square_map(sprite) {
@@ -1251,8 +1253,6 @@
                 thrust_vector[i] = spriteData[part["ID"]].thrust[(i+part_rotation+2)%4]*1000000;
                 
             }
-            console.log(thrust_vector)
-            console.log(angle)
             return thrust_vector[angle]
         }
 
@@ -1260,8 +1260,6 @@
             let thrust_vector = [0,0,0,0]
             for (part of getParts(null, "thruster")) { 
                 thrust_vector[0] += partThrustVector(part, angle)
-                //console.log(thrust_vector[0])
-                //console.log(partThrustVector(part, angle))
             }
             
             return thrust_vector
@@ -1287,17 +1285,95 @@
             return Math.sqrt(vec[0]**2+vec[1]**2)
         }
 
+        function pointDist(vec1, vec2) {
+            return vecLength([vec1[0]-vec2[0], vec1[1]-vec2[1]]) 
+        }
+
         function momentOfInertiaPart(part) {
             let [x0,y0] = ship_com_location()
             let location = part.Location
             let mass = spriteData[part["ID"]].mass
-            return vecLength(location(0)-x0,location(1)-y0)*mass
+            return vecLength([location[0]-x0,location[1]-y0])*mass
         }
 
         function momentOfInertiaShip() {
             sum = 0
             for (part of sprites) {
                 sum += momentOfInertiaPart(part)
+            }
+            return sum
+        }
+
+        function getTileHyperdriveEfficiency(part) {
+            let hyperdrives = getParts(null, "hyperdrive")
+            let sum = 0
+            let JumpEfficiency = 0.5
+            let JumpEfficiencyDistanceRange = 0
+            let tileDist = []
+            let part_center_location = partCenter(part)
+
+            for (drive of hyperdrives) {
+                switch (drive["ID"]) {
+                    case ("cosmoteer.hyperdrive_small"): {
+                        JumpEfficiencyDistanceRange = [5,30]
+                        break
+                    }
+                    case ("cosmoteer.hyperdrive_med"): {
+                        JumpEfficiencyDistanceRange = [10,60]
+                        break
+                    }
+                    case ("cosmoteer.hyperdrive_large"): {
+                        JumpEfficiencyDistanceRange = [20,120]
+                        break
+                    }
+                }
+                tileDist = pointDist(partCenter(drive), part_center_location)
+                console.log(JumpEfficiencyDistanceRange)
+                console.log(tileDist)
+                sum += (1 - InverseLerp(JumpEfficiencyDistanceRange, tileDist)) * JumpEfficiency
+            }
+            return Math.min(sum, 1)
+        }
+
+        function getShipHyperdriveEfficiency() {
+            let sum = 0
+            for (part of sprites) {
+                sum +=  getTileHyperdriveEfficiency(part)
+            }
+            return sum/sprites.length
+        }
+
+        function partCenter(part) {
+            let size = spriteData[part["ID"]].size
+            let location = part.Location
+            return [part.Location[0] + size[0]/2, part.Location[1] + size[1]/2]
+        }
+
+        function InverseLerp(interval, delimiter) {
+            if (interval[0]>delimiter) {
+                return 0
+            }
+            if (interval[1]<delimiter) {
+                return 1
+            }
+            return (delimiter - interval[0])/(interval[1]-interval[0])
+        }
+
+        function crewCount() {
+            let sum = 0
+            for (quarter of getParts(null, "crew")) {
+                console.log(quarter.ID)
+                switch (quarter.ID) { 
+                    case "cosmoteer.crew_quarters_large": {
+                        sum += 24
+                    }
+                    case "cosmoteer.crew_quarters_large": {
+                        sum += 6
+                    }
+                    case "cosmoteer.crew_quarters_large": {
+                        sum += 2
+                    }
+                }  
             }
             return sum
         }
