@@ -684,12 +684,37 @@
 
         let spritesDrawn = new Set();
 
+        const spriteCache = {};
+
+        function preloadSprites() {
+            // Iterate over the keys (IDs) in the spriteData object
+            for (let spriteID of Object.keys(spriteData)) {
+                const imageName = spriteID.replace("cosmoteer.", "");
+                const img = new Image();
+                img.src = `sprites/${imageName}.png`;
+                spriteCache[imageName] = img; // Store the image in the cache
+            }
+
+            // Preload specific images for different missile types
+            spriteCache["nuke_launcher"] = new Image();
+            spriteCache["nuke_launcher"].src = `sprites/nuke_launcher.png`;
+
+            spriteCache["emp_launcher"] = new Image();
+            spriteCache["emp_launcher"].src = `sprites/emp_launcher.png`;
+
+            spriteCache["mine_launcher"] = new Image();
+            spriteCache["mine_launcher"].src = `sprites/mine_launcher.png`;
+        }
+
+
+        preloadSprites();
+
         function redrawCanvas() {
-            const newSprites = sprites.filter(
-                sprite => !spritesDrawn.has(sprite)
-            );
+            const newSprites = sprites.filter(sprite => !spritesDrawn.has(sprite));
             const oldSprites = Array.from(spritesDrawn);
             spritesDrawn = new Set(sprites);
+
+            // Clear old sprites
             oldSprites.forEach(sprite => {
                 if (!spritesDrawn.has(sprite)) {
                     const [x, y] = sprite_position(sprite, [sprite.Location[0], sprite.Location[1]]);
@@ -701,35 +726,39 @@
                     );
                 }
             });
+
+            // Draw new sprites
             newSprites.forEach(sprite => {
                 const imageName = sprite["ID"].replace("cosmoteer.", "");
-                const img = new Image();
                 const partData = getPartDataMap(sprite);
                 const missileType = parseInt(partData.get("missile_type"));
+
+                let img;
                 if (missileType === 2) {
-                    img.src = `sprites/nuke_launcher.png`;
+                    img = spriteCache["nuke_launcher"];
                 } else if (missileType === 1) {
-                    img.src = `sprites/emp_launcher.png`;
+                    img = spriteCache["emp_launcher"];
                 } else if (missileType === 3) {
-                    img.src = `sprites/mine_launcher.png`;
+                    img = spriteCache["mine_launcher"];
                 } else {
-                    img.src = `sprites/${imageName}.png`;
+                    img = spriteCache[imageName];
                 }
 
-                img.onload = () => {
+                if (img) {
                     let [x, y] = sprite_position(sprite, [sprite.Location[0], sprite.Location[1]]);
                     const rotatedImage = rotate_img(img, sprite.Rotation, sprite.FlipX);
                     ctx.drawImage(rotatedImage, (x - minX) * gridSize + 1, (y - minY) * gridSize + 1, rotatedImage.width - 2, rotatedImage.height - 2);
                     sprite.width = rotatedImage.width;
                     sprite.height = rotatedImage.height;
                     square_map(sprite);
-                };
+                }
             });
+
             updateShipStats();
             draw_doors();
             draw_resources();
-            // drawGrid();
         }
+
 
         function updateShipStats() {
             ship_stats_label.innerHTML = 'Weight :' + shipWeight().toFixed(0).toString() + 'kg<br>'
@@ -833,9 +862,9 @@
             if (lastX === canvasPositionX && lastY === canvasPositionY && lastRotation === rotation) {
                 return;
             }
-            
+
             updateCoordinates(canvasPositionX, canvasPositionY);
-            
+
             if (cursorMode === 'Delete') {
 
                 // load sprite
@@ -1335,7 +1364,7 @@
             for (door of doors) {
                 sum += 0.1;
             }
-            return sum*1000;
+            return sum * 1000;
         }
 
         function getPartToggles(part) {
