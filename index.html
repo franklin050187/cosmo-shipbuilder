@@ -97,9 +97,6 @@
                 <div>
                     <label id="shipStatsLabel">Ship Stats: </label>
                 </div>
-                <div>
-                    <label id="shipPriceLabel">Cost: </label>
-                </div>
             </fieldset>
 
             <fieldset>
@@ -251,7 +248,8 @@
         const ctx = canvas.getContext('2d');
         const gridSize = 64; // Size of each grid cell
         const spriteSelect = document.getElementById('spriteSelect');
-        for (const spriteName in spriteData) {
+        const spriteNames = Object.keys(spriteData).sort();
+        for (const spriteName of spriteNames) {
             const option = document.createElement('option');
             option.value = spriteName;
             option.textContent = spriteName;
@@ -289,8 +287,6 @@
         ship_property_select.addEventListener('change', handleShipPropertySelectionChange);
 
 
-
-
         let isPreviewSpriteLoaded = false; // init sprite preview
         let gridMap = {}; // To store the grid map
         let affectedSquares = []; // To store the affected squares
@@ -316,15 +312,7 @@
 
         // input and output for b64
         const b64Input = document.getElementById('b64_input');
-        // const b64Output = document.getElementById('b64_export');
         const loadB64Button = document.getElementById('load_b64');
-        // const exportB64Button = document.getElementById('export_b64');
-
-        // event listeners for buttons b64
-
-        // exportB64Button.addEventListener('click', compressString);
-
-
         // get url parameter b64
         const queryString = window.location.search;
         const urlParams = new URLSearchParams(queryString);
@@ -754,11 +742,24 @@
         }
 
         function updateShipStats() {
-            ship_stats_label.innerHTML = 'stats:' + '<br>'
-            ship_stats_label.innerHTML += 'weight:' + shipWeight().toString() + 'kg<br>'
-            ship_stats_label.innerHTML += 'acceleration:' + shipAcceleration(0).toString() + 'm/s^2<br>'
-            ship_stats_label.innerHTML += 'max speed:' + shipMaxSpeed(0).toString() + 'm/s<br>'
-            ship_stats_label.innerHTML += 'thrust:' + shipThrustVector(0).toString() + 'N<br>'
+            ship_stats_label.innerHTML = 'Weight :' + shipWeight().toFixed(0).toString() + 'kg<br>'
+            ship_stats_label.innerHTML += 'Acceleration :' + shipAcceleration(0).toFixed(2).toString() + 'm/s^2<br>'
+            ship_stats_label.innerHTML += 'Max speed :' + shipMaxSpeed(0).toFixed(2).toString() + 'm/s<br>'
+            ship_stats_label.innerHTML += 'Thrust :' + shipThrustVector(0).toString() + 'N<br>'
+            ship_stats_label.innerHTML += 'Cost :' + getShipCost().toFixed(0).toString() + '₡<br>'
+            const commandPoints = getShipCommandPoints();
+            console.log("commandPoints" + commandPoints);
+            const commandCost = getShipCommandCost();
+            console.log("commandCost" + commandCost);
+            const commandPointText = `Command Points : ${commandCost}/${commandPoints}`;
+            if (commandCost > commandPoints) {
+                ship_stats_label.innerHTML += `<span style="color: red">${commandPointText}</span><br>`;
+            } else {
+                ship_stats_label.innerHTML += `${commandPointText}<br>`;
+            }
+            ship_stats_label.innerHTML += 'Crew :' + getCrew().toString() + '웃<br>'
+
+            // ship_stats_label.innerHTML += 'Hyperdrive efficiency :' + getHyperdrive().toString() + '%<br>'
         }
 
         function square_map(sprite) {
@@ -1333,7 +1334,7 @@
             for (door of doors) {
                 sum += 0.1;
             }
-            return sum;
+            return sum*1000;
         }
 
         function getPartToggles(part) {
@@ -1349,7 +1350,9 @@
         function getShipCommandCost() {
             sum = 0
             for (sprite of sprites) {
-                sum += spriteData[sprite["ID"]].cp_cost;
+                if (spriteData[sprite["ID"]].cp_cost > 0) {
+                    sum += spriteData[sprite["ID"]].cp_cost
+                }
             }
             return sum;
         }
@@ -1368,6 +1371,19 @@
             return sum;
         }
 
+        function getCrew() {
+            sum = 0
+            for (sprite of sprites) {
+                if (sprite["ID"] == "cosmoteer.crew_quarters_small") {
+                    sum += 2
+                } else if (sprite["ID"] == "cosmoteer.crew_quarters_med") {
+                    sum += 6
+                } else if (sprite["ID"] == "cosmoteer.crew_quarters_large") {
+                    sum += 24
+                }
+            }
+            return sum
+        }
         //Unfinished cause it seemed annoying to do and its not very important right now
         /*function getCGsMagsMap() {
             let mags = getParts("cosmoteer.chaingun_magazine")
