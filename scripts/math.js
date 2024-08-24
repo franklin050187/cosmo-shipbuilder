@@ -20,8 +20,9 @@ function InverseLerp(interval, delimiter) {
 
 function areCoordinatesAdjacent(pos1, pos2) {
     let x_dif = Math.abs(pos1[0]-pos2[0])
-    let y_dif = Math.abs(pos1[0]-pos2[0])
-    if (Math.abs( x_dif-y_dif)==1) {
+    let y_dif = Math.abs(pos1[1]-pos2[1])
+    if ((x_dif==1 && y_dif==0) || (x_dif==0 && y_dif==1)) {
+        console.log([x_dif,y_dif])
         return true
     }
     return false

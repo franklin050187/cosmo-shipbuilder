@@ -3,12 +3,12 @@
 
 function getShipPartConnectionGraph(parts) {
     let edges = []
-    let vertecies = []
+    let vertices = []
     let part1
     let part2
     for (let i = 0; i < parts.length; i++) {
         part1 = parts[i]
-        vertecies.push([i, part1])
+        vertices.push([i, part1])
         for (let j = 0; j < parts.length; j++) {
             if (i!=j) {
                 part2 = parts[j]
@@ -18,52 +18,53 @@ function getShipPartConnectionGraph(parts) {
             } 
         }
     }
-    return [edges, vertecies]
+    return [edges, vertices]
 }
 
-function getPartsGraphPartition(edges, vertecies) {
-    let current_vertecies = []
-    while(vertecies.length>0) {
-        vertex = vertecies[0]
-        for (adjacent_vertex of getAdjacentPartVertecies(vertex, edges, vertecies)) {
-            current_vertecies.push(adjacent_vertex)
-        }
-    }
-}
+function getConnectedComponents(edges, vertices) {
+    const visited = new Set();  // To track visited vertex ids
+    const components = [];
 
-function getAdjacentPartVertecies(vertex, edges, vertecies) {
-    let adjacent_parts = []
-    let visited_parts = []
-    let parts_partition = []
-    let n = vertecies.length
-    let j = 0
-    while (visited_parts.length < n) {
-        for (let i=0;i<n;i++) {
-            if (!visited_parts.includes[i]) {
-                adjacent_parts.push(vertecies[i])
+    // Helper function to perform DFS
+    function dfs(vertexId, component) {
+        visited.add(vertexId);
+        
+        // Find the vertex with this id and add it to the component
+        const vertex = vertices.find(v => v[0] === vertexId);
+        if (vertex) {
+            component.push(vertex);
+        }
+
+        // Explore all edges to find connected vertices
+        for (let edge of edges) {
+            const [id1, id2] = edge;
+            
+            // Check for adjacency and explore unvisited neighbors
+            if (id1 === vertexId && !visited.has(id2)) {
+                dfs(id2, component);
+            } else if (id2 === vertexId && !visited.has(id1)) {
+                dfs(id1, component);
             }
         }
-        while(adjacent_parts.length > 0) {
-            for (part of adjacent_parts) {
-                for (edge of edges) {
-                    if (!visited_parts.includes[edge[0]] && edge[0] == vertex[0]) {
-                        adjacent_parts.push(edge[1])
-                        visited_parts.push(part)
-                        parts_partition[j].push(part)
-                    }
-                }  
-            }
-        }
-        j++
     }
+
+    // Loop through all vertices to start DFS from unvisited nodes
+    for (let [vertexId, object] of vertices) {
+        if (!visited.has(vertexId)) {
+            const component = [];
+            dfs(vertexId, component);
+            components.push(component);
+        }
+    }
+
+    return components;
 }
 
 function arePartsTouching(part1, part2) {
-    let bool = 0
     let locations1 = getSpriteTileLocations(part1)
     let locations2 = getSpriteTileLocations(part2)
-    for (location1 in locations1) {
-        for (location2 in locations2) {
+    for (location1 of locations1) {
+        for (location2 of locations2) {
             if (areCoordinatesAdjacent(location1, location2)) {
                 return true
             } 

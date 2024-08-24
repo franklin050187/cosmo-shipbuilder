@@ -245,6 +245,9 @@ function loadJson() {
     canvas.height = height;
 
     redrawCanvas();
+    let graph = getShipPartConnectionGraph(sprites)
+    console.log(graph)
+    console.log(getConnectedComponents(graph[0], graph[1]))
 }
 
 function applyProperty() {
