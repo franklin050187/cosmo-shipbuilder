@@ -18,13 +18,20 @@ const warning_function_list = [
         if (getShipCommandCost() > getShipCommandPoints()) {
             return {id: "not_enough_command_points",  message: "Your ship does not have enough command points", locations: [], tags: []}
         }
+    },
+    function connectionWarning() {
+        const graph = getShipPartConnectionGraph(sprites)
+        const partition = getConnectedComponents(graph[0],graph[1])
+        if (partition.length > 1) {
+            return {id: "not_connected",  message: "Your ship is not connected", locations: [], tags: ["computationally_expensive"]}
+        }
     }
 ]
 
-function getWarnings() {
+function getWarnings(bool) {
     let warnings = []
     for (let warning of warning_function_list) {
-        if (warning() !== undefined) {
+        if (warning() !== undefined && (!warning.tags.includes("computationally_expensive") || bool)) {
             warnings.push(warning())
         }
     }

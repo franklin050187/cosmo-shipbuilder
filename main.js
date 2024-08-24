@@ -423,7 +423,7 @@ preloadSprites();
 
 
 function updateShipStats() {
-    warnings = getWarnings()
+    warnings = getWarnings(false)
     ship_stats_label.innerHTML = 'Weight :' + shipWeight().toFixed(0).toString() + 'kg<br>'
     ship_stats_label.innerHTML += 'Acceleration :' + shipAcceleration(0).toFixed(2).toString() + 'm/s^2<br>'
     ship_stats_label.innerHTML += 'Max speed :' + shipMaxSpeed(0).toFixed(2).toString() + 'm/s<br>'
