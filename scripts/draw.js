@@ -98,5 +98,4 @@ function redrawCanvas() {
     updateShipStats();
     draw_doors();
     draw_resources();
-    console.log(getShipPartConnectionGraph(sprites));
 }

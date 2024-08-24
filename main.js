@@ -420,6 +420,7 @@ preloadSprites();
 
 
 function updateShipStats() {
+    warnings = getWarnings()
     ship_stats_label.innerHTML = 'Weight :' + shipWeight().toFixed(0).toString() + 'kg<br>'
     ship_stats_label.innerHTML += 'Acceleration :' + shipAcceleration(0).toFixed(2).toString() + 'm/s^2<br>'
     ship_stats_label.innerHTML += 'Max speed :' + shipMaxSpeed(0).toFixed(2).toString() + 'm/s<br>'
@@ -437,6 +438,11 @@ function updateShipStats() {
     ship_stats_label.innerHTML += 'moment of inertia:' + momentOfInertiaShip().toString()+ 'kgm^2<br>'
     ship_stats_label.innerHTML += 'hyperdrive efficiency:' + (getShipHyperdriveEfficiency()*100).toString() + '%<br>'
     ship_stats_label.innerHTML += 'crew count:' + crewCount().toString() + '<br>'
+    ship_stats_label.innerHTML += '<br>Warnings:'
+    for (warning of warnings) {
+        ship_stats_label.innerHTML += "<br>"
+        ship_stats_label.innerHTML += warning.message
+    }
 }
 
 function updateCoordinates(canvasPositionX, canvasPositionY) {
