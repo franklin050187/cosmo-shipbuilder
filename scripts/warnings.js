@@ -85,12 +85,10 @@ function getWarnings(stats) {
 }
 
 function containsWarning(warnings, warning_id) {
-    for (let warning of warnings) {
-        if (warning.id == warning_id) {
-            return true
-        }
-    }
-    return false
+	for (const warning of warnings) {
+		if (warning.id === warning_id) {
+			return true;
+		}
+	}
+	return false;
 }
-
-

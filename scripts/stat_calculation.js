@@ -102,19 +102,19 @@ function shipWeight(stats) {
 }
 
 function part_com_location(sprite) {
-    let com_location = [0, 0]
-    let part_rotation = sprite.Rotation
-    let sprite_location = sprite.Location
-    part_size = spriteData[sprite["ID"]].size
+	const com_location = [0, 0];
+	const part_rotation = sprite.Rotation;
+	const sprite_location = sprite.Location;
+	part_size = spriteData[sprite.ID].size;
 
-    if (part_rotation == 0 || part_rotation == 2) {
-        com_location[0] = sprite_location[0] + part_size[0] / 2
-        com_location[1] = sprite_location[1] + part_size[1] / 2
-    } else {
-        com_location[0] = sprite_location[0] + part_size[1] / 2
-        com_location[1] = sprite_location[1] + part_size[0] / 2
-    }
-    return com_location
+	if (part_rotation === 0 || part_rotation === 2) {
+		com_location[0] = sprite_location[0] + part_size[0] / 2;
+		com_location[1] = sprite_location[1] + part_size[1] / 2;
+	} else {
+		com_location[0] = sprite_location[0] + part_size[1] / 2;
+		com_location[1] = sprite_location[1] + part_size[0] / 2;
+	}
+	return com_location;
 }
 
 function ship_com_location(stats) {
@@ -195,7 +195,6 @@ function getShipHyperdriveEfficiency(stats) {
     }
     return sum/stats.parts.length
 }
-
 
 function getTileHyperdriveEfficiency(stats, part) {
     let hyperdrives = getParts(stats.parts, null, "hyperdrive")
