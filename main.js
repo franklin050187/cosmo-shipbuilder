@@ -59,6 +59,7 @@ let sprite_delete_mode = []; // To store the sprite delete mode
 let sprite_to_place = []; // To store the sprite to place
 let selected_sprites = [];
 let sprites = []; // To store the sprites
+let all_ship_stats = []
 let minX = 0, minY = 0, maxX = 0, maxY = 0; // adjust canvas size
 let shipdata = {}; // To store the ship data
 let deleteMode = false; // To store the delete mode
@@ -122,7 +123,6 @@ function generateShip() {
 
     xhr.onload = function () {
         if (xhr.status === 200) {
-            // console.log(xhr.responseText);
             const ship_link = document.getElementById('ship_link');
             const url = JSON.parse(xhr.responseText).url
             ship_link.href = url
@@ -246,8 +246,6 @@ function loadJson() {
 
     redrawCanvas();
     let graph = getShipPartConnectionGraph(sprites)
-    console.log(graph)
-    console.log(getConnectedComponents(graph[0], graph[1]))
 }
 
 function applyProperty() {
@@ -281,6 +279,11 @@ function updateShipToggleSelection() {
         ship_property_select.appendChild(option);
     }
     handleShipPropertySelectionChange();
+}
+
+function updateShipStatsVariable() {
+    all_ship_stats = getShipStats(sprites)
+    return all_ship_stats
 }
 
 function applyProperty() {
@@ -423,24 +426,26 @@ preloadSprites();
 
 
 function updateShipStats() {
-    warnings = getWarnings(false)
-    ship_stats_label.innerHTML = 'Weight :' + shipWeight().toFixed(0).toString() + 'kg<br>'
-    ship_stats_label.innerHTML += 'Acceleration :' + shipAcceleration(0).toFixed(2).toString() + 'm/s^2<br>'
-    ship_stats_label.innerHTML += 'Max speed :' + shipMaxSpeed(0).toFixed(2).toString() + 'm/s<br>'
-    ship_stats_label.innerHTML += 'Thrust :' + shipThrustVector(0).toString() + 'N<br>'
-    ship_stats_label.innerHTML += 'Cost :' + getShipCost().toFixed(0).toString() + '₡<br>'
-    const commandPoints = getShipCommandPoints();
-    const commandCost = getShipCommandCost();
+    parts = sprites
+    stats = updateShipStatsVariable()
+    warnings = getWarnings(stats)
+    ship_stats_label.innerHTML = 'Weight :' + stats.weight.toFixed(0).toString() + 'kg<br>'
+    ship_stats_label.innerHTML += 'Acceleration :' + stats.acceleration[0].toFixed(2).toString() + 'm/s^2<br>'
+    ship_stats_label.innerHTML += 'Max speed :' + stats.speed.toFixed(2).toString() + 'm/s<br>'
+    ship_stats_label.innerHTML += 'Thrust :' + stats.thrust.toString() + 'N<br>'
+    ship_stats_label.innerHTML += 'Cost :' + stats.cost.toFixed(0).toString() + '₡<br>'
+    const commandPoints = stats.command_points;
+    const commandCost = stats.command_cost;
     const commandPointText = `Command Points : ${commandCost}/${commandPoints}`;
     if (commandCost > commandPoints) {
         ship_stats_label.innerHTML += `<span style="color: red">${commandPointText}</span><br>`;
     } else {
         ship_stats_label.innerHTML += `${commandPointText}<br>`;
     }
-    ship_stats_label.innerHTML += 'Crew :' + getCrew().toString() + '웃<br>'
-    ship_stats_label.innerHTML += 'moment of inertia:' + momentOfInertiaShip().toString()+ 'kgm^2<br>'
-    ship_stats_label.innerHTML += 'hyperdrive efficiency:' + (getShipHyperdriveEfficiency()*100).toString() + '%<br>'
-    ship_stats_label.innerHTML += 'crew count:' + crewCount().toString() + '<br>'
+    ship_stats_label.innerHTML += 'Crew :' + stats.crew.toString() + '웃<br>'
+    ship_stats_label.innerHTML += 'moment of inertia:' + stats.inertia.toString()+ 'kgm^2<br>'
+    ship_stats_label.innerHTML += 'hyperdrive efficiency:' + (stats.hyperdrive_efficiency*100).toString() + '%<br>'
+    ship_stats_label.innerHTML += 'crew count:' + stats.crew.toString() + '<br>'
     ship_stats_label.innerHTML += '<br>Warnings:'
     for (warning of warnings) {
         ship_stats_label.innerHTML += "<br>"
@@ -836,8 +841,6 @@ function updateSpriteSelection() {
 }
 
 function remove_from_sprites(sprite_to_remove) {
-    // console.log(sprite_to_remove);
-    // console.log(gridMap)
     sprite_to_remove = sprite_to_remove[0];
     for (const sprite of sprites) {
         // find the sprite in sprites and remove it
@@ -853,7 +856,6 @@ function remove_from_sprites(sprite_to_remove) {
     const key_loc_y = sprite_to_remove.Location[1]
     for (const key in gridMap) {
         if (gridMap[key].is_drawn_by_sprite.Location[0] == key_loc_x && gridMap[key].is_drawn_by_sprite.Location[1] == key_loc_y) {
-            // console.log("found key" + key);
             delete gridMap[key];
         }
     }

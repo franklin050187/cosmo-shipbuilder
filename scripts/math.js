@@ -22,8 +22,17 @@ function areCoordinatesAdjacent(pos1, pos2) {
     let x_dif = Math.abs(pos1[0]-pos2[0])
     let y_dif = Math.abs(pos1[1]-pos2[1])
     if ((x_dif==1 && y_dif==0) || (x_dif==0 && y_dif==1)) {
-        console.log([x_dif,y_dif])
         return true
     }
     return false
+}
+
+function indexOfListMax(arr) {
+    let maxIndex = 0;
+    for (let i = 1; i < arr.length; i++) {
+        if (arr[i] > arr[maxIndex]) {
+            maxIndex = i;
+        }
+    }
+    return maxIndex;
 }
