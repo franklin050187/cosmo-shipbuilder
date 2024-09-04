@@ -12,7 +12,7 @@ function getShipStats(parts) {
     stats.thrust = shipThrustVector(stats)
     stats.acceleration = shipAcceleration(stats, 0)
     stats.com = ship_com_location(stats)
-    stats.speed = shipMaxSpeed(stats)
+    stats.speed = shipMaxSpeed(stats, 0)
     stats.inertia = momentOfInertiaShip(stats)
     stats.hyperdrive_efficiency = getShipHyperdriveEfficiency(stats)
     stats.primary_weapon = getPrimaryWeaponID(stats)
@@ -77,15 +77,16 @@ function getShipCommandPoints(stats) {
 
 function crewCount(stats) {
     let sum = 0
-    for (quarter of getParts(stats.parts, null, "crew")) {
+    let quarters = getParts(stats.parts, null, "crew")
+    for (let quarter of quarters) {
         switch (quarter.ID) { 
             case "cosmoteer.crew_quarters_large": {
                 sum += 24
             }
-            case "cosmoteer.crew_quarters_large": {
+            case "cosmoteer.crew_quarters_med": {
                 sum += 6
             }
-            case "cosmoteer.crew_quarters_large": {
+            case "cosmoteer.crew_quarters_small": {
                 sum += 2
             }
         }  
@@ -153,8 +154,8 @@ function shipThrustVector(stats) {
     return thrust_vector
 }
 
-function shipMaxSpeed(stats) {
-    let acceleration = stats.acceleration
+function shipMaxSpeed(stats, angle) {
+    let acceleration = stats.acceleration[angle]
     for (i of Array(10000).keys()) {
         if (Math.max(i / 75, 1) ** 2 * 0.4 * i > acceleration) {
             return i;
