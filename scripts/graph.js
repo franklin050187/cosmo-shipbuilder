@@ -1,5 +1,8 @@
 //This file is for anything related to the ships part adjacency graph
 //This is experimental and currently not working
+//Graphs are a pair of directed eges and vertices. All edges/vertices contain the ids as well as the part objects. 
+//Example: We have 3 parts where 1 is connected to 2 and 2 to 3:
+//graph = [[[partid1, partid2, part1, part2], [partid2, partid1, part1, part2], [partid2, partid3, part2, part3], [partid3, paridt 2, part3, part2]], [[partid1, part1], [partid2, part2], [partdi3, part3]]]
 
 function getShipPartConnectionGraph(parts) {
 	const edges = [];
@@ -63,12 +66,22 @@ function getConnectedComponents(edges, vertices) {
 function arePartsTouching(part1, part2) {
 	const locations1 = getSpriteTileLocations(part1);
 	const locations2 = getSpriteTileLocations(part2);
-	for (location1 of locations1) {
-		for (location2 of locations2) {
+	for (let location1 of locations1) {
+		for (let location2 of locations2) {
 			if (areCoordinatesAdjacent(location1, location2)) {
 				return true;
 			}
 		}
 	}
 	return false;
+}
+
+function getTouchingParts(part, graph) {
+	list = []
+	for (edge of graph[1]) {
+		if (isSameSprite(edge[3], part)) {
+			list.push(edge[4])
+		}
+	}
+	return list
 }

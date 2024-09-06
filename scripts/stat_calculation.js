@@ -8,6 +8,10 @@ function getShipStats(parts) {
     stats.command_points = getShipCommandPoints(stats, null, null)
     stats.command_cost = getShipCommandCost(stats)
     stats.crew = crewCount(stats)
+    stats.connection_graph = getShipPartConnectionGraph(stats.parts)
+    stats.connection_graph_partition = getConnectedComponents(stats.connection_graph[0],stats.connection_graph[1])
+    stats.neighbour_map = partNeighbourMap(stats.connection_graph)
+    stats.tag_map = getPartTagMap(stats)
     stats.weight = shipWeight(stats)
     stats.thrust = shipThrustVector(stats)
     stats.acceleration = shipAcceleration(stats, 0)
@@ -16,8 +20,6 @@ function getShipStats(parts) {
     stats.inertia = momentOfInertiaShip(stats)
     stats.hyperdrive_efficiency = getShipHyperdriveEfficiency(stats)
     stats.primary_weapon = getPrimaryWeaponID(stats)
-    stats.connection_graph = getShipPartConnectionGraph(stats.parts)
-    stats.connection_graph_partition = getConnectedComponents(stats.connection_graph[0],stats.connection_graph[1])
     return stats
 } 
 
@@ -133,11 +135,16 @@ function ship_com_location(stats) {
 }
 
 //Only supports whole number angles 
-function partThrustVector(part) {
+function partThrustVector(part, stats) {
     let part_rotation = part.Rotation
     let thrust_vector = [0, 0, 0, 0]
+    let k=1
+    let tags = getElementFromPartMap(part, stats.tag_map)
+    if (tags.includes("er_buff")) {
+        k=1.5
+    }
     for (i of [0, 1, 2, 3]) {
-        thrust_vector[i] = spriteData[part["ID"]].thrust[(i + part_rotation + 2) % 4] * 1000000;
+        thrust_vector[i] = spriteData[part["ID"]].thrust[(i + part_rotation + 2) % 4] * 1000000*k;
     }
     return thrust_vector
 }
@@ -146,7 +153,7 @@ function shipThrustVector(stats) {
     let thrust_vector = [0, 0, 0, 0]
     let parts = getParts(stats.parts, null, "thruster")
     for (let part of parts) {
-        let part_vector = partThrustVector(part)
+        let part_vector = partThrustVector(part, stats)
         for (i of [0, 1, 2, 3]) {
             thrust_vector[i] += part_vector[i]
         }
@@ -264,3 +271,50 @@ function getPrimaryWeaponID(stats) {
     index = indexOfListMax(sum)
     //return weapon_groups[index][0]
 }
+
+function getPartTagMap(stats) {
+    let map = []
+    for (let part of stats.parts) {
+        map.push([part, []])
+    }
+    for (let i=0;i<stats.parts.length;i++) {
+        let thruster = stats.parts[i]
+        console.log(spriteData[thruster.ID].category)
+        if (spriteData[thruster.ID].category === "thruster") {
+            let neighbours= getElementFromPartMap(thruster, stats.neighbour_map)
+            for (let neighbour of neighbours) {
+                if (neighbour.ID === "cosmoteer.engine_room") {
+                    map[i][1].push("er_buff")
+                    j=i
+                }
+            }
+        }
+    }
+    return map
+}
+
+function getElementFromPartMap(part, map) {
+    for (pair of map) {
+        if (isSameSprite(pair[0], part)) {
+            return pair[1]
+        }
+    }
+    console.warn("no element found for key")
+    return null
+}
+
+function partNeighbourMap(graph) {
+    let map = []
+    for (let i=0;i<graph[1].length;i++) {
+        map.push([graph[1][i][1], []])
+    }
+    for (let edge of graph[0]) {
+        for (let pair of map) {
+            if (isSameSprite(pair[0], edge[2])) {
+                pair[1].push(edge[3])
+            }
+        }
+    }
+    return map
+}
+
