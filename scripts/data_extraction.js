@@ -43,17 +43,14 @@ function getPartToggles(part) {
 	return toggles;
 }
 
-function getParts(id = null, category = null) {
-	parts = [];
-	for (sprite of sprites) {
-		if (
-			(sprite.ID === id || id == null) &&
-			(category == null || category === spriteData[sprite.ID].category)
-		) {
-			parts.push(sprite);
-		}
-	}
-	return parts;
+function getParts(parts, id = null, category = null) {
+    parts_out = []
+    for (sprite of parts) {
+        if ((sprite.ID == id || id == null) && (category == null || category == spriteData[sprite["ID"]].category)) {
+            parts_out.push(sprite)
+        }
+    }
+    return parts_out
 }
 
 function getPartDataMap(part) {
@@ -81,16 +78,4 @@ function getPartDataMap(part) {
 	return part_data;
 }
 
-//Unfinished cause it seemed annoying to do and its not very important right now
-/*function getCGsMagsMap() {
-    let mags = getParts("cosmoteer.chaingun_magazine")
-    let cgs = getParts("cosmoteer.chaingun_magazine")
-    let location = [0,0]
-    for (cg_part of cgs) {
-        for (mag_part of mags) {
-            if () {
 
-            }
-        }
-    }
-}*/

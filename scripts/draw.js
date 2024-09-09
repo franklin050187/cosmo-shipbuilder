@@ -68,7 +68,6 @@ function redrawCanvas() {
 	const newSprites = sprites.filter((sprite) => !spritesDrawn.has(sprite));
 	const oldSprites = Array.from(spritesDrawn);
 	spritesDrawn = new Set(sprites);
-
 	// Clear old sprites
 	for (const sprite of oldSprites) {
 		if (!spritesDrawn.has(sprite)) {
