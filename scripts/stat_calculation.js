@@ -1,15 +1,19 @@
 //This file is for values that need to be calculated
 
 //A collection of all the ship stats calculated once to avoid dublicate calculations
-function getShipStats(parts) {
+function getShipStats(ship) {
     let stats = {}
-    stats.parts = parts
+    stats.ship = ship
+    stats.parts = ship.parts
     stats.cost = getShipCost(stats,null, null)
     stats.command_points = getShipCommandPoints(stats, null, null)
     stats.command_cost = getShipCommandCost(stats)
     stats.crew = crewCount(stats)
-    stats.connection_graph = getShipPartConnectionGraph(stats.parts)
+    stats.connection_graph = getShipPartConnectionGraph(stats)
     stats.connection_graph_partition = getConnectedComponents(stats.connection_graph[0],stats.connection_graph[1])
+    stats.walkable_connection_graph = getShipPartWalkableConnectionGraph(stats)
+    stats.walkable_connection_graph_partition = getConnectedComponents(stats.walkable_connection_graph[0], stats.walkable_connection_graph[1])
+    console.log(stats.walkable_connection_graph_partition)
     stats.neighbour_map = partNeighbourMap(stats.connection_graph)
     stats.tag_map = getPartTagMap(stats)
     stats.weight = shipWeight(stats)
@@ -279,7 +283,6 @@ function getPartTagMap(stats) {
     }
     for (let i=0;i<stats.parts.length;i++) {
         let thruster = stats.parts[i]
-        console.log(spriteData[thruster.ID].category)
         if (spriteData[thruster.ID].category === "thruster") {
             let neighbours= getElementFromPartMap(thruster, stats.neighbour_map)
             for (let neighbour of neighbours) {
@@ -318,3 +321,12 @@ function partNeighbourMap(graph) {
     return map
 }
 
+function getPartFromLocation(location, parts) {
+    for (let part of parts) {
+        if (part.Location[0] == location[0] && part.Location[1] == location[1]) {
+            return part
+        }
+    }
+    console.warn("No part found for location")
+    return null
+}

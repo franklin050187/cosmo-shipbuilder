@@ -120,7 +120,6 @@ function redrawCanvas() {
 		}
 	}
 
-	updateShipStats();
 	draw_doors();
 	draw_resources();
 }

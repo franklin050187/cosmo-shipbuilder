@@ -561,3 +561,7 @@ const downTurrets = [
 	"cosmoteer.thruster_huge",
 	"cosmoteer.thruster_boost",
 ];
+const mergingParts = [
+	"cosmoteer.corridor",
+	"cosmoteer.conveyor"
+]

@@ -137,7 +137,6 @@ function generateShip() {
 
 	xhr.onload = () => {
 		if (xhr.status === 200) {
-			// console.log(xhr.responseText);
 			const ship_link = document.getElementById("ship_link");
 			const url = JSON.parse(xhr.responseText).url;
 			ship_link.href = url;
@@ -259,7 +258,8 @@ function loadJson() {
 	canvas.width = width;
 	canvas.height = height;
 
-    //redrawCanvas();
+    redrawCanvas();
+	updateShipStats();
 	updateNonVisuals()
 }
 
@@ -727,8 +727,6 @@ function resetSelectedSprites() {
 	updateSpriteSelection();
 }
 function remove_from_sprites(sprite_to_remove) {
-	// console.log(sprite_to_remove);
-	// console.log(gridMap)
 	const spriteToRemove = sprite_to_remove[0];
 	for (const sprite of sprites) {
 		// find the sprite in sprites and remove it
@@ -747,7 +745,6 @@ function remove_from_sprites(sprite_to_remove) {
 			gridMap[key].is_drawn_by_sprite.Location[0] === key_loc_x &&
 			gridMap[key].is_drawn_by_sprite.Location[1] === key_loc_y
 		) {
-			// console.log("found key" + key);
 			delete gridMap[key];
 		}
 	}
