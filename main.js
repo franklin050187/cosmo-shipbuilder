@@ -200,14 +200,18 @@ function export_json() {
 	document.getElementById("json_export").value = json;
 }
 
-function loadJson() {
+function loadJson(json) {
 	// Clear the sprite data
 	sprites = [];
 	shipdata = {};
 	doors = [];
 	resources = [];
 	part_toggles = [];
-	const json = json_import_text.value;
+	console.log(json)
+	if (typeof json !== 'string') {
+        json = json_import_text.value;
+    }
+	console.log(json)
 	const data = JSON.parse(json);
 	const part_data = Array.isArray(data.Parts) ? data.Parts : [];
 	const doordata = Array.isArray(data.Doors) ? data.Doors : [];
@@ -726,8 +730,11 @@ function resetSelectedSprites() {
 	selected_sprites = [];
 	updateSpriteSelection();
 }
+
 function remove_from_sprites(sprite_to_remove) {
 	const spriteToRemove = sprite_to_remove[0];
+
+	
 	for (const sprite of sprites) {
 		// find the sprite in sprites and remove it
 		// check id and location
@@ -736,7 +743,7 @@ function remove_from_sprites(sprite_to_remove) {
 			break;
 		}
 	}
-
+	ship_action_stack.push({type: "remove", objects: spriteToRemove})
 	// remove from key from gridmap
 	const key_loc_x = spriteToRemove.Location[0];
 	const key_loc_y = spriteToRemove.Location[1];

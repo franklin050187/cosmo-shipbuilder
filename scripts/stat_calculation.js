@@ -13,7 +13,6 @@ function getShipStats(ship) {
     stats.connection_graph_partition = getConnectedComponents(stats.connection_graph[0],stats.connection_graph[1])
     stats.walkable_connection_graph = getShipPartWalkableConnectionGraph(stats)
     stats.walkable_connection_graph_partition = getConnectedComponents(stats.walkable_connection_graph[0], stats.walkable_connection_graph[1])
-    console.log(stats.walkable_connection_graph_partition)
     stats.neighbour_map = partNeighbourMap(stats.connection_graph)
     stats.tag_map = getPartTagMap(stats)
     stats.weight = shipWeight(stats)
@@ -24,6 +23,7 @@ function getShipStats(ship) {
     stats.inertia = momentOfInertiaShip(stats)
     stats.hyperdrive_efficiency = getShipHyperdriveEfficiency(stats)
     stats.primary_weapon = getPrimaryWeaponID(stats)
+    console.log(stats)
     return stats
 } 
 
