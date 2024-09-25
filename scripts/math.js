@@ -27,6 +27,10 @@ function areCoordinatesAdjacent(pos1, pos2) {
     return false
 }
 
+function sameTile(location1, location2) {
+    return location1[0]==location2[0]&&location1[1]==location2[1]
+}
+
 function indexOfListMax(arr) {
     let maxIndex = 0;
     for (let i = 1; i < arr.length; i++) {

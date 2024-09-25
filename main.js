@@ -1,7 +1,3 @@
-const multiple_turrets = [
-	"cosmoteer.thruster_small_2way",
-	"cosmoteer.thruster_small_3way",
-];
 const cursor_mode = document.getElementsByName("cursor_mode");
 const json_import_text = document.getElementById("jsonInput");
 const load_json_button = document.getElementById("loadButton");
@@ -207,11 +203,9 @@ function loadJson(json) {
 	doors = [];
 	resources = [];
 	part_toggles = [];
-	console.log(json)
 	if (typeof json !== 'string') {
         json = json_import_text.value;
     }
-	console.log(json)
 	const data = JSON.parse(json);
 	const part_data = Array.isArray(data.Parts) ? data.Parts : [];
 	const doordata = Array.isArray(data.Doors) ? data.Doors : [];
@@ -391,16 +385,12 @@ function rotate_img(image, angle, flipx) {
 	return canvas;
 }
 
-function get_all_locations() {
-	const json = json_import_text.value;
-	const data = JSON.parse(json);
-	const part_data = data.Parts;
-
+function get_all_locations(sprites) {
 	const locations = [];
 	// let width;
 	// let height;
 
-	for (const sprite of part_data) {
+	for (const sprite of sprites) {
 		getSpriteTileLocations(sprite);
 		Array.prototype.push.apply(locations, sprite.Location);
 	}
@@ -524,21 +514,21 @@ function handleCanvasMouseMove(event) {
 	if (cursorMode === "Place") {
 		sprite_to_place = [];
 		if (!isPreviewSpriteLoaded) return;
-		const spriteDataPreview = {
+		const spriteDataPreview = [{
 			FlipX: false,
 			ID: document.getElementById("spriteSelect").value,
 			Location: [canvasPositionX, canvasPositionY],
 			Rotation: rotation,
-		};
+		}];
 
-		const [drawX, drawY] = sprite_position(spriteDataPreview, [
-			spriteDataPreview.Location[0],
-			spriteDataPreview.Location[1],
+		const [drawX, drawY] = sprite_position(spriteDataPreview[0], [
+			spriteDataPreview[0].Location[0],
+			spriteDataPreview[0].Location[1],
 		]);
 		const rotatedImage = rotate_img(
 			previewSpriteImage,
-			spriteDataPreview.Rotation,
-			spriteDataPreview.FlipX,
+			spriteDataPreview[0].Rotation,
+			spriteDataPreview[0].FlipX,
 		);
 
 		// Clear the previous preview sprite and redraw affected sprites
@@ -671,13 +661,13 @@ function handleSpriteSelectionChange() {
 function handleCanvasClick(event) {
 	// place sprite
 	if (cursorMode === "Place") {
-		place_sprite(sprite_to_place);
+		place_sprite(sprite_to_place[0]);
 		redrawCanvas();
 	}
 	// remove sprite
 	if (cursorMode === "Delete") {
 		if (sprite_delete_mode.length > 0) {
-			remove_from_sprites(sprite_delete_mode);
+			remove_multiple_from_sprites(sprite_delete_mode);
 			redrawCanvas();
 		}
 	}
@@ -685,7 +675,7 @@ function handleCanvasClick(event) {
 	if (cursorMode === "Move") {
 		document.getElementById("spriteSelect").value = sprite_delete_mode[0].ID;
 		rotation = sprite_delete_mode[0].Rotation;
-		remove_from_sprites(sprite_delete_mode);
+		remove_multiple_from_sprites(sprite_delete_mode);
 		redrawCanvas();
 		loadPreviewSpriteImage();
 		// isPreviewSpriteLoaded = false;
@@ -712,8 +702,13 @@ function place_sprite(sprite_to_place) {
 		);
 		doors.push(string);
 	} else {
+		overlaps = overlappingParts(sprite_to_place, sprites)
+		if (overlaps.length>0) {
+			remove_multiple_from_sprites(overlaps)
+		}
 		sprites.push(sprite_to_place);
 	}
+	console.log(sprites)
 }
 
 function select_sprite(sprite_to_select) {
@@ -731,8 +726,14 @@ function resetSelectedSprites() {
 	updateSpriteSelection();
 }
 
+function remove_multiple_from_sprites(sprites_to_remove) {
+	for (let sprite of sprites_to_remove) {
+		remove_from_sprites(sprite)
+	}
+}
+
 function remove_from_sprites(sprite_to_remove) {
-	const spriteToRemove = sprite_to_remove[0];
+	const spriteToRemove = sprite_to_remove;
 
 	
 	for (const sprite of sprites) {
@@ -785,9 +786,9 @@ function findSprite(x, y) {
 }
 
 function getSpriteTileLocations(sprite) {
-	const sprite_size =
-		spriteData[sprite.ID].sprite_size || spriteData[sprite.ID].size;
+	const sprite_size = spriteData[sprite.ID].size || spriteData[sprite.ID].size;
 	const locations = [];
+	console.log(sprite)
 
 	if (sprite.Rotation % 2 === 0) {
 		width = sprite_size[0];
@@ -802,6 +803,7 @@ function getSpriteTileLocations(sprite) {
 			locations.push([sprite.Location[0] + i, sprite.Location[1] + j]);
 		}
 	}
+	console.log(sprite_size)
 	return locations;
 }
 
@@ -845,4 +847,19 @@ function isSameToggleType(toggle1, toggle2) {
 
 function toggleBelongsToSprite(toggle, sprite) {
 	return isSameSprite(toggle.Key[0], sprite);
+}
+
+function overlappingParts(part, parts) {
+	let overlapping_parts = []
+	for (let part2 of parts) {
+		for (let location1 of getSpriteTileLocations(part)) {
+			console.log(location1)
+			for (let location2 of getSpriteTileLocations(part2)) {
+				if (sameTile(location1, location2)) {
+					overlapping_parts.push(part2)
+				}
+			}
+		}
+	} 
+	return overlapping_parts
 }

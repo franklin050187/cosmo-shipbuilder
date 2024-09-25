@@ -4,3 +4,12 @@
 
 let ship_action_stack = []
 
+function inverseAction(action) {
+    if (action.type === "add_part") {
+        action.type = "remove_part"
+    }
+    if (action.type === "remove_part") {
+        action.type = "add_part"
+    }
+    return action
+}

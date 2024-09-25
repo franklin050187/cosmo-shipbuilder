@@ -239,7 +239,6 @@ function getTileHyperdriveEfficiency(stats, part) {
 
 function partCenter(part) {
     let size = spriteData[part["ID"]].size
-    let location = part.Location
     return [part.Location[0] + size[0]/2, part.Location[1] + size[1]/2]
 }
 

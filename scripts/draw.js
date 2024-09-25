@@ -2,8 +2,10 @@
 
 let spritesDrawn = new Set(); // used in draw function
 
-function draw_resources() {
-	const json = json_import_text.value;
+function draw_resources(json = JSON.stringify(startup_ship_data)) {
+	if (typeof json !== 'string') {
+        json = json_import_text.value;
+    }
 	const data = JSON.parse(json);
 	const part_data = data.Parts;
 
@@ -11,7 +13,7 @@ function draw_resources() {
 		return;
 	}
 
-	for (const location of get_all_locations()) {
+	for (const location of get_all_locations(sprites)) {
 		for (const resource of resources) {
 			if (location[0] === resource.Key[0] && location[1] === resource.Key[1]) {
 				const imageName = resource.Value;
