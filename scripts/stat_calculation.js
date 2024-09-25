@@ -23,7 +23,6 @@ function getShipStats(ship) {
     stats.inertia = momentOfInertiaShip(stats)
     stats.hyperdrive_efficiency = getShipHyperdriveEfficiency(stats)
     stats.primary_weapon = getPrimaryWeaponID(stats)
-    console.log(stats)
     return stats
 } 
 

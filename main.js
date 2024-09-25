@@ -661,7 +661,7 @@ function handleSpriteSelectionChange() {
 function handleCanvasClick(event) {
 	// place sprite
 	if (cursorMode === "Place") {
-		place_sprite(sprite_to_place[0]);
+		place_sprites(sprite_to_place);
 		redrawCanvas();
 	}
 	// remove sprite
@@ -694,19 +694,22 @@ function handleCanvasClick(event) {
 	}
 }
 
-function place_sprite(sprite_to_place) {
-	const location = sprite_to_place.Location;
-	if (sprite_to_place.ID === "cosmoteer.door") {
-		const string = JSON.parse(
-			`{"Cell": [${location}], "ID": "cosmoteer.door", "Orientation": ${(sprite_to_place.Rotation + 1) % 2}}`,
-		);
-		doors.push(string);
-	} else {
-		overlaps = overlappingParts(sprite_to_place, sprites)
-		if (overlaps.length>0) {
-			remove_multiple_from_sprites(overlaps)
+function place_sprites(sprites_to_place) {
+	for (let sprite of sprites_to_place){
+		const location = sprite.Location;
+		if (sprite.ID === "cosmoteer.door") {
+			const string = JSON.parse(
+				`{"Cell": [${location}], "ID": "cosmoteer.door", "Orientation": ${(sprite.Rotation + 1) % 2}}`,
+			);
+			doors.push(string);
+		} else {
+			overlaps = overlappingParts(sprite, sprites)
+			if (overlaps.length>0) {
+				remove_multiple_from_sprites(overlaps)
+			}
+			sprites.push(sprite);
+			addActionToHistory("add_parts", [sprite])
 		}
-		sprites.push(sprite_to_place);
 	}
 }
 
@@ -729,6 +732,7 @@ function remove_multiple_from_sprites(sprites_to_remove) {
 	for (let sprite of sprites_to_remove) {
 		remove_from_sprites(sprite)
 	}
+	addActionToHistory("remove_parts", sprites_to_remove)
 }
 
 function remove_from_sprites(sprite_to_remove) {
@@ -743,7 +747,6 @@ function remove_from_sprites(sprite_to_remove) {
 			break;
 		}
 	}
-	ship_action_stack.push({type: "remove", objects: spriteToRemove})
 	// remove from key from gridmap
 	const key_loc_x = spriteToRemove.Location[0];
 	const key_loc_y = spriteToRemove.Location[1];
@@ -758,7 +761,6 @@ function remove_from_sprites(sprite_to_remove) {
 }
 
 function removeDoor(location) {
-	console.log(doors)
 	for (let i=0; i<doors.length;i++) {
 		if (sameTile(doors[i].Cell, location)) {
 			doors.splice(i,1)
