@@ -669,7 +669,7 @@ function handleCanvasClick(event) {
 		if (sprite_delete_mode.length > 0) {
 			remove_multiple_from_sprites(sprite_delete_mode);
 			redrawCanvas();
-		}
+		} 
 	}
 	// move sprite
 	if (cursorMode === "Move") {
@@ -708,7 +708,6 @@ function place_sprite(sprite_to_place) {
 		}
 		sprites.push(sprite_to_place);
 	}
-	console.log(sprites)
 }
 
 function select_sprite(sprite_to_select) {
@@ -758,11 +757,27 @@ function remove_from_sprites(sprite_to_remove) {
 	}
 }
 
+function removeDoor(location) {
+	console.log(doors)
+	for (let i=0; i<doors.length;i++) {
+		if (sameTile(doors[i].Cell, location)) {
+			doors.splice(i,1)
+		}
+	}
+}
+
 function handleRightClick(event) {
 	event.preventDefault();
-	rotation = (rotation + 1) % 4;
-	resetSelectedSprites();
-	handleCanvasMouseMove(event); // Update the preview with new rotation
+	let pos = mousePos(event)
+	if (cursorMode === "Select") {
+		rotation = (rotation + 1) % 4;
+		resetSelectedSprites();
+		handleCanvasMouseMove(event); // Update the preview with new rotation
+	}
+	else if (cursorMode === "Delete") {
+		removeDoor(pos);
+		redrawCanvas();
+	}
 }
 
 function clearPreviewSprite() {
@@ -788,7 +803,6 @@ function findSprite(x, y) {
 function getSpriteTileLocations(sprite) {
 	const sprite_size = spriteData[sprite.ID].size || spriteData[sprite.ID].size;
 	const locations = [];
-	console.log(sprite)
 
 	if (sprite.Rotation % 2 === 0) {
 		width = sprite_size[0];
@@ -803,7 +817,6 @@ function getSpriteTileLocations(sprite) {
 			locations.push([sprite.Location[0] + i, sprite.Location[1] + j]);
 		}
 	}
-	console.log(sprite_size)
 	return locations;
 }
 
@@ -853,7 +866,6 @@ function overlappingParts(part, parts) {
 	let overlapping_parts = []
 	for (let part2 of parts) {
 		for (let location1 of getSpriteTileLocations(part)) {
-			console.log(location1)
 			for (let location2 of getSpriteTileLocations(part2)) {
 				if (sameTile(location1, location2)) {
 					overlapping_parts.push(part2)
