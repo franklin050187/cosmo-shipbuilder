@@ -108,20 +108,101 @@ function redrawCanvas() {
 				sprite.Location[0],
 				sprite.Location[1],
 			]);
+			let canvasLocation = convertCoordinatesToCanvas(x,y)
 			const rotatedImage = rotate_img(img, sprite.Rotation, sprite.FlipX);
 			ctx.drawImage(
 				rotatedImage,
-				(x - minX) * gridSize + 1,
-				(y - minY) * gridSize + 1,
+				location[0],
+				location[1],
 				rotatedImage.width - 2,
 				rotatedImage.height - 2,
 			);
+			drawPartIndicators(sprite, canvasLocation[0],canvasLocation[1])
 			sprite.width = rotatedImage.width;
 			sprite.height = rotatedImage.height;
 			square_map(sprite);
 		}
 	}
 
+	console.log("redraw")
+
 	draw_doors();
 	draw_resources();
 }
+
+function clearPreview() {
+	ctx.clearRect(lastDrawX, lastDrawY, lastWidth, lastHeight);
+
+	// Redraw the sprites that were overwritten by the preview sprite
+	for (const key of affectedSquares) {
+		if (gridMap[key]) {
+			const sprite = gridMap[key].is_drawn_by_sprite;
+			const imageName = sprite.ID.replace("cosmoteer.", "");
+			const img = new Image();
+
+			const partData = getPartDataMap(sprite);
+			const missileType = partData.get("missile_type");
+			if (missileType === 2) {
+				img.src = "sprites/nuke_launcher.png";
+			} else if (missileType === 1) {
+				img.src = "sprites/emp_launcher.png";
+			} else if (missileType === 3) {
+				img.src = "sprites/mine_launcher.png";
+			} else {
+				img.src = `sprites/${imageName}.png`;
+			}
+
+			img.onload = () => {
+				const [x, y] = sprite_position(sprite, [
+					sprite.Location[0],
+					sprite.Location[1],
+				]);
+				const rotatedImage = rotate_img(img, sprite.Rotation, sprite.FlipX);
+				ctx.clearRect(
+					(x - minX) * gridSize + 1,
+					(y - minY) * gridSize + 1,
+					rotatedImage.width - 2,
+					rotatedImage.height - 2,
+				);
+				ctx.drawImage(
+					rotatedImage,
+					(x - minX) * gridSize + 1,
+					(y - minY) * gridSize + 1,
+					rotatedImage.width - 2,
+					rotatedImage.height - 2,
+				);
+			};
+		}
+	}
+}
+
+function drawPartIndicators(part, x, y) {
+	const canvas = document.getElementById("spriteCanvas");
+	const ctx = canvas.getContext("2d");
+	ctx.fillStyle = "red";
+	ctx.fillRect(x, y, 100, 100);
+	if (part.ID == "cosmoteer.ion_beam_prism") {
+		ctx.fillStyle = "green";
+		ctx.fillRect(x, y, 100, 100);
+	}
+
+}
+
+
+function convertCoordinatesToCanvas(x,y) {
+	return [(x - minX) * gridSize + 1, (y - minY) * gridSize + 1]	
+}
+
+function drawPreview(spriteDataPreview, drawX, drawY, rotatedImage) {
+	ctx.globalAlpha = 0.5;
+	ctx.drawImage(
+		rotatedImage,
+		drawX,
+		drawY,
+		rotatedImage.width - 2,
+		rotatedImage.height - 2,
+	);
+	ctx.globalAlpha = 1.0;
+}
+
+
