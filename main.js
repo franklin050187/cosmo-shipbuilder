@@ -460,6 +460,7 @@ function loadPreviewSpriteImage() {
 
 function handleCanvasMouseMove(event) {
 	// fix position for flexbox
+	redrawCanvas();
 	const rect = canvas.getBoundingClientRect();
 
 	// Calculate scaling factors between the canvas's original size and its displayed size
@@ -608,7 +609,7 @@ function handleCanvasClick(event) {
 	// place sprite
 	if (cursorMode === "Place") {
 		place_sprites(sprite_to_place);
-		redrawCanvas();
+		//redrawCanvas();
 	}
 	// remove sprite
 	if (cursorMode === "Delete") {
@@ -649,6 +650,7 @@ function place_sprites(sprites_to_place) {
 			);
 			doors.push(string);
 		} else {
+			console.log(sprites)
 			overlaps = overlappingParts(sprite, sprites)
 			if (overlaps.length>0) {
 				remove_multiple_from_sprites(overlaps)

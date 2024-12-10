@@ -129,14 +129,15 @@ function redrawCanvas() {
 			sprite.height = rotatedImage.height;
 			square_map(sprite);
 		}
-		for (let sprite of sprites) {
-			const [x, y] = sprite_position(sprite, [
-				sprite.Location[0],
-				sprite.Location[1],
-			]);
-			let canvasLocation = convertCoordinatesToCanvas(x,y)
-			drawPartIndicators(sprite, canvasLocation[0],canvasLocation[1])
-		}
+	}
+
+	for (let sprite of sprites) {
+		const [x, y] = sprite_position(sprite, [
+			sprite.Location[0],
+			sprite.Location[1],
+		]);
+		let canvasLocation = convertCoordinatesToCanvas(x,y)
+		drawPartIndicators(sprite, canvasLocation[0],canvasLocation[1])
 	}
 
 	draw_doors();
