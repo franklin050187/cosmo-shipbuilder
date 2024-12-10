@@ -1,4 +1,10 @@
-//This file is are all functions related to drawing on the canvas
+//This file contains all functions related to drawing on the canvas
+
+const canvas = document.getElementById("spriteCanvas");
+const drawing_canvas = document.getElementById("drawingCanvas");
+const resource_canvas = document.getElementById("resourceCanvas");
+const preview_canvas = document.getElementById("previewCanvas");
+const ctx = canvas.getContext("2d");
 
 let spritesDrawn = new Set(); // used in draw function
 
@@ -69,6 +75,9 @@ function draw_doors() {
 function redrawCanvas() {
 	const newSprites = sprites.filter((sprite) => !spritesDrawn.has(sprite));
 	const oldSprites = Array.from(spritesDrawn);
+	const canvas = document.getElementById("drawingCanvas");
+	canvas.getContext("2d").clearRect(0, 0, canvas.width, canvas.height);
+
 	spritesDrawn = new Set(sprites);
 	// Clear old sprites
 	for (const sprite of oldSprites) {
@@ -108,7 +117,6 @@ function redrawCanvas() {
 				sprite.Location[0],
 				sprite.Location[1],
 			]);
-			let canvasLocation = convertCoordinatesToCanvas(x,y)
 			const rotatedImage = rotate_img(img, sprite.Rotation, sprite.FlipX);
 			ctx.drawImage(
 				rotatedImage,
@@ -117,14 +125,19 @@ function redrawCanvas() {
 				rotatedImage.width - 2,
 				rotatedImage.height - 2,
 			);
-			drawPartIndicators(sprite, canvasLocation[0],canvasLocation[1])
 			sprite.width = rotatedImage.width;
 			sprite.height = rotatedImage.height;
 			square_map(sprite);
 		}
+		for (let sprite of sprites) {
+			const [x, y] = sprite_position(sprite, [
+				sprite.Location[0],
+				sprite.Location[1],
+			]);
+			let canvasLocation = convertCoordinatesToCanvas(x,y)
+			drawPartIndicators(sprite, canvasLocation[0],canvasLocation[1])
+		}
 	}
-
-	console.log("redraw")
 
 	draw_doors();
 	draw_resources();
@@ -174,13 +187,14 @@ function clearPreview() {
 			};
 		}
 	}
+
 }
 
 function drawPartIndicators(part, x, y) {
-	const canvas = document.getElementById("spriteCanvas");
+	const canvas = document.getElementById("drawingCanvas");
 	const ctx = canvas.getContext("2d");
 	ctx.fillStyle = "red";
-	ctx.fillRect(x, y, 100, 100);
+	ctx.fillRect(x, y, 10, 10);
 	if (part.ID == "cosmoteer.ion_beam_prism") {
 		ctx.fillStyle = "green";
 		ctx.fillRect(x, y, 100, 100);
@@ -188,12 +202,14 @@ function drawPartIndicators(part, x, y) {
 
 }
 
-
 function convertCoordinatesToCanvas(x,y) {
 	return [(x - minX) * gridSize + 1, (y - minY) * gridSize + 1]	
 }
 
 function drawPreview(spriteDataPreview, drawX, drawY, rotatedImage) {
+	const canvas = document.getElementById("previewCanvas");
+	const ctx = canvas.getContext("2d");
+	ctx.clearRect(0, 0, canvas.width, canvas.height);
 	ctx.globalAlpha = 0.5;
 	ctx.drawImage(
 		rotatedImage,

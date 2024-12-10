@@ -7,8 +7,6 @@ const shiplink = document.getElementById("ship_link");
 const generate_ship = document.getElementById("post_json");
 generate_ship.addEventListener("click", generateShip);
 
-const canvas = document.getElementById("spriteCanvas");
-const ctx = canvas.getContext("2d");
 const gridSize = 64; // Size of each grid cell
 const spriteSelect = document.getElementById("spriteSelect");
 const spriteNames = Object.keys(spriteData).sort();
@@ -255,6 +253,12 @@ function loadJson(json) {
 	const height = (maxY - minY + 1) * gridSize;
 	canvas.width = width;
 	canvas.height = height;
+	resource_canvas.width = width;
+	resource_canvas.height = height;
+	drawing_canvas.width = width;
+	drawing_canvas.height = height;
+	preview_canvas.width = width;
+	preview_canvas.height = height;
 
     redrawCanvas();
 	updateShipStats();
@@ -456,7 +460,6 @@ function loadPreviewSpriteImage() {
 
 function handleCanvasMouseMove(event) {
 	// fix position for flexbox
-	const canvas = document.getElementById("spriteCanvas");
 	const rect = canvas.getBoundingClientRect();
 
 	// Calculate scaling factors between the canvas's original size and its displayed size
@@ -714,7 +717,7 @@ function removeDoor(location) {
 function handleRightClick(event) {
 	event.preventDefault();
 	let pos = mousePos(event)
-	if (cursorMode === "Select") {
+	if (cursorMode === "Place") {
 		rotation = (rotation + 1) % 4;
 		resetSelectedSprites();
 		handleCanvasMouseMove(event); // Update the preview with new rotation
@@ -766,7 +769,6 @@ function getSpriteTileLocations(sprite) {
 }
 
 function mousePos(event) {
-	const canvas = document.getElementById("spriteCanvas");
 	const rect = canvas.getBoundingClientRect();
 
 	// Calculate scaling factors between the canvas's original size and its displayed size
