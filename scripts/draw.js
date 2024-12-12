@@ -143,53 +143,6 @@ function redrawCanvas() {
 	draw_resources();
 }
 
-function clearPreview() {
-	ctx.clearRect(lastDrawX, lastDrawY, lastWidth, lastHeight);
-
-	// Redraw the sprites that were overwritten by the preview sprite
-	for (const key of affectedSquares) {
-		if (gridMap[key]) {
-			const sprite = gridMap[key].is_drawn_by_sprite;
-			const imageName = sprite.ID.replace("cosmoteer.", "");
-			const img = new Image();
-
-			const partData = getPartDataMap(sprite);
-			const missileType = partData.get("missile_type");
-			if (missileType === 2) {
-				img.src = "sprites/nuke_launcher.png";
-			} else if (missileType === 1) {
-				img.src = "sprites/emp_launcher.png";
-			} else if (missileType === 3) {
-				img.src = "sprites/mine_launcher.png";
-			} else {
-				img.src = `sprites/${imageName}.png`;
-			}
-
-			img.onload = () => {
-				const [x, y] = sprite_position(sprite, [
-					sprite.Location[0],
-					sprite.Location[1],
-				]);
-				const rotatedImage = rotate_img(img, sprite.Rotation, sprite.FlipX);
-				ctx.clearRect(
-					(x - minX) * gridSize + 1,
-					(y - minY) * gridSize + 1,
-					rotatedImage.width - 2,
-					rotatedImage.height - 2,
-				);
-				ctx.drawImage(
-					rotatedImage,
-					(x - minX) * gridSize + 1,
-					(y - minY) * gridSize + 1,
-					rotatedImage.width - 2,
-					rotatedImage.height - 2,
-				);
-			};
-		}
-	}
-
-}
-
 function drawPartIndicators(part, x, y) {
 	const canvas = document.getElementById("drawingCanvas");
 	const ctx = canvas.getContext("2d");
@@ -239,7 +192,6 @@ function partSprite(part) {
 
 function drawPreview(inputparts) {
 	const parts = repositionPartsRalative(inputparts)
-	console.log(parts)
 	const canvas = document.getElementById("previewCanvas");
 	const ctx = canvas.getContext("2d");
 	ctx.clearRect(0, 0, canvas.width, canvas.height);

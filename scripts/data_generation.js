@@ -2,17 +2,17 @@ function generatePart(id, location=[0,0], rotation=0, flipX=false) {
     return {
         FlipX: flipX,
         ID: id,
-        Location: location,
+        Location: [...location],
         Rotation: rotation,
     }
 }
 
 function partCopy(part) {
-    return generatePart(part.ID, part.Location, part.Rotation, part.FlipX)
+    return generatePart(part.ID, [...part.Location], part.Rotation, part.FlipX)
 }
 
 function partsCopy(parts) {
-    list = []
+    let list = []
     for (let part of parts) {
         list.push(partCopy(part))
     }

@@ -13,6 +13,12 @@ document.addEventListener("keydown", function(event) {
 });
 
 document.addEventListener("keydown", function(event) {
+    if (event.ctrlKey && event.key === "c") {
+        copy()
+    }
+});
+
+document.addEventListener("keydown", function(event) {
     if (event.ctrlKey && event.key === "v") {
         paste()
     }
@@ -26,12 +32,16 @@ function undo() {
 }
 
 function cut() {
-    action = {type: "remove_parts", objects: selected_sprites}
+    copy()
+    action = {type: "remove_parts", objects: global_selected_sprites}
     excecuteAction(action)
     ship_action_history.push(action)
 }
 
+function copy() {}
+
 function paste() {
-    global_sprites_to_place = selected_sprites 
+    global_sprites_to_place = absoluteToRalativePartCoordinates(partsCopy(global_selected_sprites))
+    console.log(global_selected_sprites)
     ChangeCursorMode("Place")
 }

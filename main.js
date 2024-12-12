@@ -4,7 +4,7 @@ const gridMap = {}; // To store the grid map
 let affectedSquares = []; // To store the affected squares
 let sprite_delete_mode = []; // To store the sprite delete mode
 let global_sprites_to_place = [generatePart("cosmoteer.airlock")]; // To store the sprites to place
-let selected_sprites = [];
+let global_selected_sprites = [];
 let sprites = []; // To store the sprites
 let all_ship_stats = []
 let minX = 0;
@@ -197,7 +197,7 @@ function loadJson(json) {
 function applyProperty() {
 	new_value = property_edit.value;
 
-	for (sprite of selected_sprites) {
+	for (sprite of global_selected_sprites) {
 		for (toggle of part_toggles) {
 			if (
 				isSameToggleType(toggle, JSON.parse(property_select.value)) &&
@@ -223,7 +223,7 @@ function applyShipProperty() {
 function applyProperty() {
     new_value = property_edit.value;
 
-    for (sprite of selected_sprites) {
+    for (sprite of global_selected_sprites) {
         for (toggle of part_toggles) {
             if (isSameToggleType(toggle, JSON.parse(property_select.value)) && toggleBelongsToSprite(toggle, sprite)) {
                 toggle.Value = new_value;
@@ -360,33 +360,12 @@ function loadPreviewSpriteImage() {
 function handleCanvasMouseMove(event) {
 	// fix position for flexbox
 	redrawCanvas();
-	const rect = canvas.getBoundingClientRect();
 
-	// Calculate scaling factors between the canvas's original size and its displayed size
-	const scaleX = canvas.width / rect.width;
-	const scaleY = canvas.height / rect.height;
-
-	// Calculate mouse position relative to the canvas, taking into account the scaling
-	const x = (event.clientX - rect.left) * scaleX;
-	const y = (event.clientY - rect.top) * scaleY;
-	const mouseX = Math.floor(x / gridSize) * gridSize;
-	const mouseY = Math.floor(y / gridSize) * gridSize;
-	const canvasPositionX = mouseX / gridSize + minX;
-	const canvasPositionY = mouseY / gridSize + minY;
-
-	// update if square location changes
-	if (
-		lastX === canvasPositionX &&
-		lastY === canvasPositionY 
-	) {
-		return;
-	}
+	let [canvasPositionX, canvasPositionY] = convertCanvasToCoordinates(event.clientX, event.clientY)
 
 	updateCoordinates(canvasPositionX, canvasPositionY);
 
 	if (cursorMode === "Delete") {
-		// clear preview sprite
-		clearPreview();
 		// Store affected grid squares
 		affectedSquares = [];
 		const width = 1;
@@ -509,12 +488,14 @@ function handleRightClick(event) {
 	} else if (cursorMode === "Delete") {
 		removeDoor(pos);
 		redrawCanvas();
+	} else if (cursorMode === "Select") {
+		global_selected_sprites = []
+		updateSpriteSelection()
 	} 
 }
 
 //Places the first sprites with absolute coordinates and the ones after with relative ones
 function place_sprites(sprites_to_place) {
-	console.log(sprites_to_place)
 	let repositioned_sprites = repositionPartsRalative(sprites_to_place)
 	toggle = true
 	for (let sprite of repositioned_sprites){
@@ -537,12 +518,12 @@ function place_sprites(sprites_to_place) {
 }
 
 function select_sprite(sprite_to_select) {
-	for (let sprite of selected_sprites) {
+	for (let sprite of global_selected_sprites) {
 		if (isSameSprite(sprite, sprite_to_select)) {
 			return;
 		}
 	}
-	selected_sprites.push(sprite_to_select);
+	global_selected_sprites.push(sprite_to_select);
 	updateSpriteSelection();
 }
 
@@ -692,3 +673,20 @@ function repositionPartsRalative(parts) { //Uses the first part as reference and
 	return new_parts
 }
 
+function absoluteToRalativePartCoordinates(parts) { //Uses the first part as reference and places all following parts interpreting thir location as being ralative to the first parts location
+	let base = [0,0]
+	toggle = true
+	let new_parts = []
+	for (let part of parts){
+		let new_part = partCopy(part)
+		if (toggle) {
+			base = parts[0].Location
+			toggle = false
+		} else {
+			new_part.Location[0] = part.Location[0]-base[0]
+			new_part.Location[1] = part.Location[1]-base[0]
+		}
+		new_parts.push(new_part)
+	}
+	return new_parts
+}

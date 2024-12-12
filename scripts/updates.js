@@ -64,7 +64,7 @@ function updateSpriteSelection() {
 
 	property_select.innerHTML = ""; //Update Selection
 
-	for (sprite of selected_sprites) {
+	for (sprite of global_selected_sprites) {
 		document.getElementById("selected_parts").innerText += `${sprite.ID}, `;
 		for (const toggle of getPartData(sprite)) {
 			for (const old_toggle of old_toggles) {
