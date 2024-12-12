@@ -27,18 +27,11 @@ function addActionToHistory(type_in, objects_in) {
 function excecuteAction(action) {
     switch (action.type) {
         case ("add_parts"): 
-        place_sprites(action.objects)
+            place_sprites(action.objects)
         break
         case ("remove_parts"): 
-        remove_multiple_from_sprites(action.objects)
+            remove_multiple_from_sprites(action.objects)
         break
-    }
-}
-
-function undo() {
-    if (ship_action_history_depth <= ship_action_history.length && ship_action_history.length>0) {
-        ship_action_history_depth == ship_action_history_depth - 1
-        excecuteAction(inverseAction(getCurrentLastAction()))
     }
 }
 

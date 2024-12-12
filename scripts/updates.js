@@ -64,9 +64,9 @@ function updateSpriteSelection() {
 
 	property_select.innerHTML = ""; //Update Selection
 
-	for (sprites of selected_sprites) {
-		document.getElementById("selected_parts").innerText += `${sprites.ID}, `;
-		for (const toggle of getPartData(sprites)) {
+	for (sprite of selected_sprites) {
+		document.getElementById("selected_parts").innerText += `${sprite.ID}, `;
+		for (const toggle of getPartData(sprite)) {
 			for (const old_toggle of old_toggles) {
 				if (isSameToggleType(old_toggle, toggle)) {
 					include_toggle = false;
