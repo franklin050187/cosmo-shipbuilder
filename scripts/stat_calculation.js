@@ -33,7 +33,7 @@ function getShipCost(stats, id = null, category = null) {
         sum += spriteData[sprite["ID"]].cost;
     }
     //extra costs from loaded missiles
-    for (toggle of part_toggles) {
+    for (toggle of global_part_properties) {
         if (toggle.Key[1] == "missile_type") {
             if (toggle.Value == 0) {
                 sum += 0.096;
@@ -281,7 +281,7 @@ function getPartTagMap(stats) {
     }
     for (let i=0;i<stats.parts.length;i++) {
         let thruster = stats.parts[i]
-        if (spriteData[thruster.ID].category === "thruster") {
+        if (spriteData[thruster.ID].tags.includes("thruster")) {
             let neighbours= getElementFromPartMap(thruster, stats.neighbour_map)
             for (let neighbour of neighbours) {
                 if (neighbour.ID === "cosmoteer.engine_room") {
@@ -328,3 +328,5 @@ function getPartFromLocation(location, parts) {
     console.warn("No part found for location")
     return null
 }
+
+

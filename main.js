@@ -5,6 +5,7 @@ let affectedSquares = []; // To store the affected squares
 let sprite_delete_mode = []; // To store the sprite delete mode
 let global_sprites_to_place = [generatePart("cosmoteer.airlock")]; // To store the sprites to place
 let global_selected_sprites = [];
+let global_toggles_to_add = []
 let sprites = []; // To store the sprites
 let all_ship_stats = []
 let minX = 0;
@@ -20,7 +21,7 @@ let lastHeight = 0; // Last preview sprite size
 let cursorMode = "Place"; // Initial cursor mode
 let doors = []; // To store the doors
 let resources = []; // To store the resources
-let part_toggles = [];
+let global_part_properties = [];
 const spriteCache = {};
 const previewSpriteImage = new Image();
 
@@ -109,7 +110,7 @@ function export_json() {
 	shipdata.Doors = doors;
 	shipdata.NewFlexResourceGridTypes = resources;
 	shipdata.Parts = new_parts;
-	shipdata.PartUIToggleStates = part_toggles;
+	shipdata.PartUIToggleStates = global_part_properties;
 
 	for ([key, value] of getShipDataMap()) {
 		shipdata[key] = value;
@@ -129,7 +130,7 @@ function loadJson(json) {
 	shipdata = {};
 	doors = [];
 	resources = [];
-	part_toggles = [];
+	global_part_properties = [];
 	if (typeof json !== 'string') {
         json = json_import_text.value;
     }
@@ -168,7 +169,7 @@ function loadJson(json) {
 	}
 
 	for (const toggle of partUIToggleStates) {
-		part_toggles.push(toggle);
+		global_part_properties.push(toggle);
 	}
 
 	// Extend the grid by 10 squares in each direction
@@ -194,23 +195,6 @@ function loadJson(json) {
 	updateNonVisuals()
 }
 
-function applyProperty() {
-	new_value = property_edit.value;
-
-	for (sprite of global_selected_sprites) {
-		for (toggle of part_toggles) {
-			if (
-				isSameToggleType(toggle, JSON.parse(property_select.value)) &&
-				toggleBelongsToSprite(toggle, sprite)
-			) {
-				toggle.Value = new_value;
-			}
-		}
-	}
-
-	redrawCanvas();
-}
-
 function applyShipProperty() {
 	const new_value = ship_property_edit.value;
 	const toggle =
@@ -221,16 +205,15 @@ function applyShipProperty() {
 }
 
 function applyProperty() {
-    new_value = property_edit.value;
-
-    for (sprite of global_selected_sprites) {
-        for (toggle of part_toggles) {
+    new_value = parseInt(property_edit.value);
+	console.log(global_part_properties)
+    for (let sprite of global_selected_sprites) {
+        for (toggle of global_part_properties) {
             if (isSameToggleType(toggle, JSON.parse(property_select.value)) && toggleBelongsToSprite(toggle, sprite)) {
                 toggle.Value = new_value;
             }
         }
     }
-
     redrawCanvas()
 }
 
@@ -512,8 +495,11 @@ function place_sprites(sprites_to_place) {
 			}
 			sprites.push(sprite);
 			addActionToHistory("add_parts", [sprite])
+			let prop = generatePropertiesForPart(sprite)
+			global_part_properties.push(...prop)
 		}
 	}
+	console.log(global_part_properties)
 	global_sprites_to_place = [generatePart(document.getElementById("spriteSelect").value)]
 }
 
