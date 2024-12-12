@@ -26,7 +26,6 @@ const apply_ship_property_button = document.getElementById(
 	"applyShipPropertyButton",
 );
 
-const previewSpriteImage = new Image();
 const previewSprite = document.createElement("img");
 const ship_stats_label = document.getElementById("shipStatsLabel");
 const coordinates_label = document.getElementById("coord_on_canvas");

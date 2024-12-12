@@ -225,8 +225,21 @@ function convertCanvasToCoordinates(canvasX, canvasY) {
     return result;
 }
 
+function partSprite(part) {
+	const selectedSprite = part.ID;
+	const imageName = selectedSprite.replace("cosmoteer.", "");
+	let image = new Image();
+	image.src = `sprites/${imageName}.png`;
+
+	image.onload = () => {
+		isPreviewSpriteLoaded = true;
+	};
+	return image
+}
+
 function drawPreview(inputparts) {
 	const parts = repositionPartsRalative(inputparts)
+	console.log(parts)
 	const canvas = document.getElementById("previewCanvas");
 	const ctx = canvas.getContext("2d");
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -235,7 +248,7 @@ function drawPreview(inputparts) {
 	for (let part of parts) {
 		let [x,y] = convertCoordinatesToCanvas(part.Location[0],part.Location[1])
 		const rotatedImage = rotate_img(
-			previewSpriteImage,
+			partSprite(part),
 			part.Rotation,
 			part.FlipX,
 		);

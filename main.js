@@ -22,6 +22,7 @@ let doors = []; // To store the doors
 let resources = []; // To store the resources
 let part_toggles = [];
 const spriteCache = {};
+const previewSpriteImage = new Image();
 
 function generateShip() {
 	// send post request to generate ship
