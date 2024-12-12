@@ -248,13 +248,13 @@ function getAllWeaponPartGroups(statsin) {
     for (let part of parts) {
         bool = true
         for (let i = 0;i<parts_out.length;i++) {
+            list = parts_out[i]
             if (list[0] == part.ID) {
-                parts_out[i].push(part)
+                list[i].push(part)
                 bool = false
-            } 
-        }
-        if (bool) {
-            parts_out.push([part.ID, part])
+            } else if (bool) {
+                parts_out.push([part.ID, part])
+            }
         }
     }
     return parts_out
