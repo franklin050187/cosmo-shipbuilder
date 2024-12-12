@@ -19,12 +19,18 @@ for (const spriteName of spriteNames) {
 const property_select = document.getElementById("propertySelect");
 const property_edit = document.getElementById("propertyEdit");
 const apply_property_button = document.getElementById("applyPropertyButton");
+const recalculate_stats_button = document.getElementById("reCalculateButton");
+const mirror_select = document.getElementById("mirrorSelect");
+for (const spriteName of ["vertical"]) {
+	const option = document.createElement("option");
+	option.value = spriteName;
+	option.textContent = spriteName;
+	mirror_select.appendChild(option);
+}
 
 const ship_property_select = document.getElementById("shipPropertySelect");
 const ship_property_edit = document.getElementById("shipPropertyEdit");
-const apply_ship_property_button = document.getElementById(
-	"applyShipPropertyButton",
-);
+const apply_ship_property_button = document.getElementById("applyShipPropertyButton");
 
 const previewSprite = document.createElement("img");
 const ship_stats_label = document.getElementById("shipStatsLabel");
@@ -57,20 +63,17 @@ document.addEventListener("DOMContentLoaded", () => {
 	spriteSelect.addEventListener("click", applyProperty);
 	loadB64Button.addEventListener("click", get_json);
 	apply_ship_property_button.addEventListener("click", applyShipProperty);
+	recalculate_stats_button.addEventListener("click", handleRecalculateStats);
 	generate_ship.addEventListener("click", generateShip);
 
 	for (const radio of cursor_mode) {
 		radio.addEventListener("click", handleCursorMode);
 	}
-	document
-		.getElementById("spriteSelect")
-		.addEventListener("change", handleSpriteSelectionChange);
-	property_select.addEventListener("change", handlePropertySelectionChange);
+	document.getElementById("spriteSelect").addEventListener("change", handleSpriteSelectionChange);
 
-	ship_property_select.addEventListener(
-		"change",
-		handleShipPropertySelectionChange,
-	);
+	property_select.addEventListener("change", handlePropertySelectionChange);
+	ship_property_select.addEventListener("change", handleShipPropertySelectionChange);
+	mirror_select.addEventListener("change", handleMirrorSelectionChange);
   });
 
 function handleCursorMode() {
@@ -91,6 +94,11 @@ function handleShipPropertySelectionChange() {
 	ship_property_edit.value = ship_property_select.value;
 }
 
+function handleMirrorSelectionChange() {
+	mirror_select.value 
+}
 
-
+function handleRecalculateStats() {
+	updateShipStats()
+}
 

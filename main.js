@@ -6,6 +6,7 @@ let sprite_delete_mode = []; // To store the sprite delete mode
 let global_sprites_to_place = [generatePart("cosmoteer.airlock")]; // To store the sprites to place
 let global_selected_sprites = [];
 let global_toggles_to_add = []
+let global_mirror_axis = []
 let sprites = []; // To store the sprites
 let all_ship_stats = []
 let minX = 0;
@@ -511,6 +512,7 @@ function select_sprite(sprite_to_select) {
 	}
 	global_selected_sprites.push(sprite_to_select);
 	updateSpriteSelection();
+	handlePropertySelectionChange()
 }
 
 function remove_multiple_from_sprites(sprites_to_remove) {1
