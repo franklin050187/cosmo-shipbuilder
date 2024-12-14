@@ -207,7 +207,6 @@ function applyShipProperty() {
 
 function applyProperty() {
     new_value = parseInt(property_edit.value);
-	console.log(global_part_properties)
     for (let sprite of global_selected_sprites) {
         for (toggle of global_part_properties) {
             if (isSameToggleType(toggle, JSON.parse(property_select.value)) && toggleBelongsToSprite(toggle, sprite)) {
@@ -480,9 +479,9 @@ function handleRightClick(event) {
 
 //Places the first sprites with absolute coordinates and the ones after with relative ones
 function place_sprites(sprites_to_place) {
-	let repositioned_sprites = repositionPartsRalative(sprites_to_place)
+	let new_parts = mirroredParts(repositionPartsRalative(sprites_to_place))
 	toggle = true
-	for (let sprite of repositioned_sprites){
+	for (let sprite of new_parts){
 		const location = sprite.Location;
 		if (sprite.ID === "cosmoteer.door") {
 			const string = JSON.parse(
@@ -500,7 +499,6 @@ function place_sprites(sprites_to_place) {
 			global_part_properties.push(...prop)
 		}
 	}
-	console.log(global_part_properties)
 	global_sprites_to_place = [generatePart(document.getElementById("spriteSelect").value)]
 }
 
@@ -672,9 +670,21 @@ function absoluteToRalativePartCoordinates(parts) { //Uses the first part as ref
 			toggle = false
 		} else {
 			new_part.Location[0] = part.Location[0]-base[0]
-			new_part.Location[1] = part.Location[1]-base[0]
+			new_part.Location[1] = part.Location[1]-base[1]
 		}
 		new_parts.push(new_part)
 	}
 	return new_parts
+}
+
+function mirroredParts(parts) {
+	let partsout = [...parts]
+	for (let part of parts) {
+		for (let axis of global_mirror_axis) {
+			let newpart = partCopy(part)
+			newpart.Location[axis.Rotation] = -(newpart.Location[axis.Rotation]-axis.Location)+axis.Location-1
+			partsout.push(newpart)
+		}
+	}
+	return partsout
 }

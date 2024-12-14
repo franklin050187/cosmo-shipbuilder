@@ -130,6 +130,8 @@ function redrawCanvas() {
 		}
 	}
 
+	drawMirrorAxis()
+
 	for (let sprite of sprites) {
 		const [x, y] = sprite_position(sprite, [
 			sprite.Location[0],
@@ -190,8 +192,25 @@ function partSprite(part) {
 	return image
 }
 
+function drawMirrorAxis() {
+	for (axis of global_mirror_axis) {
+		const canvas = document.getElementById("drawingCanvas");
+		const ctx = canvas.getContext("2d");
+
+		let [x,y] = convertCoordinatesToCanvas(axis.Location, maxY)
+		ctx.strokeStyle = "green"
+		ctx.lineWidth = 3;
+		ctx.beginPath(); 
+		ctx.moveTo(x, 0); 
+		ctx.lineTo(x, 2000); 
+		ctx.stroke(); 
+		ctx.lineWidth = 1;
+		ctx.strokeStyle = "black"
+	}
+}
+
 function drawPreview(inputparts) {
-	const parts = repositionPartsRalative(inputparts)
+	const parts = mirroredParts(repositionPartsRalative(inputparts))
 	const canvas = document.getElementById("previewCanvas");
 	const ctx = canvas.getContext("2d");
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
