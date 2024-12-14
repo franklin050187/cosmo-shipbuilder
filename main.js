@@ -346,6 +346,7 @@ function handleCanvasMouseMove(event) {
 	updateCoordinates(canvasPositionX, canvasPositionY);
 
 	if (cursorMode === "Delete") {
+		drawDeletePreview(event)
 		return;
 	}
 
@@ -373,22 +374,20 @@ function handleCanvasClick(event) {
 	}
 	// remove sprite
 	if (cursorMode === "Delete") {
-		const pos = mousePos(event);
-		let part = findSprite(pos[0], pos[1])
-		if (part) {
-			remove_multiple_from_sprites([part]);
+		doIfCursorOverPart(event, (part) => {
+			remove_multiple_from_sprites(mirroredParts([part]))
+			clearPreview()
 			redrawCanvas();
-		} 
+		})
 	}
 	// move sprite
 	if (cursorMode === "Move") {
 		const pos = mousePos(event);
 		if (global_sprites_to_place.length === 0) {
-			let part = findSprite(pos[0], pos[1]);
-			if (part) {
+			doIfCursorOverPart(event, (part) => {
 				global_sprites_to_place = [partCopy(part)]
-				remove_multiple_from_sprites([part])
-			}
+				remove_multiple_from_sprites(mirroredParts([part]))
+			})
 		} else {
 			place_sprites(global_sprites_to_place);
 			clearPreview()
@@ -397,11 +396,7 @@ function handleCanvasClick(event) {
 	}
 	// select sprite
 	if (cursorMode === "Select") {
-		const pos = mousePos(event);
-		const selected_sprite = findSprite(pos[0], pos[1]);
-		if (selected_sprite != null) {
-			select_sprite(selected_sprite);
-		}
+		doIfCursorOverPart(event, part => select_sprite(part));
 	}
 }
 
@@ -635,4 +630,12 @@ function mirroredParts(parts) {
 		}
 	}
 	return partsout
+}
+
+function doIfCursorOverPart(event, code) {
+	const pos = mousePos(event);
+	let part = findSprite(pos[0], pos[1])
+	if (part) {
+		code(part);
+	}
 }

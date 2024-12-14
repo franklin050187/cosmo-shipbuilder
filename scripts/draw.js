@@ -247,6 +247,38 @@ function clearPreview() {
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
 
+function drawDeletePreview(event) {
+	const canvas = document.getElementById("previewCanvas");
+	const ctx = canvas.getContext("2d");
+	ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+	doIfCursorOverPart(event, ((part) => {
+		drawDeleteSymbol(part.Location, spriteData[part.ID].size, part.Rotation)
+	}))
+}
+
+function drawDeleteSymbol(location, size, rotation) {
+	const canvas = document.getElementById("previewCanvas");
+	const ctx = canvas.getContext("2d");
+
+	let [x,y] = convertCoordinatesToCanvas(location[0], location[1])
+	let [a,b] = convertCoordinatesToCanvas(location[0]+size[rotation%2], location[1]+size[(rotation+1)%2])
+
+	ctx.strokeStyle = "red"
+	ctx.lineWidth = 6;
+	ctx.beginPath(); 
+
+	ctx.moveTo(x, y); 
+	ctx.lineTo(a, b); 
+	ctx.moveTo(a, y); 
+	ctx.lineTo(x, b); 
+
+	ctx.stroke(); 
+
+	ctx.lineWidth = 1;
+	ctx.strokeStyle = "black"
+}
+
 function rotate_img(image, angle, flipx) {
 	const canvas = document.createElement("canvas");
 	const ctx = canvas.getContext("2d");
