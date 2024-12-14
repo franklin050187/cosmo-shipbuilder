@@ -201,8 +201,14 @@ function drawMirrorAxis() {
 		ctx.strokeStyle = "green"
 		ctx.lineWidth = 3;
 		ctx.beginPath(); 
-		ctx.moveTo(x, 0); 
-		ctx.lineTo(x, 2000); 
+		if (axis.Rotation === 0) {
+			ctx.moveTo(x, 0); 
+			ctx.lineTo(x, 2000); 
+		}
+		if (axis.Rotation === 1) {
+			ctx.moveTo(0, x); 
+			ctx.lineTo(2000, x); 
+		}
 		ctx.stroke(); 
 		ctx.lineWidth = 1;
 		ctx.strokeStyle = "black"

@@ -21,7 +21,7 @@ const property_edit = document.getElementById("propertyEdit");
 const apply_property_button = document.getElementById("applyPropertyButton");
 const recalculate_stats_button = document.getElementById("reCalculateButton");
 const mirror_select = document.getElementById("mirrorSelect");
-for (const spriteName of ["none", "vertical"]) {
+for (const spriteName of ["none", "vertical", "horizontal"]) {
 	const option = document.createElement("option");
 	option.value = spriteName;
 	option.textContent = spriteName;
@@ -99,6 +99,8 @@ function handleMirrorSelectionChange() {
 		global_mirror_axis = []
 	} else if (mirror_select.value === "vertical") {
 		global_mirror_axis = [{Rotation: 0, Location: 0, Rotational: false}]
+	} else if (mirror_select.value === "horizontal") {
+		global_mirror_axis = [{Rotation: 1, Location: 0, Rotational: false}]
 	}
 }
 

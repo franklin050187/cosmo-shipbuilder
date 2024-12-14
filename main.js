@@ -682,7 +682,7 @@ function mirroredParts(parts) {
 	for (let part of parts) {
 		for (let axis of global_mirror_axis) {
 			let newpart = partCopy(part)
-			newpart.Location[axis.Rotation] = -(newpart.Location[axis.Rotation]-axis.Location)+axis.Location-1
+			newpart.Location[axis.Rotation] = -(newpart.Location[axis.Rotation]-axis.Location)+axis.Location-1+axis.Rotation
 			partsout.push(newpart)
 		}
 	}
