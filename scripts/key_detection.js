@@ -24,6 +24,30 @@ document.addEventListener("keydown", function(event) {
     }
 });
 
+document.addEventListener("keydown", function(event) {
+    if (event.key === "1") {
+        ChangeCursorMode("Place")
+    }
+});
+
+document.addEventListener("keydown", function(event) {
+    if (event.key === "2") {
+        ChangeCursorMode("Select")
+    }
+});
+
+document.addEventListener("keydown", function(event) {
+    if (event.key === "3") {
+        ChangeCursorMode("Delete")
+    }
+});
+
+document.addEventListener("keydown", function(event) {
+    if (event.key === "4") {
+        ChangeCursorMode("Move")
+    }
+});
+
 function undo() {
     if (ship_action_history_depth <= ship_action_history.length && ship_action_history.length>0) {
         ship_action_history_depth == ship_action_history_depth - 1
@@ -42,6 +66,5 @@ function copy() {}
 
 function paste() {
     global_sprites_to_place = absoluteToRalativePartCoordinates(partsCopy(global_selected_sprites))
-    console.log(global_selected_sprites)
     ChangeCursorMode("Place")
 }

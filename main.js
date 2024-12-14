@@ -70,7 +70,8 @@ function ChangeCursorMode(string) {
 		radio.checked = false	
 	}
 	for (const radio of cursor_mode) {
-		if (radio.id = string) {
+		if (radio.id === string) {
+			cursor_mode.value = string
 			radio.checked = true
 			handleCursorMode();
 			return
@@ -357,8 +358,10 @@ function handleCanvasMouseMove(event) {
 	}
 
 	if (cursorMode === "Move") {
-		global_sprites_to_place[0].Location = [canvasPositionX, canvasPositionY]
-		drawPreview(global_sprites_to_place);
+		if (global_sprites_to_place.length > 0) {
+			global_sprites_to_place[0].Location = [canvasPositionX, canvasPositionY]
+			drawPreview(global_sprites_to_place);
+		}
 		return;
 	}
 }
@@ -370,8 +373,10 @@ function handleCanvasClick(event) {
 	}
 	// remove sprite
 	if (cursorMode === "Delete") {
-		if (sprite_delete_mode.length > 0) {
-			remove_multiple_from_sprites(sprite_delete_mode);
+		const pos = mousePos(event);
+		let part = findSprite(pos[0], pos[1])
+		if (part) {
+			remove_multiple_from_sprites([part]);
 			redrawCanvas();
 		} 
 	}
