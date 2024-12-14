@@ -241,6 +241,12 @@ function drawPreview(inputparts) {
 	ctx.globalAlpha = 1.0;
 }
 
+function clearPreview() {
+	const canvas = document.getElementById("previewCanvas");
+	const ctx = canvas.getContext("2d");
+	ctx.clearRect(0, 0, canvas.width, canvas.height);
+}
+
 function rotate_img(image, angle, flipx) {
 	const canvas = document.createElement("canvas");
 	const ctx = canvas.getContext("2d");

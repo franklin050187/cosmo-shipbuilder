@@ -1,7 +1,6 @@
 const gridSize = 64; // Size of each grid cell
 let isPreviewSpriteLoaded = false; // init sprite preview
 const gridMap = {}; // To store the grid map
-let affectedSquares = []; // To store the affected squares
 let sprite_delete_mode = []; // To store the sprite delete mode
 let global_sprites_to_place = [generatePart("cosmoteer.airlock")]; // To store the sprites to place
 let global_selected_sprites = [];
@@ -14,15 +13,11 @@ let minY = 0;
 let maxX = 0;
 let maxY = 0; // adjust canvas size
 let shipdata = {}; // To store the ship data
-const deleteMode = false; // To store the delete mode
-let lastX = 0; // Last mouse position
-let lastY = 0; // Last mouse position
-let lastWidth = 0; // Last preview sprite size
-let lastHeight = 0; // Last preview sprite size
 let cursorMode = "Place"; // Initial cursor mode
 let doors = []; // To store the doors
 let resources = []; // To store the resources
 let global_part_properties = [];
+
 const spriteCache = {};
 const previewSpriteImage = new Image();
 
@@ -84,12 +79,13 @@ function ChangeCursorMode(string) {
 }
 
 function handleCursorModeChange() {
+	clearPreview();
 	if (cursorMode === "Place") {
-		// set <select id="spriteSelect"></select> to cosmoteer.corridor
 		document.getElementById("spriteSelect").value = "cosmoteer.corridor";
 	} else if (cursorMode === "Delete") {
-		// set <select id="spriteSelect"></select> to cosmoteer.corridor
 		document.getElementById("spriteSelect").value = "cosmoteer.delete";
+	} else if (cursorMode === "Move") {
+		global_sprites_to_place = [];
 	}
 }
 
@@ -349,78 +345,20 @@ function handleCanvasMouseMove(event) {
 	updateCoordinates(canvasPositionX, canvasPositionY);
 
 	if (cursorMode === "Delete") {
-		// Store affected grid squares
-		affectedSquares = [];
-		const width = 1;
-		const height = 1;
-		for (let i = 0; i < width; i++) {
-			for (let j = 0; j < height; j++) {
-				const squareX = canvasPositionX + i;
-				const squareY = canvasPositionY + j;
-				const key = `${squareX},${squareY}`;
-				affectedSquares.push(key);
-			}
-		}
-		// Find sprite data for affected squares and store it in sprite_delete_mode
-		sprite_delete_mode = [];
-		for (const key of affectedSquares) {
-			if (gridMap[key]) {
-				sprite_delete_mode.push(gridMap[key].is_drawn_by_sprite);
-			}
-		}
-		lastX = canvasPositionX;
-		lastY = canvasPositionY;
-
 		return;
 	}
 
 	if (cursorMode === "Place") {
 		if (!isPreviewSpriteLoaded) return;
 		global_sprites_to_place[0].Location = [canvasPositionX, canvasPositionY]
-	 
-		// Draw the new preview sprite
+
 		drawPreview(global_sprites_to_place);
-
-		// Store affected grid squares
-		/*affectedSquares = [];
-		const width = Math.ceil(rotatedImage.width / gridSize);
-		const height = Math.ceil(rotatedImage.height / gridSize);
-
-		for (let i = 0; i < width; i++) {
-			for (let j = 0; j < height; j++) {
-				const squareX = canvasPositionX + i;
-				const squareY = canvasPositionY + j;
-				const key = `${squareX},${squareY}`;
-				affectedSquares.push(key);
-			}
-		}*/
-
 		return;
 	}
 
 	if (cursorMode === "Move") {
-		// get sprite under, call delete + place mode with that sprite and rotation
-		// clear preview sprite
-		clearPreview();
-		affectedSquares = [];
-		const width = 1;
-		const height = 1;
-		for (let i = 0; i < width; i++) {
-			for (let j = 0; j < height; j++) {
-				const squareX = canvasPositionX + i;
-				const squareY = canvasPositionY + j;
-				const key = `${squareX},${squareY}`;
-				affectedSquares.push(key);
-			}
-		}
-		sprite_delete_mode = [];
-		for (const key of affectedSquares) {
-			if (gridMap[key]) {
-				sprite_delete_mode.push(gridMap[key].is_drawn_by_sprite);
-			}
-		}
-		lastX = canvasPositionX;
-		lastY = canvasPositionY;
+		global_sprites_to_place[0].Location = [canvasPositionX, canvasPositionY]
+		drawPreview(global_sprites_to_place);
 		return;
 	}
 }
@@ -439,16 +377,18 @@ function handleCanvasClick(event) {
 	}
 	// move sprite
 	if (cursorMode === "Move") {
-		document.getElementById("spriteSelect").value = sprite_delete_mode[0].ID;
-		rotation = sprite_delete_mode[0].Rotation;
-		remove_multiple_from_sprites(sprite_delete_mode);
-		redrawCanvas();
-		loadPreviewSpriteImage();
-		// isPreviewSpriteLoaded = false;
-		cursorMode = "Place";
-		// check the radio to place document.getElementsByName('cursor_mode')
-		document.getElementById("Move").checked = false;
-		document.getElementById("Place").checked = true;
+		const pos = mousePos(event);
+		if (global_sprites_to_place.length === 0) {
+			let part = findSprite(pos[0], pos[1]);
+			if (part) {
+				global_sprites_to_place = [partCopy(part)]
+				remove_multiple_from_sprites([part])
+			}
+		} else {
+			place_sprites(global_sprites_to_place);
+			clearPreview()
+			global_sprites_to_place = []
+		}
 	}
 	// select sprite
 	if (cursorMode === "Select") {
@@ -463,7 +403,7 @@ function handleCanvasClick(event) {
 function handleRightClick(event) {
 	event.preventDefault();
 	let pos = mousePos(event)
-	if (cursorMode === "Place") {
+	if (cursorMode === "Place" || cursorMode === "Move") {
 		for (part of global_sprites_to_place) {
 			part.Rotation = (part.Rotation + 1) % 4
 		}
