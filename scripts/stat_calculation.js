@@ -238,7 +238,12 @@ function getTileHyperdriveEfficiency(stats, part) {
 
 function partCenter(part) {
     let size = spriteData[part["ID"]].size
-    return [part.Location[0] + size[0]/2, part.Location[1] + size[1]/2]
+    return [part.Location[0] + size[part.Rotation%2]/2, part.Location[1] + size[(part.Rotation+1)%2]/2]
+}
+
+function partLocationFromCenter(center, part) {
+    let size = spriteData[part["ID"]].size;
+    return [center[0] - size[part.Rotation%2] / 2, center[1] - size[(part.Rotation+1)%2] / 2];
 }
 
 function getAllWeaponPartGroups(statsin) {
