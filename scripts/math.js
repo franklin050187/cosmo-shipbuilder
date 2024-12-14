@@ -41,15 +41,14 @@ function indexOfListMax(arr) {
     return maxIndex;
 }
 
-function mirroredPositions(pos, allaxis, include_starting_parts) {
-    let locations = []
-    if (include_starting_parts) {
-        locations = [pos]
-    }
+function mirroredPositions(pos, allaxis) {
+    locations = [pos]
+    rotationFlips = [[0,0]]
     for (let axis of allaxis) {
         let loc = [...pos]
-        loc[axis.Rotation] = -(pos[axis.Rotation]-axis.Location)+axis.Location+axis.Rotation
+        loc[axis.Rotation] = -(pos[axis.Rotation]-axis.Location)+axis.Location+axis.Rotation*2
         locations.push(loc)
+        rotationFlips.push([axis.Rotation, true])
     }
-	return locations
+	return [locations, rotationFlips]
 }

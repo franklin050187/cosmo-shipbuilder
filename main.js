@@ -620,10 +620,12 @@ function absoluteToRalativePartCoordinates(parts) { //Uses the first part as ref
 function mirroredParts(parts) {
 	let partsout = [...parts]
 	for (let part of parts) {
-		for (let pos of mirroredPositions(partCenter(part), global_mirror_axis, false)) {
+		location_rotations = mirroredPositions(partCenter(part), global_mirror_axis, false)
+		for (let i = 1;i< location_rotations[0].length; i++) {
 			let newpart = partCopy(part)
-			newpart.Location = partLocationFromCenter(pos, part)
-			newpart.FlipX = true
+			newpart.Location = partLocationFromCenter(location_rotations[0][i], part)
+			newpart.Rotation = part.Rotation+(part.Rotation+location_rotations[1][i][0])%2*2//+location_rotations[1][i][0]
+			newpart.FlipX = location_rotations[1][i][1]
 			partsout.push(newpart)
 		}
 	}
