@@ -5,6 +5,9 @@ const json_import_text = document.getElementById("jsonInput");
 const load_json_button = document.getElementById("loadButton");
 const export_json_button = document.getElementById("exportButton");
 
+const partsContainer = document.getElementById("parts-container");
+const categoryButtons = document.querySelectorAll(".category-btn");
+
 const shiplink = document.getElementById("ship_link");
 const generate_ship = document.getElementById("post_json");
 
@@ -74,7 +77,45 @@ document.addEventListener("DOMContentLoaded", () => {
 	property_select.addEventListener("change", handlePropertySelectionChange);
 	ship_property_select.addEventListener("change", handleShipPropertySelectionChange);
 	mirror_select.addEventListener("change", handleMirrorSelectionChange);
-  });
+
+	// Event listeners for category buttons
+	categoryButtons.forEach(btn => {
+		btn.addEventListener("click", () => {
+		const category = btn.dataset.category;
+		loadParts(category);
+		});
+  	});
+});
+
+
+
+// Function to load parts based on category
+function loadParts(category) {
+	partsContainer.innerHTML = ""; 
+	for (let part of getParts(getOneOfEachPart(), undefined, category)) {
+		const partDiv = document.createElement("div");
+		partDiv.classList.add("part-item");
+
+		const button = document.createElement("button");
+		button.classList.add("part-button")
+		let name = part.ID.replace("cosmoteer.", "");
+		let src = "sprites/" + name + ".png"
+
+		button.innerHTML = `
+		<img src="${src}" alt="${name}">
+		<div>${name}</div>
+		<div>Cost: ${spriteData[part.ID].cost*1000}</div>
+		`;
+		button.addEventListener("click", () => {
+			ChangeCursorMode("Place")
+			global_sprites_to_place = [generatePart(part.ID)]
+		});
+		console.log(partDiv.innerHTML)
+		partDiv.appendChild(button);
+    	partsContainer.appendChild(partDiv);
+	};
+}
+
 
 function handleCursorMode() {
 	const cursor_mode = document.getElementsByName("cursor_mode");

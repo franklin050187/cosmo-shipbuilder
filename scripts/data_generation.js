@@ -43,3 +43,11 @@ function generatePropertiesForParts(parts) {
     }
     return properties
 }
+
+function getOneOfEachPart() {
+    let parts = []
+	for (let id in spriteData) {
+		parts.push(generatePart(id))
+	}
+    return parts
+}

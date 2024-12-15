@@ -82,7 +82,9 @@ function ChangeCursorMode(string) {
 function handleCursorModeChange() {
 	clearPreview();
 	if (cursorMode === "Place") {
-		document.getElementById("spriteSelect").value = "cosmoteer.corridor";
+		if (global_sprites_to_place.length === 0) {
+			document.getElementById("spriteSelect").value = "cosmoteer.corridor";
+		}
 	} else if (cursorMode === "Delete") {
 		document.getElementById("spriteSelect").value = "cosmoteer.delete";
 	} else if (cursorMode === "Move") {
@@ -417,8 +419,7 @@ function handleRightClick(event) {
 	} 
 }
 
-//Places the first sprites with absolute coordinates and the ones after with relative ones
-function place_sprites(sprites_to_place) {
+function place_sprites(sprites_to_place) {//Places the first sprites with absolute coordinates and the ones after with relative ones
 	let new_parts = mirroredParts(repositionPartsRalative(sprites_to_place))
 	toggle = true
 	for (let sprite of new_parts){

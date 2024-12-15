@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sprite Placement</title>
+    <link rel="stylesheet" href="style.css">
     <style>
         canvas {
             border: 1px solid #000;
@@ -123,7 +124,6 @@
                     <a href="" id="ship_link" style="display: none">Generated Ship, click here</a>
                     <button id="post_json">Generate Ship File</button>
                 </div>
-            </fieldset>
         </div>
         <div style="
         width: 80%;
@@ -150,6 +150,26 @@
             <canvas id="resourceCanvas" width="64" height="64"></canvas>
             <canvas id="drawingCanvas" width="64" height="64"></canvas>
             <canvas id="previewCanvas" width="64" height="64"></canvas>
+        </div>
+        <div class="part-container">
+            <!-- Categories -->
+            <div class="categories">
+              <button class="category-btn" data-category="energy weapon">Energy Weapons</button>
+              <button class="category-btn" data-category="projectile weapon">Projectile Weapons</button>
+              <button class="category-btn" data-category="defense">Defenses</button>
+              <button class="category-btn" data-category="flight">Flight</button>
+              <button class="category-btn" data-category="crew_transport">Crew</button>
+              <button class="category-btn" data-category="power">Power</button>
+              <button class="category-btn" data-category="factory">Factory</button>
+              <button class="category-btn" data-category="utilities">Utilities</button>
+              <button class="category-btn" data-category="structure">Structure</button>
+              <button class="category-btn" data-category="storage">Storage</button>
+            </div>
+        
+            <!-- Parts -->
+            <div id="parts-container" class="parts">
+              <!-- Dynamic loading parts here -->
+            </div>
         </div>
     </div>
     <script src="data.js"></script>
