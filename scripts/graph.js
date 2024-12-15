@@ -4,9 +4,10 @@
 //Example: We have 3 parts where 1 is connected to 2 and 2 to 3:
 //graph = [[[partid1, partid2, part1, part2], [partid2, partid1, part1, part2], [partid2, partid3, part2, part3], [partid3, paridt 2, part3, part2]], [[partid1, part1], [partid2, part2], [partdi3, part3]]]
 
-function getShipPartConnectionGraph(parts) {
+function makePartsGraph(stats, condition) {
 	const edges = [];
 	const vertices = [];
+	const parts = stats.parts
 	let part1;
 	let part2;
 	for (let i = 0; i < parts.length; i++) {
@@ -15,13 +16,21 @@ function getShipPartConnectionGraph(parts) {
 		for (let j = 0; j < parts.length; j++) {
 			if (i !== j) {
 				part2 = parts[j];
-				if (arePartsTouching(part1, part2)) {
+				if (condition(part1, part2, stats)) {
 					edges.push([i, j, part1, part2]);
 				}
 			}
 		}
 	}
 	return [edges, vertices];
+}
+
+function getShipPartConnectionGraph(stats) {
+	return makePartsGraph(stats, arePartsTouching)
+}
+
+function getShipPartWalkableConnectionGraph(stats) {
+	return makePartsGraph(stats, partsHaveWalkableConnection)
 }
 
 function getConnectedComponents(edges, vertices) {
@@ -84,4 +93,12 @@ function getTouchingParts(part, graph) {
 		}
 	}
 	return list
+}
+
+function partsHaveWalkableConnection(part1, part2, stats) {
+	let doors = stats.ship.doors
+	if (mergingParts.includes(part1.ID) && mergingParts.includes(part2.ID) && areCoordinatesAdjacent(part1.Location, part2.Location)) {
+		return true
+	}
+	return false
 }

@@ -2,12 +2,9 @@
 
 function getPartData(part) {
 	data = [];
-	for (const entry of part_toggles) {
+	for (const entry of global_part_properties) {
 		const key = entry.Key || {};
-		if (
-			part.Location[0] === key[0].Location[0] &&
-			part.Location[1] === key[0].Location[1]
-		) {
+		if (part.Location[0] === key[0].Location[0] && part.Location[1] === key[0].Location[1]) {
 			data.push(entry);
 		}
 	}
@@ -35,7 +32,7 @@ function getShipDataMap() {
 
 function getPartToggles(part) {
 	toggles = [];
-	for (toggle of part_toggles) {
+	for (toggle of global_part_properties) {
 		if (toggle.Key[0].ID === part.ID) {
 			toggles.push(toggle);
 		}
@@ -43,10 +40,10 @@ function getPartToggles(part) {
 	return toggles;
 }
 
-function getParts(parts, id = null, category = null) {
+function getParts(parts, id = null, tag = null) {
     parts_out = []
     for (sprite of parts) {
-        if ((sprite.ID == id || id == null) && (category == null || category == spriteData[sprite["ID"]].category)) {
+        if ((sprite.ID == id || id == null) && (tag == null || spriteData[sprite["ID"]].tags.includes(tag))) {
             parts_out.push(sprite)
         }
     }

@@ -27,6 +27,10 @@ function areCoordinatesAdjacent(pos1, pos2) {
     return false
 }
 
+function sameTile(location1, location2) {
+    return location1[0]==location2[0]&&location1[1]==location2[1]
+}
+
 function indexOfListMax(arr) {
     let maxIndex = 0;
     for (let i = 1; i < arr.length; i++) {
@@ -35,4 +39,16 @@ function indexOfListMax(arr) {
         }
     }
     return maxIndex;
+}
+
+function mirroredPositions(pos, allaxis) {
+    locations = [pos]
+    rotationFlips = [[0,0]]
+    for (let axis of allaxis) {
+        let loc = [...pos]
+        loc[axis.Rotation] = -(pos[axis.Rotation]-axis.Location)+axis.Location+axis.Rotation*2
+        locations.push(loc)
+        rotationFlips.push([axis.Rotation, true])
+    }
+	return [locations, rotationFlips]
 }

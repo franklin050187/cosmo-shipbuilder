@@ -87,6 +87,14 @@
             </fieldset>
 
             <fieldset>
+                <legend>Dodats</legend>
+                <div>
+                    <label for="mirrorSelect">Mirror mode:</label>
+                    <select id="mirrorSelect"></select>
+                </div>
+            </fieldset>
+
+            <fieldset>
                 <legend>Ship config</legend>
                 <div>
                     <select id="shipPropertySelect"></select>
@@ -97,6 +105,9 @@
 
             <fieldset>
                 <legend>Stats</legend>
+                <div>
+                    <button id="reCalculateButton">Calculate Stats</button>
+                </div>
                 <div>
                     <label id="shipStatsLabel">Ship Stats: </label>
                 </div>
@@ -118,19 +129,44 @@
         width: 80%;
         display: flex;
         flex-direction: column;
+        position: relative;
     ">
+            <style>
+            #drawingCanvas, #resourceCanvas, #previewCanvas  {
+                position: absolute;
+                top: 0;
+                left: 0;
+                pointer-events: none
+            }
+            </style>
+            <style>
+                #spriteCanvas  {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                }
+            </style>
             <canvas id="spriteCanvas" width="64" height="64"></canvas>
+            <canvas id="resourceCanvas" width="64" height="64"></canvas>
+            <canvas id="drawingCanvas" width="64" height="64"></canvas>
+            <canvas id="previewCanvas" width="64" height="64"></canvas>
         </div>
     </div>
     <script src="data.js"></script>
     <script src="scripts/math.js"></script>
+    <script src="scripts/ship.js"></script>
     <script src="scripts/data_extraction.js"></script>
     <script src="scripts/stat_calculation.js"></script>
     <script src="scripts/warnings.js"></script>
+    <script src="scripts/action.js"></script>
     <script src="scripts/graph.js"></script>
     <script src="scripts/updates.js"></script>
+    <script src="scripts/key_detection.js"></script>
     <script src="scripts/draw.js"></script>
-    <script src="main.js"></script>
+    <script src="scripts/data_generation.js"></script>
+    <script src="scripts/html_element_handeling.js" defer></script>
+    <script src="main.js" defer></script>
+    <script src="scripts/startup.js" defer></script>
 </body>
 
 </html>

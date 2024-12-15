@@ -1,15 +1,18 @@
 //This file is for values that need to be calculated
 
 //A collection of all the ship stats calculated once to avoid dublicate calculations
-function getShipStats(parts) {
+function getShipStats(ship) {
     let stats = {}
-    stats.parts = parts
+    stats.ship = ship
+    stats.parts = ship.parts
     stats.cost = getShipCost(stats,null, null)
     stats.command_points = getShipCommandPoints(stats, null, null)
     stats.command_cost = getShipCommandCost(stats)
     stats.crew = crewCount(stats)
-    stats.connection_graph = getShipPartConnectionGraph(stats.parts)
+    stats.connection_graph = getShipPartConnectionGraph(stats)
     stats.connection_graph_partition = getConnectedComponents(stats.connection_graph[0],stats.connection_graph[1])
+    stats.walkable_connection_graph = getShipPartWalkableConnectionGraph(stats)
+    stats.walkable_connection_graph_partition = getConnectedComponents(stats.walkable_connection_graph[0], stats.walkable_connection_graph[1])
     stats.neighbour_map = partNeighbourMap(stats.connection_graph)
     stats.tag_map = getPartTagMap(stats)
     stats.weight = shipWeight(stats)
@@ -30,7 +33,7 @@ function getShipCost(stats, id = null, category = null) {
         sum += spriteData[sprite["ID"]].cost;
     }
     //extra costs from loaded missiles
-    for (toggle of part_toggles) {
+    for (toggle of global_part_properties) {
         if (toggle.Key[1] == "missile_type") {
             if (toggle.Value == 0) {
                 sum += 0.096;
@@ -235,8 +238,12 @@ function getTileHyperdriveEfficiency(stats, part) {
 
 function partCenter(part) {
     let size = spriteData[part["ID"]].size
-    let location = part.Location
-    return [part.Location[0] + size[0]/2, part.Location[1] + size[1]/2]
+    return [part.Location[0] + size[part.Rotation%2]/2, part.Location[1] + size[(part.Rotation+1)%2]/2]
+}
+
+function partLocationFromCenter(center, part) {
+    let size = spriteData[part["ID"]].size;
+    return [center[0] - size[part.Rotation%2] / 2, center[1] - size[(part.Rotation+1)%2] / 2];
 }
 
 function getAllWeaponPartGroups(statsin) {
@@ -246,13 +253,13 @@ function getAllWeaponPartGroups(statsin) {
     for (let part of parts) {
         bool = true
         for (let i = 0;i<parts_out.length;i++) {
+            list = parts_out[i]
             if (list[0] == part.ID) {
-                parts_out[i].push(part)
+                list[i].push(part)
                 bool = false
-            } 
-        }
-        if (bool) {
-            parts_out.push([part.ID, part])
+            } else if (bool) {
+                parts_out.push([part.ID, part])
+            }
         }
     }
     return parts_out
@@ -279,8 +286,7 @@ function getPartTagMap(stats) {
     }
     for (let i=0;i<stats.parts.length;i++) {
         let thruster = stats.parts[i]
-        console.log(spriteData[thruster.ID].category)
-        if (spriteData[thruster.ID].category === "thruster") {
+        if (spriteData[thruster.ID].tags.includes("thruster")) {
             let neighbours= getElementFromPartMap(thruster, stats.neighbour_map)
             for (let neighbour of neighbours) {
                 if (neighbour.ID === "cosmoteer.engine_room") {
@@ -317,4 +323,15 @@ function partNeighbourMap(graph) {
     }
     return map
 }
+
+function getPartFromLocation(location, parts) {
+    for (let part of parts) {
+        if (part.Location[0] == location[0] && part.Location[1] == location[1]) {
+            return part
+        }
+    }
+    console.warn("No part found for location")
+    return null
+}
+
 

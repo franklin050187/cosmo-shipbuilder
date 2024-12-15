@@ -1,73 +1,11 @@
-const multiple_turrets = [
-	"cosmoteer.thruster_small_2way",
-	"cosmoteer.thruster_small_3way",
-];
-const cursor_mode = document.getElementsByName("cursor_mode");
-const json_import_text = document.getElementById("jsonInput");
-const load_json_button = document.getElementById("loadButton");
-const export_json_button = document.getElementById("exportButton");
-
-const shiplink = document.getElementById("ship_link");
-const generate_ship = document.getElementById("post_json");
-generate_ship.addEventListener("click", generateShip);
-
-const canvas = document.getElementById("spriteCanvas");
-const ctx = canvas.getContext("2d");
 const gridSize = 64; // Size of each grid cell
-const spriteSelect = document.getElementById("spriteSelect");
-const spriteNames = Object.keys(spriteData).sort();
-for (const spriteName of spriteNames) {
-	const option = document.createElement("option");
-	option.value = spriteName;
-	option.textContent = spriteName;
-	spriteSelect.appendChild(option);
-}
-const property_select = document.getElementById("propertySelect");
-const property_edit = document.getElementById("propertyEdit");
-const apply_property_button = document.getElementById("applyPropertyButton");
-
-const ship_property_select = document.getElementById("shipPropertySelect");
-const ship_property_edit = document.getElementById("shipPropertyEdit");
-const apply_ship_property_button = document.getElementById(
-	"applyShipPropertyButton",
-);
-
-const previewSpriteImage = new Image();
-const previewSprite = document.createElement("img");
-const ship_stats_label = document.getElementById("shipStatsLabel");
-const coordinates_label = document.getElementById("coord_on_canvas");
-
-previewSprite.id = "previewSprite";
-document.body.appendChild(previewSprite);
-canvas.addEventListener("mousemove", handleCanvasMouseMove);
-canvas.addEventListener("click", handleCanvasClick);
-canvas.addEventListener("contextmenu", handleRightClick); // Listen for right-click
-export_json_button.addEventListener("click", export_json);
-load_json_button.addEventListener("click", loadJson);
-apply_property_button.addEventListener("click", applyProperty);
-
-apply_ship_property_button.addEventListener("click", applyShipProperty);
-
-for (const radio of cursor_mode) {
-	radio.addEventListener("click", handleCursorMode);
-}
-// canvas.addEventListener('mousemove', handleCanvasMouseMove);
-document
-	.getElementById("spriteSelect")
-	.addEventListener("change", handleSpriteSelectionChange);
-property_select.addEventListener("change", handlePropertySelectionChange);
-
-ship_property_select.addEventListener(
-	"change",
-	handleShipPropertySelectionChange,
-);
-
 let isPreviewSpriteLoaded = false; // init sprite preview
 const gridMap = {}; // To store the grid map
-let affectedSquares = []; // To store the affected squares
 let sprite_delete_mode = []; // To store the sprite delete mode
-let sprite_to_place = []; // To store the sprite to place
-let selected_sprites = [];
+let global_sprites_to_place = [generatePart("cosmoteer.airlock")]; // To store the sprites to place
+let global_selected_sprites = [];
+let global_toggles_to_add = []
+let global_mirror_axis = []
 let sprites = []; // To store the sprites
 let all_ship_stats = []
 let minX = 0;
@@ -75,49 +13,13 @@ let minY = 0;
 let maxX = 0;
 let maxY = 0; // adjust canvas size
 let shipdata = {}; // To store the ship data
-const deleteMode = false; // To store the delete mode
-let rotation = 0; // Initial rotation (0 degrees)
-let lastX = 0; // Last mouse position
-let lastY = 0; // Last mouse position
-let lastRotation = 0; // Last rotation
-let lastDrawX = 0; // Last preview sprite position
-let lastDrawY = 0; // Last preview sprite position
-let lastWidth = 0; // Last preview sprite size
-let lastHeight = 0; // Last preview sprite size
 let cursorMode = "Place"; // Initial cursor mode
 let doors = []; // To store the doors
 let resources = []; // To store the resources
-let part_toggles = [];
+let global_part_properties = [];
 
-// input and output for b64
-const b64Input = document.getElementById("b64_input");
-const loadB64Button = document.getElementById("load_b64");
-// get url parameter b64
-const queryString = window.location.search;
-const urlParams = new URLSearchParams(queryString);
-const b64 = urlParams.get("url");
-if (b64) {
-	b64Input.value = b64;
-	get_json();
-}
-
-loadB64Button.addEventListener("click", get_json);
-function get_json() {
-	const b64Input = document.getElementById("b64_input");
-	const encodedB64 = b64Input.value.replace(/-/g, "+").replace(/_/g, "/");
-	const jsonInput = document.getElementById("jsonInput");
-	const xhr = new XMLHttpRequest();
-	const url = `https://cosmo-api-git-docker-franklin050187s-projects.vercel.app/edit?url=${encodedB64}`;
-	xhr.open("GET", url, true);
-	xhr.onload = () => {
-		if (xhr.status === 200) {
-			jsonInput.value = xhr.responseText;
-			loadJson();
-		}
-	};
-
-	xhr.send();
-}
+const spriteCache = {};
+const previewSpriteImage = new Image();
 
 function generateShip() {
 	// send post request to generate ship
@@ -137,7 +39,6 @@ function generateShip() {
 
 	xhr.onload = () => {
 		if (xhr.status === 200) {
-			// console.log(xhr.responseText);
 			const ship_link = document.getElementById("ship_link");
 			const url = JSON.parse(xhr.responseText).url;
 			ship_link.href = url;
@@ -146,33 +47,53 @@ function generateShip() {
 	};
 }
 
-function handleCursorMode() {
+function get_json() {
+	const b64Input = document.getElementById("b64_input");
+	const encodedB64 = b64Input.value.replace(/-/g, "+").replace(/_/g, "/");
+	const jsonInput = document.getElementById("jsonInput");
+	const xhr = new XMLHttpRequest();
+	const url = `https://cosmo-api-git-docker-franklin050187s-projects.vercel.app/edit?url=${encodedB64}`;
+	xhr.open("GET", url, true);
+	xhr.onload = () => {
+		if (xhr.status === 200) {
+			jsonInput.value = xhr.responseText;
+			loadJson();
+		}
+	};
+
+	xhr.send();
+}
+
+function ChangeCursorMode(string) {
 	const cursor_mode = document.getElementsByName("cursor_mode");
 	for (const radio of cursor_mode) {
-		if (radio.checked) {
-			cursorMode = radio.value;
-			handleCursorModeChange();
+		radio.checked = false	
+	}
+	for (const radio of cursor_mode) {
+		if (radio.id === string) {
+			cursor_mode.value = string
+			radio.checked = true
+			handleCursorMode();
+			return
 		}
 	}
 }
 
-function handlePropertySelectionChange() {
-	property_edit.value = JSON.parse(property_select.value).Value;
-}
-
-function handleShipPropertySelectionChange() {
-	ship_property_edit.value = ship_property_select.value;
-}
-
 function handleCursorModeChange() {
+	clearPreview();
 	if (cursorMode === "Place") {
-		// set <select id="spriteSelect"></select> to cosmoteer.corridor
 		document.getElementById("spriteSelect").value = "cosmoteer.corridor";
-		handleSpriteSelectionChange();
 	} else if (cursorMode === "Delete") {
-		// set <select id="spriteSelect"></select> to cosmoteer.corridor
 		document.getElementById("spriteSelect").value = "cosmoteer.delete";
+	} else if (cursorMode === "Move") {
+		global_sprites_to_place = [];
 	}
+}
+
+function handleSpriteSelectionChange() {
+	global_sprites_to_place = []
+	global_sprites_to_place.push(generatePart(document.getElementById("spriteSelect").value))
+	loadPreviewSpriteImage();
 }
 
 function export_json() {
@@ -187,7 +108,7 @@ function export_json() {
 	shipdata.Doors = doors;
 	shipdata.NewFlexResourceGridTypes = resources;
 	shipdata.Parts = new_parts;
-	shipdata.PartUIToggleStates = part_toggles;
+	shipdata.PartUIToggleStates = global_part_properties;
 
 	for ([key, value] of getShipDataMap()) {
 		shipdata[key] = value;
@@ -201,14 +122,16 @@ function export_json() {
 	document.getElementById("json_export").value = json;
 }
 
-function loadJson() {
+function loadJson(json) {
 	// Clear the sprite data
 	sprites = [];
 	shipdata = {};
 	doors = [];
 	resources = [];
-	part_toggles = [];
-	const json = json_import_text.value;
+	global_part_properties = [];
+	if (typeof json !== 'string') {
+        json = json_import_text.value;
+    }
 	const data = JSON.parse(json);
 	const part_data = Array.isArray(data.Parts) ? data.Parts : [];
 	const doordata = Array.isArray(data.Doors) ? data.Doors : [];
@@ -244,7 +167,7 @@ function loadJson() {
 	}
 
 	for (const toggle of partUIToggleStates) {
-		part_toggles.push(toggle);
+		global_part_properties.push(toggle);
 	}
 
 	// Extend the grid by 10 squares in each direction
@@ -258,26 +181,16 @@ function loadJson() {
 	const height = (maxY - minY + 1) * gridSize;
 	canvas.width = width;
 	canvas.height = height;
+	resource_canvas.width = width;
+	resource_canvas.height = height;
+	drawing_canvas.width = width;
+	drawing_canvas.height = height;
+	preview_canvas.width = width;
+	preview_canvas.height = height;
 
-    //redrawCanvas();
+    redrawCanvas();
+	updateShipStats();
 	updateNonVisuals()
-}
-
-function applyProperty() {
-	new_value = property_edit.value;
-
-	for (sprite of selected_sprites) {
-		for (toggle of part_toggles) {
-			if (
-				isSameToggleType(toggle, JSON.parse(property_select.value)) &&
-				toggleBelongsToSprite(toggle, sprite)
-			) {
-				toggle.Value = new_value;
-			}
-		}
-	}
-
-	redrawCanvas();
 }
 
 function applyShipProperty() {
@@ -290,16 +203,14 @@ function applyShipProperty() {
 }
 
 function applyProperty() {
-    new_value = property_edit.value;
-
-    for (sprite of selected_sprites) {
-        for (toggle of part_toggles) {
+    new_value = parseInt(property_edit.value);
+    for (let sprite of global_selected_sprites) {
+        for (toggle of global_part_properties) {
             if (isSameToggleType(toggle, JSON.parse(property_select.value)) && toggleBelongsToSprite(toggle, sprite)) {
                 toggle.Value = new_value;
             }
         }
     }
-
     redrawCanvas()
 }
 
@@ -361,49 +272,17 @@ function sprite_position(part, position) {
 	return position;
 }
 
-function rotate_img(image, angle, flipx) {
-	const canvas = document.createElement("canvas");
-	const ctx = canvas.getContext("2d");
-
-	// Set canvas dimensions based on the rotation
-	if (angle % 2 === 0) {
-		canvas.width = image.width;
-		canvas.height = image.height;
-	} else {
-		canvas.width = image.height;
-		canvas.height = image.width;
-	}
-
-	// Translate to center and rotate
-	ctx.translate(canvas.width / 2, canvas.height / 2);
-	ctx.rotate((angle * Math.PI) / 2);
-
-	if (flipx) {
-		ctx.scale(-1, 1);
-	}
-
-	ctx.drawImage(image, -image.width / 2, -image.height / 2);
-
-	return canvas;
-}
-
-function get_all_locations() {
-	const json = json_import_text.value;
-	const data = JSON.parse(json);
-	const part_data = data.Parts;
-
+function get_all_locations(sprites) {
 	const locations = [];
 	// let width;
 	// let height;
 
-	for (const sprite of part_data) {
+	for (const sprite of sprites) {
 		getSpriteTileLocations(sprite);
 		Array.prototype.push.apply(locations, sprite.Location);
 	}
 	return locations;
 }
-
-const spriteCache = {};
 
 function preloadSprites() {
 	// Iterate over the keys (IDs) in the spriteData object
@@ -424,8 +303,6 @@ function preloadSprites() {
 	spriteCache.mine_launcher = new Image();
 	spriteCache.mine_launcher.src = "sprites/mine_launcher.png";
 }
-
-preloadSprites();
 
 function square_map(sprite) {
 	const [x, y] = sprite_position(sprite, [
@@ -462,274 +339,131 @@ function loadPreviewSpriteImage() {
 
 function handleCanvasMouseMove(event) {
 	// fix position for flexbox
-	const canvas = document.getElementById("spriteCanvas");
-	const rect = canvas.getBoundingClientRect();
+	redrawCanvas();
 
-	// Calculate scaling factors between the canvas's original size and its displayed size
-	const scaleX = canvas.width / rect.width;
-	const scaleY = canvas.height / rect.height;
-
-	// Calculate mouse position relative to the canvas, taking into account the scaling
-	const x = (event.clientX - rect.left) * scaleX;
-	const y = (event.clientY - rect.top) * scaleY;
-	const mouseX = Math.floor(x / gridSize) * gridSize;
-	const mouseY = Math.floor(y / gridSize) * gridSize;
-	const canvasPositionX = mouseX / gridSize + minX;
-	const canvasPositionY = mouseY / gridSize + minY;
-
-	// update if square location changes
-	if (
-		lastX === canvasPositionX &&
-		lastY === canvasPositionY &&
-		lastRotation === rotation
-	) {
-		return;
-	}
+	let [canvasPositionX, canvasPositionY] = convertCanvasToCoordinates(event.clientX, event.clientY)
 
 	updateCoordinates(canvasPositionX, canvasPositionY);
 
 	if (cursorMode === "Delete") {
-		// clear preview sprite
-		clearPreview();
-		// Store affected grid squares
-		affectedSquares = [];
-		const width = 1;
-		const height = 1;
-		for (let i = 0; i < width; i++) {
-			for (let j = 0; j < height; j++) {
-				const squareX = canvasPositionX + i;
-				const squareY = canvasPositionY + j;
-				const key = `${squareX},${squareY}`;
-				affectedSquares.push(key);
-			}
-		}
-		// Find sprite data for affected squares and store it in sprite_delete_mode
-		sprite_delete_mode = [];
-		for (const key of affectedSquares) {
-			if (gridMap[key]) {
-				sprite_delete_mode.push(gridMap[key].is_drawn_by_sprite);
-			}
-		}
-		lastX = canvasPositionX;
-		lastY = canvasPositionY;
-		lastRotation = rotation;
-
+		drawDeletePreview(event)
 		return;
 	}
 
 	if (cursorMode === "Place") {
-		sprite_to_place = [];
 		if (!isPreviewSpriteLoaded) return;
-		const spriteDataPreview = {
-			FlipX: false,
-			ID: document.getElementById("spriteSelect").value,
-			Location: [canvasPositionX, canvasPositionY],
-			Rotation: rotation,
-		};
+		global_sprites_to_place[0].Location = [canvasPositionX, canvasPositionY]
 
-		const [drawX, drawY] = sprite_position(spriteDataPreview, [
-			spriteDataPreview.Location[0],
-			spriteDataPreview.Location[1],
-		]);
-		const rotatedImage = rotate_img(
-			previewSpriteImage,
-			spriteDataPreview.Rotation,
-			spriteDataPreview.FlipX,
-		);
-
-		// Clear the previous preview sprite and redraw affected sprites
-		clearPreview();
-
-		// Draw the new preview sprite
-		drawPreview(
-			spriteDataPreview,
-			(drawX - minX) * gridSize + 1,
-			(drawY - minY) * gridSize + 1,
-			rotatedImage,
-		);
-
-		// Update last known position and dimensions
-		lastX = canvasPositionX;
-		lastY = canvasPositionY;
-		lastRotation = rotation;
-		lastDrawX = (drawX - minX) * gridSize + 1;
-		lastDrawY = (drawY - minY) * gridSize + 1;
-		lastWidth = rotatedImage.width - 2;
-		lastHeight = rotatedImage.height - 2;
-
-		// Store affected grid squares
-		affectedSquares = [];
-		const width = Math.ceil(rotatedImage.width / gridSize);
-		const height = Math.ceil(rotatedImage.height / gridSize);
-
-		for (let i = 0; i < width; i++) {
-			for (let j = 0; j < height; j++) {
-				const squareX = canvasPositionX + i;
-				const squareY = canvasPositionY + j;
-				const key = `${squareX},${squareY}`;
-				affectedSquares.push(key);
-			}
-		}
-		sprite_to_place = spriteDataPreview;
+		drawPreview(global_sprites_to_place);
 		return;
 	}
 
 	if (cursorMode === "Move") {
-		// get sprite under, call delete + place mode with that sprite and rotation
-		// clear preview sprite
-		clearPreview();
-		affectedSquares = [];
-		const width = 1;
-		const height = 1;
-		for (let i = 0; i < width; i++) {
-			for (let j = 0; j < height; j++) {
-				const squareX = canvasPositionX + i;
-				const squareY = canvasPositionY + j;
-				const key = `${squareX},${squareY}`;
-				affectedSquares.push(key);
-			}
+		if (global_sprites_to_place.length > 0) {
+			global_sprites_to_place[0].Location = [canvasPositionX, canvasPositionY]
+			drawPreview(global_sprites_to_place);
 		}
-		sprite_delete_mode = [];
-		for (const key of affectedSquares) {
-			if (gridMap[key]) {
-				sprite_delete_mode.push(gridMap[key].is_drawn_by_sprite);
-			}
-		}
-		lastX = canvasPositionX;
-		lastY = canvasPositionY;
-		lastRotation = rotation;
 		return;
 	}
-}
-
-function clearPreview() {
-	ctx.clearRect(lastDrawX, lastDrawY, lastWidth, lastHeight);
-
-	// Redraw the sprites that were overwritten by the preview sprite
-	for (const key of affectedSquares) {
-		if (gridMap[key]) {
-			const sprite = gridMap[key].is_drawn_by_sprite;
-			const imageName = sprite.ID.replace("cosmoteer.", "");
-			const img = new Image();
-
-			const partData = getPartDataMap(sprite);
-			const missileType = partData.get("missile_type");
-			if (missileType === 2) {
-				img.src = "sprites/nuke_launcher.png";
-			} else if (missileType === 1) {
-				img.src = "sprites/emp_launcher.png";
-			} else if (missileType === 3) {
-				img.src = "sprites/mine_launcher.png";
-			} else {
-				img.src = `sprites/${imageName}.png`;
-			}
-
-			img.onload = () => {
-				const [x, y] = sprite_position(sprite, [
-					sprite.Location[0],
-					sprite.Location[1],
-				]);
-				const rotatedImage = rotate_img(img, sprite.Rotation, sprite.FlipX);
-				ctx.clearRect(
-					(x - minX) * gridSize + 1,
-					(y - minY) * gridSize + 1,
-					rotatedImage.width - 2,
-					rotatedImage.height - 2,
-				);
-				ctx.drawImage(
-					rotatedImage,
-					(x - minX) * gridSize + 1,
-					(y - minY) * gridSize + 1,
-					rotatedImage.width - 2,
-					rotatedImage.height - 2,
-				);
-			};
-		}
-	}
-}
-
-function drawPreview(spriteDataPreview, drawX, drawY, rotatedImage) {
-	ctx.globalAlpha = 0.5;
-	ctx.drawImage(
-		rotatedImage,
-		drawX,
-		drawY,
-		rotatedImage.width - 2,
-		rotatedImage.height - 2,
-	);
-	ctx.globalAlpha = 1.0;
-}
-
-function handleSpriteSelectionChange() {
-	loadPreviewSpriteImage();
 }
 
 function handleCanvasClick(event) {
 	// place sprite
 	if (cursorMode === "Place") {
-		place_sprite(sprite_to_place);
-		redrawCanvas();
+		place_sprites(global_sprites_to_place);
 	}
 	// remove sprite
 	if (cursorMode === "Delete") {
-		if (sprite_delete_mode.length > 0) {
-			remove_from_sprites(sprite_delete_mode);
+		doIfCursorOverPart(event, (part) => {
+			remove_multiple_from_sprites(mirroredParts([part]))
+			clearPreview()
 			redrawCanvas();
-		}
+		})
 	}
 	// move sprite
 	if (cursorMode === "Move") {
-		document.getElementById("spriteSelect").value = sprite_delete_mode[0].ID;
-		rotation = sprite_delete_mode[0].Rotation;
-		remove_from_sprites(sprite_delete_mode);
-		redrawCanvas();
-		loadPreviewSpriteImage();
-		// isPreviewSpriteLoaded = false;
-		cursorMode = "Place";
-		// check the radio to place document.getElementsByName('cursor_mode')
-		document.getElementById("Move").checked = false;
-		document.getElementById("Place").checked = true;
+		const pos = mousePos(event);
+		if (global_sprites_to_place.length === 0) {
+			doIfCursorOverPart(event, (part) => {
+				global_sprites_to_place = [partCopy(part)]
+				remove_multiple_from_sprites(mirroredParts([part]))
+			})
+		} else {
+			place_sprites(global_sprites_to_place);
+			clearPreview()
+			global_sprites_to_place = []
+		}
 	}
 	// select sprite
 	if (cursorMode === "Select") {
-		const pos = mousePos(event);
-		const selected_sprite = findSprite(pos[0], pos[1]);
-		if (selected_sprite != null) {
-			select_sprite(selected_sprite);
-		}
+		doIfCursorOverPart(event, part => select_sprite(part));
 	}
 }
 
-function place_sprite(sprite_to_place) {
-	const location = sprite_to_place.Location;
-	if (sprite_to_place.ID === "cosmoteer.door") {
-		const string = JSON.parse(
-			`{"Cell": [${location}], "ID": "cosmoteer.door", "Orientation": ${(sprite_to_place.Rotation + 1) % 2}}`,
-		);
-		doors.push(string);
-	} else {
-		sprites.push(sprite_to_place);
+function handleRightClick(event) {
+	event.preventDefault();
+	let pos = mousePos(event)
+	if (cursorMode === "Place" || cursorMode === "Move") {
+		for (part of global_sprites_to_place) {
+			part.Rotation = (part.Rotation + 1) % 4
+		}
+		handleCanvasMouseMove(event); 
+	} else if (cursorMode === "Delete") {
+		removeDoor(pos);
+		redrawCanvas();
+	} else if (cursorMode === "Select") {
+		global_selected_sprites = []
+		updateSpriteSelection()
+	} 
+}
+
+//Places the first sprites with absolute coordinates and the ones after with relative ones
+function place_sprites(sprites_to_place) {
+	let new_parts = mirroredParts(repositionPartsRalative(sprites_to_place))
+	toggle = true
+	for (let sprite of new_parts){
+		const location = sprite.Location;
+		if (sprite.ID === "cosmoteer.door") {
+			const string = JSON.parse(
+				`{"Cell": [${location}], "ID": "cosmoteer.door", "Orientation": ${(sprite.Rotation + 1) % 2}}`,
+			);
+			doors.push(string);
+		} else {
+			overlaps = overlappingParts(sprite, sprites)
+			if (overlaps.length>0) {
+				remove_multiple_from_sprites(overlaps)
+			}
+			sprites.push(sprite);
+			addActionToHistory("add_parts", [sprite])
+			let prop = generatePropertiesForPart(sprite)
+			global_part_properties.push(...prop)
+		}
 	}
+	global_sprites_to_place = [generatePart(document.getElementById("spriteSelect").value)]
 }
 
 function select_sprite(sprite_to_select) {
-	for (sprite of selected_sprites) {
+	for (let sprite of global_selected_sprites) {
 		if (isSameSprite(sprite, sprite_to_select)) {
 			return;
 		}
 	}
-	selected_sprites.push(sprite_to_select);
+	global_selected_sprites.push(sprite_to_select);
 	updateSpriteSelection();
+	handlePropertySelectionChange()
 }
 
-function resetSelectedSprites() {
-	selected_sprites = [];
-	updateSpriteSelection();
+function remove_multiple_from_sprites(sprites_to_remove) {1
+	for (let sprite of sprites_to_remove) {
+		remove_from_sprites(sprite)
+	}
+	addActionToHistory("remove_parts", sprites_to_remove)
 }
+
 function remove_from_sprites(sprite_to_remove) {
-	// console.log(sprite_to_remove);
-	// console.log(gridMap)
-	const spriteToRemove = sprite_to_remove[0];
+	const spriteToRemove = sprite_to_remove;
+
+	
 	for (const sprite of sprites) {
 		// find the sprite in sprites and remove it
 		// check id and location
@@ -738,7 +472,6 @@ function remove_from_sprites(sprite_to_remove) {
 			break;
 		}
 	}
-
 	// remove from key from gridmap
 	const key_loc_x = spriteToRemove.Location[0];
 	const key_loc_y = spriteToRemove.Location[1];
@@ -747,17 +480,17 @@ function remove_from_sprites(sprite_to_remove) {
 			gridMap[key].is_drawn_by_sprite.Location[0] === key_loc_x &&
 			gridMap[key].is_drawn_by_sprite.Location[1] === key_loc_y
 		) {
-			// console.log("found key" + key);
 			delete gridMap[key];
 		}
 	}
 }
 
-function handleRightClick(event) {
-	event.preventDefault();
-	rotation = (rotation + 1) % 4;
-	resetSelectedSprites();
-	handleCanvasMouseMove(event); // Update the preview with new rotation
+function removeDoor(location) {
+	for (let i=0; i<doors.length;i++) {
+		if (sameTile(doors[i].Cell, location)) {
+			doors.splice(i,1)
+		}
+	}
 }
 
 function clearPreviewSprite() {
@@ -781,8 +514,7 @@ function findSprite(x, y) {
 }
 
 function getSpriteTileLocations(sprite) {
-	const sprite_size =
-		spriteData[sprite.ID].sprite_size || spriteData[sprite.ID].size;
+	const sprite_size = spriteData[sprite.ID].size || spriteData[sprite.ID].size;
 	const locations = [];
 
 	if (sprite.Rotation % 2 === 0) {
@@ -802,7 +534,6 @@ function getSpriteTileLocations(sprite) {
 }
 
 function mousePos(event) {
-	const canvas = document.getElementById("spriteCanvas");
 	const rect = canvas.getBoundingClientRect();
 
 	// Calculate scaling factors between the canvas's original size and its displayed size
@@ -812,8 +543,6 @@ function mousePos(event) {
 	// Calculate mouse position relative to the canvas, taking into account the scaling
 	const x = (event.clientX - rect.left) * scaleX;
 	const y = (event.clientY - rect.top) * scaleY;
-	// const x = event.offsetX;
-	// const y = event.offsetY;
 	const mouseX = Math.floor(x / gridSize) * gridSize;
 	const mouseY = Math.floor(y / gridSize) * gridSize;
 	const canvasPositionX = mouseX / gridSize + minX;
@@ -821,11 +550,6 @@ function mousePos(event) {
 	const result = [canvasPositionX, canvasPositionY];
 	return result;
 }
-
-// Initialize the canvas
-loadPreviewSpriteImage();
-// Initialize the grid
-// drawGrid();
 
 function isSameSprite(sprite1, sprite2) {
 	return (
@@ -841,4 +565,77 @@ function isSameToggleType(toggle1, toggle2) {
 
 function toggleBelongsToSprite(toggle, sprite) {
 	return isSameSprite(toggle.Key[0], sprite);
+}
+
+function overlappingParts(part, parts) {
+	let overlapping_parts = []
+	for (let part2 of parts) {
+		for (let location1 of getSpriteTileLocations(part)) {
+			for (let location2 of getSpriteTileLocations(part2)) {
+				if (sameTile(location1, location2)) {
+					overlapping_parts.push(part2)
+				}
+			}
+		}
+	} 
+	return overlapping_parts
+}
+
+function repositionPartsRalative(parts) { //Uses the first part as reference and places all following parts interpreting thir location as being ralative to the first parts location
+	let base = [0,0]
+	toggle = true
+	let new_parts = []
+	for (let part of parts){
+		let new_part = partCopy(part)
+		if (toggle) {
+			base = parts[0].Location
+			toggle = false
+		} else {
+			new_part.Location[0] = base[0]+part.Location[0]
+			new_part.Location[1] = base[1]+part.Location[1]
+		}
+		new_parts.push(new_part)
+	}
+	return new_parts
+}
+
+function absoluteToRalativePartCoordinates(parts) { //Uses the first part as reference and places all following parts interpreting thir location as being ralative to the first parts location
+	let base = [0,0]
+	toggle = true
+	let new_parts = []
+	for (let part of parts){
+		let new_part = partCopy(part)
+		if (toggle) {
+			base = parts[0].Location
+			toggle = false
+		} else {
+			new_part.Location[0] = part.Location[0]-base[0]
+			new_part.Location[1] = part.Location[1]-base[1]
+		}
+		new_parts.push(new_part)
+	}
+	return new_parts
+}
+
+function mirroredParts(parts) {
+	let partsout = [...parts]
+	for (let part of parts) {
+		location_rotations = mirroredPositions(partCenter(part), global_mirror_axis, false)
+		for (let i = 1;i< location_rotations[0].length; i++) {
+			let newpart = partCopy(part)
+			newpart.Location = partLocationFromCenter(location_rotations[0][i], part)
+			newpart.Rotation = part.Rotation+(part.Rotation+location_rotations[1][i][0])%2*2//+location_rotations[1][i][0]
+			newpart.FlipX = location_rotations[1][i][1]
+			partsout.push(newpart)
+		}
+	}
+	return partsout
+}
+
+function doIfCursorOverPart(event, code) {
+	const pos = mousePos(event);
+	let part = findSprite(pos[0], pos[1])
+	if (part) {
+		code(part);
+	}
 }
