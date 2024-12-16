@@ -6,6 +6,8 @@ let global_sprites_to_place = [generatePart("cosmoteer.airlock")]; // To store t
 let global_selected_sprites = [];
 let global_toggles_to_add = []
 let global_mirror_axis = []
+let global_crew_assignments = []
+let global_supply_chains = []
 let sprites = []; // To store the sprites
 let all_ship_stats = []
 let minX = 0;
@@ -400,6 +402,10 @@ function handleCanvasClick(event) {
 	if (cursorMode === "Select") {
 		doIfCursorOverPart(event, part => select_sprite(part));
 	}
+	// select sprite
+	if (cursorMode === "Supply") {
+		doIfCursorOverPart(event, part => select_sprite(part));
+	}
 }
 
 function handleRightClick(event) {
@@ -416,6 +422,8 @@ function handleRightClick(event) {
 	} else if (cursorMode === "Select") {
 		global_selected_sprites = []
 		updateSpriteSelection()
+	} else if (cursorMode === "Supply") {
+		doIfCursorOverPart(event, part => addSupplyChains(part, global_selected_sprites));
 	} 
 }
 
@@ -638,5 +646,19 @@ function doIfCursorOverPart(event, code) {
 	let part = findSprite(pos[0], pos[1])
 	if (part) {
 		code(part);
+	}
+}
+
+function addSupplyChains(part1, parts) {
+	let part1Data = spriteData[part1.ID]
+	for (let part2 of parts) {
+		let part2Data = spriteData[part2.ID]
+		if (part1Data.tags.includes("crew")) {
+			global_crew_assignments.push(generateSupplyChain(part1, part2))
+		} else if (part2Data.tags.includes("crew")) {
+			global_crew_assignments.push(generateSupplyChain(part2, part1))
+		} else if (part2Data.tags.includes("crew")) {
+			global_supply_chains.push(generateSupplyChain(part1, part2))
+		}
 	}
 }

@@ -1,3 +1,24 @@
+/*
+meanings of tags:
+
+crew_transport: in game section for crew related parts
+structure: in game section for structure related parts
+energy weapon: in game section for energy weapon related parts
+utilities: in game section for utilities related parts
+defense: in game section for defense related parts
+projectile weapon: in game section for projectile weapon related parts
+flight: in game section for flight related parts
+power: in game section for power related parts
+factory: in game section for factory parts
+
+weapon: Anything that can deal consistent damage
+weapon like: Used for parts that dont deal damage but still have adjustable fire modes (currently only tractor beam)
+on_off: parts that can be tunred on and off
+fire_pref: weapons that cen be switched between attack, defend or both (flak and pd)
+thruster: Anything that provides thrust
+hyperdrive: hyperdrives
+*/ 
+
 const spriteData = {
 	"cosmoteer.corridor": { mass: 1, size: [1, 1], cost: 0.1, tags: ["crew_transport"] },
 	"cosmoteer.door": { size: [1, 1], cost: 0.1, tags: ["crew_transport"] },

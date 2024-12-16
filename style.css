@@ -1,3 +1,4 @@
+/*trash mostly written by ai. Idk what most of this does tbh*/
 body {
     font-family: Arial, sans-serif;
     background-color: white;
@@ -5,10 +6,29 @@ body {
     margin: 0;
   }
   
-  .menu-container {
-    padding: 10px;
-    float: right;
-  }
+  .main-container {
+    display: flex;
+    width: 90%;
+    flex-direction: row;
+    justify-content: space-between; 
+    align-items: flex-start;
+}
+
+.canvas-container {
+  flex-grow: 1; 
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.part-container {
+  flex-shrink: 0; 
+  width: 20%; 
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-left: 10px;
+}
   
   .categories {
     display: flex;
@@ -38,8 +58,8 @@ body {
   }
   
   .part-item {
-    flex: 1 1 calc(33.33% - 20px); 
-    max-width: calc(33.33% - 20px); 
+    flex: 1 1 calc(25% - 20px); 
+    max-width: calc(25% - 20px); 
     text-align: center;
     background-color: white;
     border: 1px solid #111;
@@ -48,8 +68,8 @@ body {
   }
   
   .part-item img {
-    width: 60px;        
-    height: 90px;       
+    width: 90px;        
+    height: 120px;       
     object-fit: cover;  
     object-position: top;
     margin-bottom: 10px; 
