@@ -1,9 +1,11 @@
 //Stuff that should immediately run on startup
-
-preloadSprites();
+window.onload = () => {
+	preloadSprites();
+};
 
 // Initialize the canvas
 loadPreviewSpriteImage();
+
 // Initialize the grid
 // drawGrid();
 
