@@ -58,8 +58,8 @@ body {
   }
   
   .part-item {
-    flex: 1 1 calc(25% - 20px); 
-    max-width: calc(25% - 20px); 
+    flex: 1 1 calc(20% - 20px); 
+    max-width: calc(20% - 20px); 
     text-align: center;
     background-color: white;
     border: 1px solid #111;

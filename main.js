@@ -2,12 +2,14 @@ const gridSize = 64; // Size of each grid cell
 let isPreviewSpriteLoaded = false; // init sprite preview
 const gridMap = {}; // To store the grid map
 let sprite_delete_mode = []; // To store the sprite delete mode
-let global_sprites_to_place = [generatePart("cosmoteer.airlock")]; // To store the sprites to place
+let global_sprites_to_place = [generatePart("cosmoteer.corridor")]; // To store the sprites to place
 let global_selected_sprites = [];
 let global_toggles_to_add = []
 let global_mirror_axis = []
 let global_crew_assignments = []
 let global_supply_chains = []
+let global_sprites_to_draw = [] //Saves the sprites that are yet to be drawn
+let global_sprites_to_delete = [] //Saves the sprites that are drawn to which should be deleted
 let sprites = []; // To store the sprites
 let all_ship_stats = []
 let minX = 0;
@@ -84,10 +86,12 @@ function ChangeCursorMode(string) {
 function handleCursorModeChange() {
 	clearPreview();
 	if (cursorMode === "Place") {
-		if (global_sprites_to_place.length === 0) {
+		if (global_sprites_to_place.length === 0 || global_sprites_to_place.includes("cosmoteer.delete")) {
 			document.getElementById("spriteSelect").value = "cosmoteer.corridor";
+			global_sprites_to_place = [generatePart("cosmoteer.corridor")]
 		}
 	} else if (cursorMode === "Delete") {
+		global_sprites_to_place = []
 		document.getElementById("spriteSelect").value = "cosmoteer.delete";
 	} else if (cursorMode === "Move") {
 		global_sprites_to_place = [];
@@ -448,7 +452,7 @@ function place_sprites(sprites_to_place) {//Places the first sprites with absolu
 			global_part_properties.push(...prop)
 		}
 	}
-	global_sprites_to_place = [generatePart(document.getElementById("spriteSelect").value)]
+	//global_sprites_to_place = [generatePart(document.getElementById("spriteSelect").value)]
 }
 
 function select_sprite(sprite_to_select) {

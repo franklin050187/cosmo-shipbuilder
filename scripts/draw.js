@@ -133,28 +133,29 @@ function redrawCanvas() {
 	drawMirrorAxis()
 
 	for (let sprite of sprites) {
-		const [x, y] = sprite_position(sprite, [
-			sprite.Location[0],
-			sprite.Location[1],
-		]);
-		let canvasLocation = convertCoordinatesToCanvas(x,y)
-		drawPartIndicators(sprite, canvasLocation[0],canvasLocation[1])
+		drawPartIndicators(sprite)
 	}
 
 	draw_doors();
 	draw_resources();
 }
 
-function drawPartIndicators(part, x, y) {
+function drawPartIndicators(part) {
+	let loc = partCenter(part)
+	let [x,y] = convertCoordinatesToCanvas(part.Location[0], part.Location[1])
+	let [centerX,centerY] = convertCoordinatesToCanvas(loc[0],loc[1])
+
 	const canvas = document.getElementById("drawingCanvas");
 	const ctx = canvas.getContext("2d");
 	ctx.fillStyle = "red";
 	ctx.fillRect(x, y, 10, 10);
-	if (part.ID == "cosmoteer.ion_beam_prism") {
-		ctx.fillStyle = "green";
-		ctx.fillRect(x, y, 100, 100);
+	if (part.ID == "cosmoteer.shield_gen_small") {
+		ctx.fillStyle = "blue";
+		ctx.beginPath();
+		ctx.lineWidth = 10;
+		ctx.arc(centerX, centerY, 400, 4*Math.PI/3, 5*Math.PI/3);
+		ctx.stroke(); 
 	}
-
 }
 
 function convertCoordinatesToCanvas(x,y) {
