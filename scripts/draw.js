@@ -72,17 +72,15 @@ function draw_doors() {
 	}
 }
 
-function redrawCanvas() {
-	const newSprites = sprites.filter((sprite) => !spritesDrawn.has(sprite));
-	const oldSprites = Array.from(spritesDrawn);
+function updateCanvas() {
 	const canvas = document.getElementById("drawingCanvas");
 	canvas.getContext("2d").clearRect(0, 0, canvas.width, canvas.height);
 	const spritecanvas = document.getElementById("spriteCanvas");
-	spritecanvas.getContext("2d").clearRect(0, 0, spritecanvas.width, spritecanvas.height);
+	//spritecanvas.getContext("2d").clearRect(0, 0, spritecanvas.width, spritecanvas.height);
 
 	spritesDrawn = new Set(sprites);
 	// Clear old sprites
-	for (const sprite of oldSprites) {
+	for (const sprite of global_sprites_to_delete) {
 		if (!spritesDrawn.has(sprite)) {
 			const [x, y] = sprite_position(sprite, [
 				sprite.Location[0],
@@ -96,9 +94,9 @@ function redrawCanvas() {
 			);
 		}
 	}
-
+	global_sprites_to_delete = []
 	// Draw new sprites
-	for (const sprite of sprites) {
+	for (const sprite of global_sprites_to_draw) {
 		const imageName = sprite.ID.replace("cosmoteer.", "");
 		const partData = getPartDataMap(sprite);
 		const missileType = Number.parseInt(partData.get("missile_type"));
@@ -129,6 +127,7 @@ function redrawCanvas() {
 			square_map(sprite);
 		}
 	}
+	global_sprites_to_draw = []
 
 	drawMirrorAxis()
 

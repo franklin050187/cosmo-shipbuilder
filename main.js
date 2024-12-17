@@ -164,6 +164,8 @@ function loadJson(json) {
 		if (x > maxX) maxX = x;
 		if (y > maxY) maxY = y;
 		sprites.push(sprite);
+		global_sprites_to_draw.push(sprite)
+
 	}
 
 	for (const door of doordata) {
@@ -196,7 +198,7 @@ function loadJson(json) {
 	preview_canvas.width = width;
 	preview_canvas.height = height;
 
-    redrawCanvas();
+    updateCanvas();
 	updateShipStats();
 	updateNonVisuals()
 }
@@ -207,7 +209,7 @@ function applyShipProperty() {
 		ship_property_select.options[ship_property_select.selectedIndex].text;
 	shipdata[toggle] = new_value;
 	updateShipToggleSelection();
-	redrawCanvas();
+	updateCanvas();
 }
 
 function applyProperty() {
@@ -219,7 +221,7 @@ function applyProperty() {
             }
         }
     }
-    redrawCanvas()
+    updateCanvas()
 }
 
 function sprite_position(part, position) {
@@ -347,7 +349,7 @@ function loadPreviewSpriteImage() {
 
 function handleCanvasMouseMove(event) {
 	// fix position for flexbox
-	redrawCanvas();
+	updateCanvas();
 
 	let [canvasPositionX, canvasPositionY] = convertCanvasToCoordinates(event.clientX, event.clientY)
 
@@ -385,7 +387,7 @@ function handleCanvasClick(event) {
 		doIfCursorOverPart(event, (part) => {
 			remove_multiple_from_sprites(mirroredParts([part]))
 			clearPreview()
-			redrawCanvas();
+			updateCanvas();
 		})
 	}
 	// move sprite
@@ -422,7 +424,7 @@ function handleRightClick(event) {
 		handleCanvasMouseMove(event); 
 	} else if (cursorMode === "Delete") {
 		removeDoor(pos);
-		redrawCanvas();
+		updateCanvas();
 	} else if (cursorMode === "Select") {
 		global_selected_sprites = []
 		updateSpriteSelection()
@@ -447,6 +449,7 @@ function place_sprites(sprites_to_place) {//Places the first sprites with absolu
 				remove_multiple_from_sprites(overlaps)
 			}
 			sprites.push(sprite);
+			global_sprites_to_draw.push(sprite)
 			addActionToHistory("add_parts", [sprite])
 			let prop = generatePropertiesForPart(sprite)
 			global_part_properties.push(...prop)
@@ -482,6 +485,7 @@ function remove_from_sprites(sprite_to_remove) {
 		// check id and location
 		if (isSameSprite(sprite, spriteToRemove)) {
 			sprites.splice(sprites.indexOf(sprite), 1);
+			global_sprites_to_delete.push(sprite)
 			break;
 		}
 	}

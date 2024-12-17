@@ -110,7 +110,6 @@ function loadParts(category) {
 			ChangeCursorMode("Place")
 			global_sprites_to_place = [generatePart(part.ID)]
 		});
-		console.log(partDiv.innerHTML)
 		partDiv.appendChild(button);
     	partsContainer.appendChild(partDiv);
 	};
