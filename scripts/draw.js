@@ -192,18 +192,32 @@ function drawMirrorAxis() {
 		const canvas = document.getElementById("drawingCanvas");
 		const ctx = canvas.getContext("2d");
 
-		let [x,y] = convertCoordinatesToCanvas([axis.Location, maxY])
 		ctx.strokeStyle = "green"
 		ctx.lineWidth = 3;
 		ctx.beginPath(); 
-		if (axis.Rotation === 0) {
-			ctx.moveTo(x, 0); 
-			ctx.lineTo(x, 2000); 
+		let bignum = 2000
+		if (axis.Type === "linear") {
+			let [x, y] = convertCoordinatesToCanvas([global_mirror_center[axis.Rotation], maxY])
+			if (axis.Rotation === 0) {
+				ctx.moveTo(x, 0); 
+				ctx.lineTo(x, y); 
+			}
+			if (axis.Rotation === 1) {
+				ctx.moveTo(0, x); 
+				ctx.lineTo(bignum, x); 
+			}
+		} else if (axis.Type === "diagonal") {
+			let [x,y] = convertCoordinatesToCanvas(global_mirror_center)
+			if (axis.Rotation === 0) {
+				ctx.moveTo(x-bignum, y-bignum); 
+				ctx.lineTo(x+bignum, y+bignum); 
+			}
+			if (axis.Rotation === 1) {
+				ctx.moveTo(x+bignum, y-bignum); 
+				ctx.lineTo(x-bignum, y+bignum);  
+			}
 		}
-		if (axis.Rotation === 1) {
-			ctx.moveTo(0, x); 
-			ctx.lineTo(2000, x); 
-		}
+		
 		ctx.stroke(); 
 		ctx.lineWidth = 1;
 		ctx.strokeStyle = "black"

@@ -41,7 +41,7 @@ function indexOfListMax(arr) {
     return maxIndex;
 }
 
-function mirroredPositions(pos, allaxis) {
+/*function mirroredPositions(pos, allaxis) {
     locations = [pos]
     rotationFlips = [[0,0]]
     for (let axis of allaxis) {
@@ -51,4 +51,23 @@ function mirroredPositions(pos, allaxis) {
         rotationFlips.push([axis.Rotation, true])
     }
 	return [locations, rotationFlips]
+}*/
+
+function mirroredPositions(pos, allaxis, axislocations) {
+    let locations = [pos];
+    let rotationFlips = [[0, 0]];
+    
+    for (let axis of allaxis) {
+        let loc = [...pos];
+        if (axis.Type === "linear") {
+            loc[axis.Rotation] = -(pos[axis.Rotation] - axislocations[axis.Rotation]) + axislocations[axis.Rotation] + axis.Rotation * 2;
+        } else if (axis.Type === "diagonal") {
+            loc[axis.Rotation] = loc[axis.Location[1]];
+            loc[axis.Rotation] = temp;
+        }
+        locations.push(loc);
+        rotationFlips.push([axis.Rotation, true]);
+    }
+
+    return [locations, rotationFlips];
 }

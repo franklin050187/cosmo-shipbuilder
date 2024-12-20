@@ -6,6 +6,7 @@ let global_sprites_to_place = [generatePart("cosmoteer.corridor")]; // To store 
 let global_selected_sprites = [];
 let global_toggles_to_add = []
 let global_mirror_axis = []
+let global_mirror_center = [0,0]
 let global_crew_assignments = []
 let global_supply_chains = []
 let global_sprites_to_draw = [] //Saves the sprites that are yet to be drawn
@@ -535,8 +536,13 @@ function findSprite(x, y) {
 }
 
 function getSpriteTileLocations(sprite) {
-	const sprite_size = spriteData[sprite.ID].size || spriteData[sprite.ID].size;
+	const sprite_size = spriteData[sprite.ID].sprite_size || spriteData[sprite.ID].size;
 	const locations = [];
+	let base_location = [...sprite.Location]
+	if (spriteData[sprite.ID].sprite_size && (sprite.Rotation === 0 || sprite.Rotation === 3)) {
+		let caze = (sprite.Rotation+1)%2
+		base_location[caze] = base_location[caze]-spriteData[sprite.ID].sprite_size[caze]
+	}
 
 	if (sprite.Rotation % 2 === 0) {
 		width = sprite_size[0];
@@ -548,7 +554,7 @@ function getSpriteTileLocations(sprite) {
 
 	for (let i = 0; i < width; i++) {
 		for (let j = 0; j < height; j++) {
-			locations.push([sprite.Location[0] + i, sprite.Location[1] + j]);
+			locations.push([base_location[0] + i, base_location[1] + j]);
 		}
 	}
 	return locations;
@@ -644,11 +650,11 @@ function mirroredParts(parts, also_adds_base_parts = true) {
 		partsout = [...parts]
 	}
 	for (let part of parts) {
-		location_rotations = mirroredPositions(partCenter(part), global_mirror_axis, false)
+		location_rotations = mirroredPositions(partCenter(part), global_mirror_axis,global_mirror_center, false)
 		for (let i = 1;i< location_rotations[0].length; i++) {
 			let newpart = partCopy(part)
 			newpart.Location = partLocationFromCenter(location_rotations[0][i], part)
-			newpart.Rotation = part.Rotation+(part.Rotation+location_rotations[1][i][0])%2*2//+location_rotations[1][i][0]
+			newpart.Rotation = part.Rotation+(part.Rotation+location_rotations[1][i][0])%2*2
 			newpart.FlipX = location_rotations[1][i][1]
 			partsout.push(newpart)
 		}
@@ -663,7 +669,7 @@ function existingMirroredParts(parts, all_parts, also_adds_base_parts = true) {
 		partsout = [...parts]
 	}
 	for (let part of parts) {
-		location_rotations = mirroredPositions(partCenter(part), global_mirror_axis, false)
+		location_rotations = mirroredPositions(partCenter(part), global_mirror_axis, global_mirror_center, false)
 		for (let i = 1;i< location_rotations[0].length; i++) {
 			locations.push(partLocationFromCenter(location_rotations[0][i], part))
 		}
