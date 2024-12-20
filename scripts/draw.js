@@ -126,8 +126,10 @@ function updateCanvas() {
 		drawPartIndicators(sprite)
 	}
 
+	if (cursorMode === "Supply") {
+		drawSupplyChains()
+	}
 	drawMirrorAxis()
-	drawSupplyChains()
 	draw_doors();
 	draw_resources();
 }
@@ -215,17 +217,9 @@ function drawSupplyChains() {
 	for (let chain of [...global_supply_chains, ...global_crew_assignments]) {
 		let part1 = chain.Key
 		for (let part2 of chain.Value) {
-			let [x,y] = convertCoordinatesToCanvas(part1)
-			let [a,b] = convertCoordinatesToCanvas(part2.Location)
-		
 			ctx.strokeStyle = "blue"
-			ctx.lineWidth = 6;
-			ctx.beginPath(); 
-		
-			ctx.moveTo(x, y); 
-			ctx.lineTo(a, b);  
-		
-			ctx.stroke();
+			ctx.lineWidth = 4;
+			drawArrow(ctx, convertCoordinatesToCanvas(partCenter(part1)), convertCoordinatesToCanvas(partCenter(part2)))
 		}
 	}
 }
@@ -322,4 +316,33 @@ function rotate_img(image, angle, flipx) {
 
 function clearLayer(layer) {
 	layer.clearRect(0, 0, canvas.width, canvas.height)
+}
+
+function drawArrow(ctx, loc1, loc2) {
+	let [x1, y1] = loc1
+	let [x2, y2] = loc2
+
+	const lineWidth = ctx.lineWidth;
+	const headLength = 10; // Arrowhead size
+	const headAngle = Math.PI / 6; // Angle for the arrowhead
+	const angle = Math.atan2(y2 - y1, x2 - x1);
+
+	// Draw the main line
+	ctx.beginPath();
+	ctx.moveTo(x1, y1);
+	ctx.lineTo(x2, y2);
+	ctx.lineWidth = lineWidth;
+	ctx.stroke();
+
+	// Calculate arrowhead position, adjusted for line width
+	const arrowheadX = x2 - (headLength + lineWidth) * Math.cos(angle);
+	const arrowheadY = y2 - (headLength + lineWidth) * Math.sin(angle);
+
+	// Draw the left and right parts of the arrowhead
+	ctx.beginPath();
+	ctx.moveTo(x2, y2);
+	ctx.lineTo(arrowheadX - headLength * Math.cos(angle - headAngle), arrowheadY - headLength * Math.sin(angle - headAngle));
+	ctx.moveTo(x2, y2);
+	ctx.lineTo(arrowheadX - headLength * Math.cos(angle + headAngle), arrowheadY - headLength * Math.sin(angle + headAngle));
+	ctx.stroke();
 }

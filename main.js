@@ -81,6 +81,7 @@ function ChangeCursorMode(string) {
 			return
 		}
 	}
+	updateCanvas()
 }
 
 function handleCursorModeChange() {
@@ -118,7 +119,6 @@ function export_json() {
 	shipdata.Parts = new_parts;
 	shipdata.PartUIToggleStates = global_part_properties;
 	shipdata.ResourceSupplierTargets = global_supply_chains;
-	console.log(global_crew_assignments)
 	shipdata.CrewSourceTargets = global_crew_assignments;
 
 	for ([key, value] of getShipDataMap()) {
@@ -425,7 +425,13 @@ function handleRightClick(event) {
 		global_selected_sprites = []
 		updateSpriteSelection()
 	} else if (cursorMode === "Supply") {
-		doIfCursorOverPart(event, part => addSupplyChains(part, global_selected_sprites));
+		doIfCursorOverPart(event, (part) => {
+			addSupplyChains(part, global_selected_sprites)
+			let part2arr = mirroredParts([part])
+			if (part2arr[0]) {
+				addSupplyChains(part2arr[0], global_selected_sprites)
+			}
+		});
 	} 
 }
 
@@ -630,8 +636,11 @@ function absoluteToRalativePartCoordinates(parts) { //Uses the first part as ref
 	return new_parts
 }
 
-function mirroredParts(parts) {
-	let partsout = [...parts]
+function mirroredParts(parts, also_adds_base_parts = true) {
+	let partsout = []
+	if (also_adds_base_parts) {
+		partsout = [...parts]
+	}
 	for (let part of parts) {
 		location_rotations = mirroredPositions(partCenter(part), global_mirror_axis, false)
 		for (let i = 1;i< location_rotations[0].length; i++) {
@@ -653,20 +662,27 @@ function doIfCursorOverPart(event, code) {
 	}
 }
 
-function addSupplyChains(part1, parts) {
-	let part1Data = spriteData[part1.ID]
+function addSupplyChains(part2, parts) {
+	let part2Data = spriteData[part2.ID]
 	let chainlist = [...global_supply_chains, ...global_crew_assignments]
-	for (let part2 of parts) {
-		let part2Data = spriteData[part2.ID]
+	for (let part1 of parts) {
+		let part1Data = spriteData[part1.ID]
 
 		//No chain from a part to itself
 		if (!isSameSprite(part1, part2)) {
 			//check if chain already exists
 			let toggle = true
+			loop:
 			for (let chain of chainlist) {
-				if((isSameSprite(part1, chain.Value) && isSameSprite(part2, chain.Key)) ||  (isSameSprite(part2, chain.Value) && isSameSprite(part1, chain.Key))) {
+				if (isSameSprite(part1, chain.Key)) {
 					toggle = false
-					break
+					break loop
+				}
+				for (let value of chain.Value) {
+					if(isSameSprite(part2, value)) {
+						toggle = false
+						break loop
+					}
 				}
 			}
 
