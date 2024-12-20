@@ -1,14 +1,12 @@
-//Stuff that should immediately run on startup
+//Happens after the window loaded to prevent drawing on a non existent canvas
 window.onload = () => {
-	preloadSprites();
+	loadJson(JSON.stringify(startup_ship_data))
 };
-
-// Initialize the canvas
-loadPreviewSpriteImage();
-
-// Initialize the grid
-// drawGrid();
-
-loadJson(JSON.stringify(startup_ship_data))
 // Load a default category
-loadParts("weapon");
+loadParts("energy weapon")
+preloadSprites()
+// Initialize the canvas
+loadPreviewSpriteImage()
+
+
+

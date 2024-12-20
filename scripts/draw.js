@@ -52,10 +52,7 @@ function draw_doors() {
 
 		img.onload = () => {
 			rotation = (door.Orientation + 1) % 2;
-			const door_location = [];
-			door_location[0] = door.Cell[0];
-			door_location[1] = door.Cell[1];
-			const location = sprite_position(door, door_location);
+			const location = sprite_position(door);
 			x = location[0];
 			y = location[1];
 			const angle = rotation;
@@ -76,16 +73,12 @@ function updateCanvas() {
 	const canvas = document.getElementById("drawingCanvas");
 	canvas.getContext("2d").clearRect(0, 0, canvas.width, canvas.height);
 	const spritecanvas = document.getElementById("spriteCanvas");
-	//spritecanvas.getContext("2d").clearRect(0, 0, spritecanvas.width, spritecanvas.height);
 
 	spritesDrawn = new Set(sprites);
 	// Clear old sprites
 	for (const sprite of global_sprites_to_delete) {
 		if (!spritesDrawn.has(sprite)) {
-			const [x, y] = sprite_position(sprite, [
-				sprite.Location[0],
-				sprite.Location[1],
-			]);
+			const [x, y] = sprite_position(sprite);
 			ctx.clearRect(
 				(x - minX) * gridSize + 1,
 				(y - minY) * gridSize + 1,
@@ -113,7 +106,7 @@ function updateCanvas() {
 		}
 
 		if (img) {
-			const [x, y] = convertCoordinatesToCanvas(sprite.Location[0],sprite.Location[1]);
+			const [x, y] = convertCoordinatesToCanvas(sprite_position(sprite));
 			const rotatedImage = rotate_img(img, sprite.Rotation, sprite.FlipX);
 			ctx.drawImage(
 				rotatedImage,
@@ -129,20 +122,20 @@ function updateCanvas() {
 	}
 	global_sprites_to_draw = []
 
-	drawMirrorAxis()
-
 	for (let sprite of sprites) {
 		drawPartIndicators(sprite)
 	}
 
+	drawMirrorAxis()
+	drawSupplyChains()
 	draw_doors();
 	draw_resources();
 }
 
 function drawPartIndicators(part) {
 	let loc = partCenter(part)
-	let [x,y] = convertCoordinatesToCanvas(part.Location[0], part.Location[1])
-	let [centerX,centerY] = convertCoordinatesToCanvas(loc[0],loc[1])
+	let [x,y] = convertCoordinatesToCanvas(part.Location)
+	let [centerX,centerY] = convertCoordinatesToCanvas(loc)
 
 	const canvas = document.getElementById("drawingCanvas");
 	const ctx = canvas.getContext("2d");
@@ -157,8 +150,8 @@ function drawPartIndicators(part) {
 	}
 }
 
-function convertCoordinatesToCanvas(x,y) {
-	return [(x - minX) * gridSize + 1, (y - minY) * gridSize + 1]	
+function convertCoordinatesToCanvas(location) {
+	return [(location[0] - minX) * gridSize + 1, (location[1] - minY) * gridSize + 1]	
 }
 
 function convertCanvasToCoordinates(canvasX, canvasY) {
@@ -197,7 +190,7 @@ function drawMirrorAxis() {
 		const canvas = document.getElementById("drawingCanvas");
 		const ctx = canvas.getContext("2d");
 
-		let [x,y] = convertCoordinatesToCanvas(axis.Location, maxY)
+		let [x,y] = convertCoordinatesToCanvas([axis.Location, maxY])
 		ctx.strokeStyle = "green"
 		ctx.lineWidth = 3;
 		ctx.beginPath(); 
@@ -215,15 +208,37 @@ function drawMirrorAxis() {
 	}
 }
 
+function drawSupplyChains() {
+	const canvas = document.getElementById("previewCanvas");
+	const ctx = canvas.getContext("2d");
+	clearLayer(ctx)
+	for (let chain of [...global_supply_chains, ...global_crew_assignments]) {
+		let part1 = chain.Key
+		for (let part2 of chain.Value) {
+			let [x,y] = convertCoordinatesToCanvas(part1)
+			let [a,b] = convertCoordinatesToCanvas(part2.Location)
+		
+			ctx.strokeStyle = "blue"
+			ctx.lineWidth = 6;
+			ctx.beginPath(); 
+		
+			ctx.moveTo(x, y); 
+			ctx.lineTo(a, b);  
+		
+			ctx.stroke();
+		}
+	}
+}
+
 function drawPreview(inputparts) {
 	const parts = mirroredParts(repositionPartsRalative(inputparts))
 	const canvas = document.getElementById("previewCanvas");
 	const ctx = canvas.getContext("2d");
-	ctx.clearRect(0, 0, canvas.width, canvas.height);
+	clearLayer(ctx);
 	ctx.globalAlpha = 0.5;
 
 	for (let part of parts) {
-		let [x,y] = convertCoordinatesToCanvas(part.Location[0],part.Location[1])
+		let [x,y] = convertCoordinatesToCanvas(sprite_position(part))
 		const rotatedImage = rotate_img(
 			partSprite(part),
 			part.Rotation,
@@ -261,8 +276,8 @@ function drawDeleteSymbol(location, size, rotation) {
 	const canvas = document.getElementById("previewCanvas");
 	const ctx = canvas.getContext("2d");
 
-	let [x,y] = convertCoordinatesToCanvas(location[0], location[1])
-	let [a,b] = convertCoordinatesToCanvas(location[0]+size[rotation%2], location[1]+size[(rotation+1)%2])
+	let [x,y] = convertCoordinatesToCanvas(location)
+	let [a,b] = convertCoordinatesToCanvas([location[0]+size[rotation%2], location[1]+size[(rotation+1)%2]])
 
 	ctx.strokeStyle = "red"
 	ctx.lineWidth = 6;
@@ -303,4 +318,8 @@ function rotate_img(image, angle, flipx) {
 	ctx.drawImage(image, -image.width / 2, -image.height / 2);
 
 	return canvas;
+}
+
+function clearLayer(layer) {
+	layer.clearRect(0, 0, canvas.width, canvas.height)
 }

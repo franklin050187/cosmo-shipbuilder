@@ -43,7 +43,7 @@ function updateShipStats() {
         ship_stats_label.innerHTML += `${commandPointText}<br>`;
     }
     ship_stats_label.innerHTML += 'Crew :' + stats.crew.toString() + '웃<br>'
-    ship_stats_label.innerHTML += 'moment of inertia:' + stats.inertia.toString()+ 'kgm^2<br>'
+    ship_stats_label.innerHTML += 'moment of inertia:' + stats.inertia.toFixed(2).toString()+ 'kgm^2<br>'
     ship_stats_label.innerHTML += 'hyperdrive efficiency:' + (stats.hyperdrive_efficiency*100).toString() + '%<br>'
     ship_stats_label.innerHTML += 'crew count:' + stats.crew.toString() + '<br>'
     ship_stats_label.innerHTML += '<br>Warnings:'

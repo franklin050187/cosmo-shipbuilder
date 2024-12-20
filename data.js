@@ -200,7 +200,7 @@ const spriteData = {
 		mass: 24,
 		size: [2, 3],
 		cost: 12.5,
-		tags: ["on_off"],
+		tags: ["on_off", "projectile weapon"],
 		cp_cost: 4,
 	},
 	"cosmoteer.armor_structure_hybrid_1x1": {
@@ -219,7 +219,7 @@ const spriteData = {
 		mass: 36,
 		size: [2, 3],
 		cost: 7.5,
-		tags: ["on_off"],
+		tags: ["on_off", "projectile weapon"],
 		cp_cost: 1,
 	},
 	"cosmoteer.armor_structure_hybrid_1x3": {

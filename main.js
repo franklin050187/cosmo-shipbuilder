@@ -117,6 +117,9 @@ function export_json() {
 	shipdata.NewFlexResourceGridTypes = resources;
 	shipdata.Parts = new_parts;
 	shipdata.PartUIToggleStates = global_part_properties;
+	shipdata.ResourceSupplierTargets = global_supply_chains;
+	console.log(global_crew_assignments)
+	shipdata.CrewSourceTargets = global_crew_assignments;
 
 	for ([key, value] of getShipDataMap()) {
 		shipdata[key] = value;
@@ -163,11 +166,8 @@ function loadJson(json) {
 		if (y < minY) minY = y;
 		if (x > maxX) maxX = x;
 		if (y > maxY) maxY = y;
-		sprites.push(sprite);
-		global_sprites_to_draw.push(sprite)
-
 	}
-
+	
 	for (const door of doordata) {
 		doors.push(door);
 	}
@@ -198,9 +198,10 @@ function loadJson(json) {
 	preview_canvas.width = width;
 	preview_canvas.height = height;
 
-    updateCanvas();
-	updateShipStats();
+	updateShipStats()
 	updateNonVisuals()
+	place_sprites(part_data)
+	global_sprites_to_draw.push(...part_data)
 }
 
 function applyShipProperty() {
@@ -224,7 +225,8 @@ function applyProperty() {
     updateCanvas()
 }
 
-function sprite_position(part, position) {
+function sprite_position(part) {
+	position = [...(part.Location ?? part.Cell)]
 	const sprite_size =
 		spriteData[part.ID].sprite_size || spriteData[part.ID].size;
 	const part_size = spriteData[part.ID].size;
@@ -315,10 +317,7 @@ function preloadSprites() {
 }
 
 function square_map(sprite) {
-	const [x, y] = sprite_position(sprite, [
-		sprite.Location[0],
-		sprite.Location[1],
-	]);
+	const [x, y] = sprite_position(sprite);
 	const width = Math.ceil(sprite.width / gridSize);
 	const height = Math.ceil(sprite.height / gridSize);
 
@@ -348,9 +347,6 @@ function loadPreviewSpriteImage() {
 }
 
 function handleCanvasMouseMove(event) {
-	// fix position for flexbox
-	updateCanvas();
-
 	let [canvasPositionX, canvasPositionY] = convertCanvasToCoordinates(event.clientX, event.clientY)
 
 	updateCoordinates(canvasPositionX, canvasPositionY);
@@ -455,7 +451,7 @@ function place_sprites(sprites_to_place) {//Places the first sprites with absolu
 			global_part_properties.push(...prop)
 		}
 	}
-	//global_sprites_to_place = [generatePart(document.getElementById("spriteSelect").value)]
+	updateCanvas()
 }
 
 function select_sprite(sprite_to_select) {
@@ -659,14 +655,43 @@ function doIfCursorOverPart(event, code) {
 
 function addSupplyChains(part1, parts) {
 	let part1Data = spriteData[part1.ID]
+	let chainlist = [...global_supply_chains, ...global_crew_assignments]
 	for (let part2 of parts) {
 		let part2Data = spriteData[part2.ID]
-		if (part1Data.tags.includes("crew")) {
-			global_crew_assignments.push(generateSupplyChain(part1, part2))
-		} else if (part2Data.tags.includes("crew")) {
-			global_crew_assignments.push(generateSupplyChain(part2, part1))
-		} else if (part2Data.tags.includes("crew")) {
-			global_supply_chains.push(generateSupplyChain(part1, part2))
+
+		//No chain from a part to itself
+		if (!isSameSprite(part1, part2)) {
+			//check if chain already exists
+			let toggle = true
+			for (let chain of chainlist) {
+				if((isSameSprite(part1, chain.Value) && isSameSprite(part2, chain.Key)) ||  (isSameSprite(part2, chain.Value) && isSameSprite(part1, chain.Key))) {
+					toggle = false
+					break
+				}
+			}
+
+			//Add chain
+			if (toggle) {
+				if (part1Data.tags.includes("crew") || part2Data.tags.includes("crew")) {
+					const foundItem = global_crew_assignments.find(item => isSameSprite(item.Key, part1));
+					const value = foundItem ? foundItem.Value : null;
+					if (value === null) {
+						global_crew_assignments.push(generateSupplyChain(part1, part2))
+					} else {
+						value.push(part2)
+					}
+					
+				} else {
+					const foundItem = global_supply_chains.find(item => isSameSprite(item.Key, part1));
+					const value = foundItem ? foundItem.Value : null;
+					if (value === null) {
+						global_supply_chains.push(generateSupplyChain(part1, part2))
+					} else {
+						value.push(part2)
+					}
+				}
+			}
 		}
 	}
+	updateCanvas()
 }

@@ -87,8 +87,6 @@ document.addEventListener("DOMContentLoaded", () => {
   	});
 });
 
-
-
 // Function to load parts based on category
 function loadParts(category) {
 	partsContainer.innerHTML = ""; 
@@ -115,7 +113,6 @@ function loadParts(category) {
 	};
 }
 
-
 function handleCursorMode() {
 	const cursor_mode = document.getElementsByName("cursor_mode");
 	for (const radio of cursor_mode) {
@@ -127,7 +124,9 @@ function handleCursorMode() {
 }
 
 function handlePropertySelectionChange() {
-	property_edit.value = JSON.parse(property_select.value).Value;
+	if (property_select.value) {
+		property_edit.value = JSON.parse(property_select.value).Value;
+	}
 }
 
 function handleShipPropertySelectionChange() {

@@ -53,6 +53,6 @@ function getOneOfEachPart() {
 }
 
 function generateSupplyChain(part1, part2) {//Example: [{"Key": {"FlipX": false, "ID": "cosmoteer.crew_quarters_med", "Location": [4, 10], "Rotation": 0}, "Value": [{"FlipX": false, "ID": "cosmoteer.point_defense", "Location": [4, 9], "Rotation": 0}]}], 
-    return {Key: part1, Value: part2}
+    return {Key: part1, Value: [part2]}
 }
 
