@@ -141,6 +141,7 @@ function handleMirrorSelectionChange() {
 	} else if (mirror_select.value === "horizontal") {
 		global_mirror_axis = [{Rotation: 1, Location: 0, Rotational: false}]
 	}
+	updateCanvas()
 }
 
 function handleRecalculateStats() {

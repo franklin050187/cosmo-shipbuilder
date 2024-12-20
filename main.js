@@ -81,7 +81,6 @@ function ChangeCursorMode(string) {
 			return
 		}
 	}
-	updateCanvas()
 }
 
 function handleCursorModeChange() {
@@ -97,6 +96,7 @@ function handleCursorModeChange() {
 	} else if (cursorMode === "Move") {
 		global_sprites_to_place = [];
 	}
+	updateCanvas()
 }
 
 function handleSpriteSelectionChange() {
@@ -402,11 +402,11 @@ function handleCanvasClick(event) {
 	}
 	// select sprite
 	if (cursorMode === "Select") {
-		doIfCursorOverPart(event, part => select_sprite(part));
+		doIfCursorOverPart(event, part => selectParts([part]));
 	}
 	// select sprite
 	if (cursorMode === "Supply") {
-		doIfCursorOverPart(event, part => select_sprite(part));
+		doIfCursorOverPart(event, part => selectParts([part]));
 	}
 }
 
@@ -427,9 +427,9 @@ function handleRightClick(event) {
 	} else if (cursorMode === "Supply") {
 		doIfCursorOverPart(event, (part) => {
 			addSupplyChains(part, global_selected_sprites)
-			let part2arr = mirroredParts([part])
+			let part2arr = existingMirroredParts([part], sprites, false)
 			if (part2arr[0]) {
-				addSupplyChains(part2arr[0], global_selected_sprites)
+				addSupplyChains(part2arr[0], existingMirroredParts(global_selected_sprites,sprites, false))
 			}
 		});
 	} 
@@ -460,13 +460,15 @@ function place_sprites(sprites_to_place) {//Places the first sprites with absolu
 	updateCanvas()
 }
 
-function select_sprite(sprite_to_select) {
-	for (let sprite of global_selected_sprites) {
-		if (isSameSprite(sprite, sprite_to_select)) {
-			return;
+function selectParts(parts) {
+	for (let part of parts) {
+		for (let sprite of global_selected_sprites) {
+			if (isSameSprite(sprite, sprite_to_select)) {
+				break
+			}
 		}
+		global_selected_sprites.push(part)
 	}
-	global_selected_sprites.push(sprite_to_select);
 	updateSpriteSelection();
 	handlePropertySelectionChange()
 }
@@ -654,6 +656,29 @@ function mirroredParts(parts, also_adds_base_parts = true) {
 	return partsout
 }
 
+function existingMirroredParts(parts, all_parts, also_adds_base_parts = true) {
+	let partsout = []
+	let locations = []
+	if (also_adds_base_parts) {
+		partsout = [...parts]
+	}
+	for (let part of parts) {
+		location_rotations = mirroredPositions(partCenter(part), global_mirror_axis, false)
+		for (let i = 1;i< location_rotations[0].length; i++) {
+			locations.push(partLocationFromCenter(location_rotations[0][i], part))
+		}
+	}
+	for (let pos of locations) {
+		for (let part of all_parts) {
+			if (pos[0]===part.Location[0] && pos[1]===part.Location[1]) {
+				partsout.push(part)
+				break
+			}
+		}
+	}
+	return partsout
+}
+
 function doIfCursorOverPart(event, code) {
 	const pos = mousePos(event);
 	let part = findSprite(pos[0], pos[1])
@@ -674,10 +699,6 @@ function addSupplyChains(part2, parts) {
 			let toggle = true
 			loop:
 			for (let chain of chainlist) {
-				if (isSameSprite(part1, chain.Key)) {
-					toggle = false
-					break loop
-				}
 				for (let value of chain.Value) {
 					if(isSameSprite(part2, value)) {
 						toggle = false
