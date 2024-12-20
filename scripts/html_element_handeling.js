@@ -24,7 +24,7 @@ const property_edit = document.getElementById("propertyEdit");
 const apply_property_button = document.getElementById("applyPropertyButton");
 const recalculate_stats_button = document.getElementById("reCalculateButton");
 const mirror_select = document.getElementById("mirrorSelect");
-for (const spriteName of ["none", "vertical", "horizontal", "diagonal1", "diagonal2"]) {
+for (const spriteName of ["none", "vertical", "horizontal", "diagonal1", "diagonal2", "dot"]) {
 	const option = document.createElement("option");
 	option.value = spriteName;
 	option.textContent = spriteName;
@@ -144,6 +144,8 @@ function handleMirrorSelectionChange() {
 		global_mirror_axis = [{Rotation: 0, Rotational: false, Type: "diagonal"}]
 	} else if (mirror_select.value === "diagonal2") {
 		global_mirror_axis = [{Rotation: 1, Rotational: false, Type: "diagonal"}]
+	} else if (mirror_select.value === "dot") {
+		global_mirror_axis = [{Rotation: 0, Rotational: false, Type: "dot"}]
 	}
 	updateCanvas()
 }

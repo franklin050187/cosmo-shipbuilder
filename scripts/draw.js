@@ -188,13 +188,14 @@ function partSprite(part) {
 }
 
 function drawMirrorAxis() {
-	for (axis of global_mirror_axis) {
-		const canvas = document.getElementById("drawingCanvas");
-		const ctx = canvas.getContext("2d");
+	const canvas = document.getElementById("drawingCanvas");
+	const ctx = canvas.getContext("2d");
 
-		ctx.strokeStyle = "green"
-		ctx.lineWidth = 3;
-		ctx.beginPath(); 
+	ctx.strokeStyle = "green"
+	ctx.lineWidth = 3;
+	ctx.beginPath(); 
+	for (axis of global_mirror_axis) {
+		
 		let bignum = 2000
 		if (axis.Type === "linear") {
 			let [x, y] = convertCoordinatesToCanvas([global_mirror_center[axis.Rotation], maxY])
@@ -217,10 +218,15 @@ function drawMirrorAxis() {
 				ctx.lineTo(x-bignum, y+bignum);  
 			}
 		}
-		
+	}
+	ctx.stroke(); 
+	if (global_mirror_axis.length > 0) {
+		//draw center of mirror axis
+		let dotcords = convertCoordinatesToCanvas(global_mirror_center)
+		ctx.beginPath(); 
+		ctx.arc(dotcords[0], dotcords[1], 5, 0, Math.PI * 2);
+		ctx.fill();
 		ctx.stroke(); 
-		ctx.lineWidth = 1;
-		ctx.strokeStyle = "black"
 	}
 }
 
