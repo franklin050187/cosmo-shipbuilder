@@ -202,7 +202,8 @@ function loadJson(json) {
 	updateShipStats()
 	updateNonVisuals()
 	place_sprites(part_data)
-	global_sprites_to_draw.push(...part_data)
+	//global_sprites_to_draw.push(...part_data)
+	updateCanvas()
 }
 
 function applyShipProperty() {
@@ -736,5 +737,10 @@ function addSupplyChains(part2, parts) {
 			}
 		}
 	}
+	updateCanvas()
+}
+
+function shiftMirrorCenter(vector) {
+	global_mirror_center = [global_mirror_center[0]+vector[0], global_mirror_center[1]+vector[1]]
 	updateCanvas()
 }

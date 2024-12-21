@@ -18,7 +18,6 @@ function draw_resources(json = JSON.stringify(startup_ship_data)) {
 	if (resources === "Unset") {
 		return;
 	}
-
 	for (const location of get_all_locations(sprites)) {
 		for (const resource of resources) {
 			if (location[0] === resource.Key[0] && location[1] === resource.Key[1]) {
@@ -134,6 +133,14 @@ function updateCanvas() {
 	draw_resources();
 }
 
+function redrawEntireCanvas() {
+	const canvas = document.getElementById("spriteCanvas");
+	canvas.getContext("2d").clearRect(0, 0, canvas.width, canvas.height);
+	clearLayer(canvas.getContext("2d"))
+	global_sprites_to_draw.push(...sprites)
+	updateCanvas()
+}
+
 function drawPartIndicators(part) {
 	let loc = partCenter(part)
 	let [x,y] = convertCoordinatesToCanvas(part.Location)
@@ -195,7 +202,7 @@ function drawMirrorAxis() {
 	ctx.lineWidth = 3;
 	ctx.beginPath(); 
 	for (axis of global_mirror_axis) {
-		
+		console.log(global_mirror_axis)
 		let bignum = 2000
 		if (axis.Type === "linear") {
 			let [x, y] = convertCoordinatesToCanvas([global_mirror_center[axis.Rotation], maxY])
