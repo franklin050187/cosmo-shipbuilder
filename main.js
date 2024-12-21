@@ -537,12 +537,13 @@ function findSprite(x, y) {
 }
 
 function getSpriteTileLocations(sprite) {
-	const sprite_size = spriteData[sprite.ID].sprite_size || spriteData[sprite.ID].size;
+	const data = spriteData[sprite.ID]
+	const sprite_size = data.real_size || data.sprite_size || data.size;
 	const locations = [];
 	let base_location = [...sprite.Location]
-	if (spriteData[sprite.ID].sprite_size && (sprite.Rotation === 0 || sprite.Rotation === 3)) {
+	if (!data.real_size && data.sprite_size && (sprite.Rotation === 0 || sprite.Rotation === 3)) {
 		let caze = (sprite.Rotation+1)%2
-		base_location[caze] = base_location[caze]-spriteData[sprite.ID].sprite_size[caze]
+		base_location[caze] = base_location[caze]-(data.sprite_size[1]-data.size[1])
 	}
 
 	if (sprite.Rotation % 2 === 0) {
