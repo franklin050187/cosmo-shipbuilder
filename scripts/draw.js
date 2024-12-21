@@ -372,3 +372,12 @@ function drawArrow(ctx, loc1, loc2) {
 	ctx.lineTo(arrowheadX - headLength * Math.cos(angle + headAngle), arrowheadY - headLength * Math.sin(angle + headAngle));
 	ctx.stroke();
 }
+
+function zoom(factor) {
+	global_zoom_factor = global_zoom_factor*factor
+	for (let c of global_canvases) {
+		let ctx = c.getContext("2d")
+		ctx.setTransform(global_zoom_factor, 0, 0, global_zoom_factor, 0, 0)
+	}
+	redrawEntireCanvas()
+}

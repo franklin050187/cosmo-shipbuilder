@@ -75,6 +75,15 @@ document.addEventListener("keydown", function(event) {
     }
 });
 
+//zoom
+document.addEventListener('wheel', (event) => {
+    if (event.deltaY > 0) {//down
+        zoom(1.1)
+    } else {//up
+        zoom(0.9)
+    }
+  });
+
 function undo() {
     if (ship_action_history_depth <= ship_action_history.length && ship_action_history.length>0) {
         ship_action_history_depth == ship_action_history_depth - 1

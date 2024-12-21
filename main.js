@@ -22,6 +22,8 @@ let cursorMode = "Place"; // Initial cursor mode
 let doors = []; // To store the doors
 let resources = []; // To store the resources
 let global_part_properties = [];
+let global_zoom_factor = 1
+let global_canvases = [canvas, resource_canvas, drawing_canvas, preview_canvas]
 
 const spriteCache = {};
 const previewSpriteImage = new Image();
@@ -191,14 +193,10 @@ function loadJson(json) {
 	// Adjust canvas size
 	const width = (maxX - minX + 1) * gridSize;
 	const height = (maxY - minY + 1) * gridSize;
-	canvas.width = width;
-	canvas.height = height;
-	resource_canvas.width = width;
-	resource_canvas.height = height;
-	drawing_canvas.width = width;
-	drawing_canvas.height = height;
-	preview_canvas.width = width;
-	preview_canvas.height = height;
+	for (let c of global_canvases) {
+		c.width = width;
+		c.height = height;
+	}
 
 	updateShipStats()
 	updateNonVisuals()
