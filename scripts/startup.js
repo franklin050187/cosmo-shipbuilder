@@ -7,6 +7,6 @@ loadParts("energy weapon")
 preloadSprites()
 // Initialize the canvas
 loadPreviewSpriteImage()
-
+closeHelp()
 
 

@@ -21,6 +21,7 @@ for (const spriteName of spriteNames) {
 }
 const property_select = document.getElementById("propertySelect");
 const property_edit = document.getElementById("propertyEdit");
+const help = document.getElementById("helpButton");
 const apply_property_button = document.getElementById("applyPropertyButton");
 const recalculate_stats_button = document.getElementById("reCalculateButton");
 const mirror_select = document.getElementById("mirrorSelect");
@@ -68,6 +69,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	apply_ship_property_button.addEventListener("click", applyShipProperty);
 	recalculate_stats_button.addEventListener("click", handleRecalculateStats);
 	generate_ship.addEventListener("click", generateShip);
+	//help.addEventListener("click", displayHelp);
 
 	for (const radio of cursor_mode) {
 		radio.addEventListener("click", handleCursorMode);
@@ -154,3 +156,13 @@ function handleRecalculateStats() {
 	updateShipStats()
 }
 
+function displayHelp() {
+	document.getElementById('helpText').innerHTML = global_help_message;
+	document.getElementById('overlay').style.display = 'block';
+	document.getElementById('helpModal').style.display = 'block';
+}
+
+function closeHelp() {
+	document.getElementById('overlay').style.display = 'none';
+	document.getElementById('helpModal').style.display = 'none';
+}

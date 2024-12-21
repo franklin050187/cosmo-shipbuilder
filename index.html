@@ -37,6 +37,15 @@
     align-items: stretch;
 ">
             <fieldset>
+                <div id="overlay"></div>
+                <div id="helpModal">
+                    <p id="helpText"></p>
+                    <button onclick="closeHelp()">Close</button>
+                </div>
+
+                <button onclick="displayHelp()">Show Help</button>
+            </fieldset>
+            <fieldset>
                 <legend>Load a ship</legend>
                 <div>
                     <textarea name="b64_input" id="b64_input"></textarea>
@@ -176,7 +185,8 @@
             </div>
         </div>
     </div>
-    <script src="data.js"></script>
+    <script src="data/data.js"></script>
+    <script src="data/help.js"></script>
     <script src="scripts/math.js"></script>
     <script src="scripts/ship.js"></script>
     <script src="scripts/data_extraction.js"></script>
