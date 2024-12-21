@@ -52,21 +52,25 @@ document.addEventListener("keydown", function(event) {
 //Mirror center shifts
 document.addEventListener("keydown", function(event) {
     if (event.key === "ArrowUp") {
+        event.preventDefault()
         shiftMirrorCenter([0,-1])
     }
 });
 document.addEventListener("keydown", function(event) {
     if (event.key === "ArrowLeft") {
+        event.preventDefault()
         shiftMirrorCenter([-1,0])
     }
 });
 document.addEventListener("keydown", function(event) {
     if (event.key === "ArrowRight") {
+        event.preventDefault()
         shiftMirrorCenter([1,0])
     }
 });
 document.addEventListener("keydown", function(event) {
     if (event.key === "ArrowDown") {
+        event.preventDefault()
         shiftMirrorCenter([0,1])
     }
 });

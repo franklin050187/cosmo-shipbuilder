@@ -202,7 +202,6 @@ function drawMirrorAxis() {
 	ctx.lineWidth = 3;
 	ctx.beginPath(); 
 	for (axis of global_mirror_axis) {
-		console.log(global_mirror_axis)
 		let bignum = 2000
 		if (axis.Type === "linear") {
 			let [x, y] = convertCoordinatesToCanvas([global_mirror_center[axis.Rotation], maxY])
