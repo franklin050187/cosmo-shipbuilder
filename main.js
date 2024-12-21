@@ -167,6 +167,7 @@ function loadJson(json) {
 		if (y < minY) minY = y;
 		if (x > maxX) maxX = x;
 		if (y > maxY) maxY = y;
+		sprites.push(sprite)
 	}
 	
 	for (const door of doordata) {
@@ -201,8 +202,8 @@ function loadJson(json) {
 
 	updateShipStats()
 	updateNonVisuals()
-	place_sprites(part_data)
-	//global_sprites_to_draw.push(...part_data)
+	//place_sprites(part_data)
+	global_sprites_to_draw.push(...part_data)
 	updateCanvas()
 }
 
