@@ -137,15 +137,15 @@ function handleMirrorSelectionChange() {
 	if (mirror_select.value === "none") {
 		global_mirror_axis = []
 	} else if (mirror_select.value === "vertical") {
-		global_mirror_axis = [{Rotation: 0, Rotational: false, Type: "linear"}]
+		global_mirror_axis = [{Rotation: 0, Type: "linear"}]
 	} else if (mirror_select.value === "horizontal") {
-		global_mirror_axis = [{Rotation: 1, Rotational: false, Type: "linear"}]
+		global_mirror_axis = [{Rotation: 1, Type: "linear"}]
 	} else if (mirror_select.value === "diagonal1") {
-		global_mirror_axis = [{Rotation: 0, Rotational: false, Type: "diagonal"}]
+		global_mirror_axis = [{Rotation: 0, Type: "diagonal"}]
 	} else if (mirror_select.value === "diagonal2") {
-		global_mirror_axis = [{Rotation: 1, Rotational: false, Type: "diagonal"}]
+		global_mirror_axis = [{Rotation: 1, Type: "diagonal"}]
 	} else if (mirror_select.value === "dot") {
-		global_mirror_axis = [{Rotation: 0, Rotational: false, Type: "dot"}]
+		global_mirror_axis = [{Rotation: 0, Type: "dot"}]
 	}
 	updateCanvas()
 }
