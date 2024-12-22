@@ -538,7 +538,21 @@ function getSpriteTileLocations(sprite) {
 }
 
 function mousePos(event) {
-	return convertCanvasToCoordinates(event.clientX, event.clientY);
+	return mousePosEv(event.clientX, event.clientY);
+}
+
+function mousePosEv(canvasX, canvasY) {
+	const rect = canvas.getBoundingClientRect();
+
+	// Adjust for canvas transformations
+	const transformedX = (canvasX - rect.left) / global_zoom_factor;
+	const transformedY = (canvasY - rect.top) / global_zoom_factor;
+
+	// Map to logical grid coordinates
+	const logicalX = Math.floor(transformedX / gridSize) + minX;
+	const logicalY = Math.floor(transformedY / gridSize) + minY;
+
+	return [logicalX, logicalY];
 }
 
 function isSameSprite(sprite1, sprite2) {

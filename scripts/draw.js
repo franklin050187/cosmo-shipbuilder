@@ -160,7 +160,7 @@ function drawPartIndicators(part) {
 }
 
 function convertCoordinatesToCanvas(location) {
-	return [(location[0] - minX) * gridSize + 1, (location[1] - minY) * gridSize + 1]	
+	return [(location[0] - minX) * gridSize  + 1, (location[1] - minY) * gridSize  + 1]	
 }
 
 function convertCanvasToCoordinates(canvasX, canvasY) {
