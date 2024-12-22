@@ -374,26 +374,21 @@ function drawArrow(ctx, loc1, loc2) {
 }
 
 function zoom(factor, event) {
-	[x,y] = [event.clientX,event.clientY]
-	global_zoom_factor += factor
-	for (let c of global_canvases) {
-		let ctx = c.getContext("2d")
-		ctx.setTransform(global_zoom_factor, 0, 0, global_zoom_factor, 0, 0)
-	}
-	redrawEntireCanvas()
-}
+	const canvas = global_canvases[0]; 
+	const rect = canvas.getBoundingClientRect();
+	const [mouseX, mouseY] = [event.clientX - rect.left, event.clientY - rect.top];
 
-function resizeCanvas() {
-	// Adjust canvas size
-	minX = -10;
-	minY = -10;
-	maxX = 10;
-	maxY = 10; 
-	const width = (maxX - minX + 1) * gridSize;
-	const height = (maxY - minY + 1) * gridSize;
+	const previous_zoom_factor = global_zoom_factor;
+	global_zoom_factor += factor;
+
+	const scaleFactor = global_zoom_factor / previous_zoom_factor;
+
 	for (let c of global_canvases) {
-		c.width = width;
-		c.height = height;
+		let ctx = c.getContext("2d");
+		ctx.translate(mouseX, mouseY);
+		ctx.scale(scaleFactor, scaleFactor);
+		ctx.translate(-mouseX, -mouseY);
 	}
-	updateCanvas()
+
+	redrawEntireCanvas();
 }

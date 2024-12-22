@@ -1,4 +1,4 @@
-const gridSize = 64; // Size of each grid cell
+const gridSize = 32; // Size of each grid cell
 let isPreviewSpriteLoaded = false; // init sprite preview
 const gridMap = {}; // To store the grid map
 let sprite_delete_mode = []; // To store the sprite delete mode
@@ -538,21 +538,7 @@ function getSpriteTileLocations(sprite) {
 }
 
 function mousePos(event) {
-	const rect = canvas.getBoundingClientRect();
-
-	// Calculate scaling factors between the canvas's original size and its displayed size
-	const scaleX = canvas.width / rect.width;
-	const scaleY = canvas.height / rect.height;
-
-	// Calculate mouse position relative to the canvas, taking into account the scaling
-	const x = (event.clientX - rect.left) * scaleX;
-	const y = (event.clientY - rect.top) * scaleY;
-	const mouseX = Math.floor(x / gridSize) * gridSize;
-	const mouseY = Math.floor(y / gridSize) * gridSize;
-	const canvasPositionX = mouseX / gridSize + minX;
-	const canvasPositionY = mouseY / gridSize + minY;
-	const result = [canvasPositionX, canvasPositionY];
-	return result;
+	return convertCanvasToCoordinates(event.clientX, event.clientY);
 }
 
 function isSameSprite(sprite1, sprite2) {

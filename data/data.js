@@ -16,7 +16,7 @@ weapon like: Used for parts that dont deal damage but still have adjustable fire
 on_off: parts that can be tunred on and off
 fire_pref: weapons that cen be switched between attack, defend or both (flak and pd)
 thruster: Anything that provides thrust
-hyperdrive: hyperdrives
+hyperdrive: hyperdrives (obviously lol)
 sprite_size: how big the sprite is
 size: how big the base is (without turrets and such)
 real_size: Used if the sprite is bigger than the size but the hitbox isnt. This is to seperate drawing in the right position and checking for overlaps.

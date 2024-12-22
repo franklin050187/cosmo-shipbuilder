@@ -85,7 +85,7 @@ document.addEventListener('wheel', (event) => {
             zoom(0.1, event)
         }
     } 
-  });
+  }, { passive: false });
 
 function undo() {
     if (ship_action_history_depth <= ship_action_history.length && ship_action_history.length>0) {

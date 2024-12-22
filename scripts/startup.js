@@ -7,7 +7,20 @@ loadParts("energy weapon")
 preloadSprites()
 // Initialize the canvas
 loadPreviewSpriteImage()
-resizeCanvas()
+initializeCanvas()
 closeHelp()
 
-
+function initializeCanvas() {
+	// Adjust canvas size
+	minX = -10;
+	minY = -10;
+	maxX = 10;
+	maxY = 10; 
+	const width = (maxX - minX + 1) * gridSize;
+	const height = (maxY - minY + 1) * gridSize;
+	for (let c of global_canvases) {
+		c.width = width;
+		c.height = height;
+	}
+	updateCanvas()
+}

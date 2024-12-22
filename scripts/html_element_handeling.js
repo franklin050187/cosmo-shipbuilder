@@ -24,6 +24,7 @@ const property_edit = document.getElementById("propertyEdit");
 const help = document.getElementById("helpButton");
 const apply_property_button = document.getElementById("applyPropertyButton");
 const recalculate_stats_button = document.getElementById("reCalculateButton");
+const redraw_button = document.getElementById("redrawButton");
 const mirror_select = document.getElementById("mirrorSelect");
 for (const spriteName of ["none", "vertical", "horizontal", "diagonal1", "diagonal2", "dot"]) {
 	const option = document.createElement("option");
@@ -69,6 +70,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	apply_ship_property_button.addEventListener("click", applyShipProperty);
 	recalculate_stats_button.addEventListener("click", handleRecalculateStats);
 	generate_ship.addEventListener("click", generateShip);
+	redraw_button.addEventListener("click", redrawEntireCanvas);
 	//help.addEventListener("click", displayHelp);
 
 	for (const radio of cursor_mode) {
