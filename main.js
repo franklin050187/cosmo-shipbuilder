@@ -157,18 +157,8 @@ function loadJson(json) {
 		: [];
 
 	shipdata = data;
-	// Calculate the min and max positions
-	minX = Number.POSITIVE_INFINITY;
-	minY = Number.POSITIVE_INFINITY;
-	maxX = Number.NEGATIVE_INFINITY;
-	maxY = Number.NEGATIVE_INFINITY;
 
 	for (const sprite of part_data) {
-		const [x, y] = sprite.Location;
-		if (x < minX) minX = x;
-		if (y < minY) minY = y;
-		if (x > maxX) maxX = x;
-		if (y > maxY) maxY = y;
 		sprites.push(sprite)
 	}
 	
@@ -182,20 +172,6 @@ function loadJson(json) {
 
 	for (const toggle of partUIToggleStates) {
 		global_part_properties.push(toggle);
-	}
-
-	// Extend the grid by 10 squares in each direction
-	minX -= 10;
-	minY -= 10;
-	maxX += 10;
-	maxY += 10;
-
-	// Adjust canvas size
-	const width = (maxX - minX + 1) * gridSize;
-	const height = (maxY - minY + 1) * gridSize;
-	for (let c of global_canvases) {
-		c.width = width;
-		c.height = height;
 	}
 
 	updateShipStats()

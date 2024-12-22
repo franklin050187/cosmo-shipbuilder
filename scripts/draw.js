@@ -111,11 +111,11 @@ function updateCanvas() {
 				rotatedImage,
 				x,
 				y,
-				rotatedImage.width - 2,
-				rotatedImage.height - 2,
+				rotatedImage.width*gridSize/64 - 2,
+				rotatedImage.height*gridSize/64 - 2,
 			);
-			sprite.width = rotatedImage.width;
-			sprite.height = rotatedImage.height;
+			sprite.width = rotatedImage.width*gridSize/64;
+			sprite.height = rotatedImage.height*gridSize/64;
 			square_map(sprite);
 		}
 	}
@@ -134,9 +134,9 @@ function updateCanvas() {
 }
 
 function redrawEntireCanvas() {
-	const canvas = document.getElementById("spriteCanvas");
-	canvas.getContext("2d").clearRect(0, 0, canvas.width, canvas.height);
-	clearLayer(canvas.getContext("2d"))
+	for (let c of global_canvases) {
+		clearLayer(c.getContext("2d"))
+	}
 	global_sprites_to_draw.push(...sprites)
 	updateCanvas()
 }
@@ -171,13 +171,13 @@ function convertCanvasToCoordinates(canvasX, canvasY) {
 	const scaleY = canvas.height / rect.height;
 
 	// Calculate mouse position relative to the canvas, taking into account the scaling
-	const x = (canvasX - rect.left) * scaleX;
-	const y = (canvasY - rect.top) * scaleY;
-	const mouseX = Math.floor(x / gridSize) * gridSize;
-	const mouseY = Math.floor(y / gridSize) * gridSize;
-	const canvasPositionX = mouseX / gridSize + minX;
-	const canvasPositionY = mouseY / gridSize + minY;
-	const result = [canvasPositionX, canvasPositionY];
+	const x = (canvasX - rect.left) * scaleX
+	const y = (canvasY - rect.top) * scaleY
+	const mouseX = Math.floor(x / gridSize) 
+	const mouseY = Math.floor(y / gridSize) 
+	const canvasPositionX = mouseX  + minX
+	const canvasPositionY = mouseY  + minY
+	const result = [canvasPositionX, canvasPositionY]
 
     return result;
 }
@@ -268,8 +268,8 @@ function drawPreview(inputparts) {
 			rotatedImage,
 			x,
 			y,
-			rotatedImage.width - 2,
-			rotatedImage.height - 2,
+			rotatedImage.width*gridSize/64 - 2,
+			rotatedImage.height*gridSize/64 - 2,
 		);
 		
 	}
@@ -373,11 +373,27 @@ function drawArrow(ctx, loc1, loc2) {
 	ctx.stroke();
 }
 
-function zoom(factor) {
-	global_zoom_factor = global_zoom_factor*factor
+function zoom(factor, event) {
+	[x,y] = [event.clientX,event.clientY]
+	global_zoom_factor += factor
 	for (let c of global_canvases) {
 		let ctx = c.getContext("2d")
 		ctx.setTransform(global_zoom_factor, 0, 0, global_zoom_factor, 0, 0)
 	}
 	redrawEntireCanvas()
+}
+
+function resizeCanvas() {
+	// Adjust canvas size
+	minX = -10;
+	minY = -10;
+	maxX = 10;
+	maxY = 10; 
+	const width = (maxX - minX + 1) * gridSize;
+	const height = (maxY - minY + 1) * gridSize;
+	for (let c of global_canvases) {
+		c.width = width;
+		c.height = height;
+	}
+	updateCanvas()
 }

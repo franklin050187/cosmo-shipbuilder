@@ -77,11 +77,14 @@ document.addEventListener("keydown", function(event) {
 
 //zoom
 document.addEventListener('wheel', (event) => {
-    if (event.deltaY > 0) {//down
-        zoom(1.1)
-    } else {//up
-        zoom(0.9)
-    }
+    if (event.ctrlKey && event.shiftKey) {
+        event.preventDefault()
+        if (event.deltaY > 0) {//down
+            zoom(-0.1, event)
+        } else {//up
+            zoom(0.1, event)
+        }
+    } 
   });
 
 function undo() {
