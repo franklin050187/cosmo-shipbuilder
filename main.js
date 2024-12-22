@@ -24,6 +24,8 @@ let resources = []; // To store the resources
 let global_part_properties = [];
 let global_zoom_factor = 1
 let global_canvases = [canvas, resource_canvas, drawing_canvas, preview_canvas]
+let global_translationX = 0
+let global_translationY = 0
 
 const spriteCache = {};
 const previewSpriteImage = new Image();
@@ -324,7 +326,7 @@ function loadPreviewSpriteImage() {
 }
 
 function handleCanvasMouseMove(event) {
-	let [canvasPositionX, canvasPositionY] = convertCanvasToCoordinates(event.clientX, event.clientY)
+	let [canvasPositionX, canvasPositionY] = mousePos(event)
 
 	updateCoordinates(canvasPositionX, canvasPositionY);
 
@@ -491,14 +493,6 @@ function removeDoor(location) {
 	}
 }
 
-function clearPreviewSprite() {
-	previewSprite.style.display = "none"; // Hide the preview sprite
-}
-
-function unclearPreviewSprite() {
-	previewSprite.style.display = "block"; // Hide the preview sprite
-}
-
 function findSprite(x, y) {
 	for (const sprite of sprites) {
 		for (const location of getSpriteTileLocations(sprite)) {
@@ -538,7 +532,7 @@ function getSpriteTileLocations(sprite) {
 }
 
 function mousePos(event) {
-	return mousePosEv(event.clientX, event.clientY);
+	return mousePosEv(event.clientX-global_translationX, event.clientY-global_translationY);
 }
 
 function mousePosEv(canvasX, canvasY) {

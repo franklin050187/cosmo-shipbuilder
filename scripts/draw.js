@@ -390,5 +390,8 @@ function zoom(factor, event) {
 		ctx.translate(-mouseX, -mouseY);
 	}
 
+	global_translationX = (global_translationX - mouseX) * scaleFactor + mouseX;
+	global_translationY = (global_translationY - mouseY) * scaleFactor + mouseY;
+
 	redrawEntireCanvas();
 }
