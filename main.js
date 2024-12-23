@@ -23,7 +23,7 @@ let doors = []; // To store the doors
 let resources = []; // To store the resources
 let global_part_properties = [];
 let global_zoom_factor = 1
-let global_canvases = [canvas, resource_canvas, drawing_canvas, preview_canvas]
+let global_canvases = [canvas, resource_canvas, drawing_canvas, preview_canvas, additionals_canvas]
 
 const spriteCache = {};
 const previewSpriteImage = new Image();
@@ -319,6 +319,12 @@ function handleCanvasMouseMove(event) {
 
 		drawPreview(global_sprites_to_place);
 		return;
+	}
+
+	if (cursorMode === "Select") {
+		if (global_selection_box_start[0]) {
+			drawSelectionBox(mousePos(event))
+		}
 	}
 
 	if (cursorMode === "Move") {

@@ -1,5 +1,7 @@
 //This is for detecting key inputs and handling them
 
+let global_selection_box_start = []
+
 //ctrl+ hotkeys
 document.addEventListener("keydown", function(event) {
     if (event.ctrlKey && event.key === "z") {
@@ -124,16 +126,13 @@ document.addEventListener("keydown", function(event) {
 
 //Part selection
 document.addEventListener('mousedown', (event) => {
-    if (cursorMode === "Select" && event.button === 0) { // Left button
-        isMouseDown = true
-        console.log('Left mouse button held down')
+    if (cursorMode === "Select" && event.button === 0) { 
+        startSelectionBox(mousePos(event))
     }
 });
-
 document.addEventListener('mouseup', (event) => {
-    if (cursorMode === "Select" && event.button === 0) { // Left button
-        isMouseDown = false
-        console.log('Left mouse button released')
+    if (cursorMode === "Select" && event.button === 0) { 
+        endSelectionBox(mousePos(event), event)
     }
 });
 
@@ -163,4 +162,27 @@ function copy() {}
 function paste() {
     global_sprites_to_place = absoluteToRalativePartCoordinates(partsCopy(global_selected_sprites))
     ChangeCursorMode("Place")
+}
+
+function startSelectionBox(pos) {
+    global_selection_box_start = [pos[0],pos[1]]
+}
+
+function endSelectionBox(pos, event) {
+    let selection = []
+    let box1 = [global_selection_box_start,pos]
+    for (let part of sprites) {
+        if(areBoxesOverlapping(box1,partBoundingBox(part))) {//Checks if part is in the selection box
+            selection.push(part)
+        }
+    }
+    if (!event.shiftKey) {
+        global_selected_sprites = [...selection]
+    } else {
+        global_selected_sprites.push(...selection)
+    }
+    
+    global_selection_box_start = []
+    clearLayer(additionals_canvas.getContext("2d")) //clear selection box
+    updateCanvas()
 }

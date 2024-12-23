@@ -4,6 +4,7 @@ const canvas = document.getElementById("spriteCanvas");
 const drawing_canvas = document.getElementById("drawingCanvas");
 const resource_canvas = document.getElementById("resourceCanvas");
 const preview_canvas = document.getElementById("previewCanvas");
+const additionals_canvas = document.getElementById("additionalsCanvas");
 const ctx = canvas.getContext("2d");
 
 let spritesDrawn = new Set(); // used in draw function
@@ -177,6 +178,18 @@ function drawSelectionindicators(parts) {
 		ctx.rect(x1, y1, x2-x1-1, y2-y1-1);
 		ctx.stroke()
 	}
+}
+
+function drawSelectionBox(endpos) {
+	const ctx = preview_canvas.getContext("2d")
+	clearLayer(ctx)
+	ctx.strokeStyle  = "rgb(13, 130, 11)"
+	ctx.lineWidth = 3
+	ctx.beginPath()
+	let [x1,y1] = convertCoordinatesToCanvas(global_selection_box_start)
+	let [x2,y2] = convertCoordinatesToCanvas(endpos)
+	ctx.rect(x1, y1, x2-x1, y2-y1);
+	ctx.stroke()
 }
 
 function convertCoordinatesToCanvas(location) {
