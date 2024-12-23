@@ -24,8 +24,6 @@ let resources = []; // To store the resources
 let global_part_properties = [];
 let global_zoom_factor = 1
 let global_canvases = [canvas, resource_canvas, drawing_canvas, preview_canvas]
-let global_translationX = 0
-let global_translationY = 0
 
 const spriteCache = {};
 const previewSpriteImage = new Image();
@@ -532,7 +530,8 @@ function getSpriteTileLocations(sprite) {
 }
 
 function mousePos(event) {
-	return mousePosEv(event.clientX-global_translationX, event.clientY-global_translationY);
+	let transform = canvas.getContext("2d").getTransform()
+	return mousePosEv(event.clientX-transform.e, event.clientY-transform.f);
 }
 
 function mousePosEv(canvasX, canvasY) {

@@ -87,6 +87,39 @@ document.addEventListener('wheel', (event) => {
     } 
   }, { passive: false });
 
+//translation
+let global_translation_amount = 20
+document.addEventListener('mousedown', (event) => {
+    if (event.button === 1) {
+        event.preventDefault();
+        translateCanvas(mousePos(event))
+    }
+});
+document.addEventListener("keydown", function(event) {
+    if (event.key === "w") {
+        event.preventDefault()
+        translateCanvas([0,global_translation_amount*global_zoom_factor], true)
+    }
+});
+document.addEventListener("keydown", function(event) {
+    if (event.key === "s") {
+        event.preventDefault()
+        translateCanvas([0,-global_translation_amount*global_zoom_factor], true)
+    }
+});
+document.addEventListener("keydown", function(event) {
+    if (event.key === "a") {
+        event.preventDefault()
+        translateCanvas([global_translation_amount*global_zoom_factor,0], true)
+    }
+});
+document.addEventListener("keydown", function(event) {
+    if (event.key === "d") {
+        event.preventDefault()
+        translateCanvas([-global_translation_amount*global_zoom_factor,0], true)
+    }
+});
+
 function undo() {
     if (ship_action_history_depth <= ship_action_history.length && ship_action_history.length>0) {
         ship_action_history_depth == ship_action_history_depth - 1

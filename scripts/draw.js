@@ -390,8 +390,24 @@ function zoom(factor, event) {
 		ctx.translate(-mouseX, -mouseY);
 	}
 
-	global_translationX = (global_translationX - mouseX) * scaleFactor + mouseX;
-	global_translationY = (global_translationY - mouseY) * scaleFactor + mouseY;
-
 	redrawEntireCanvas();
+}
+
+function translateCanvas(pos,relative=false) {
+	let [x,y] = pos
+	if (relative) {
+		for (c of global_canvases) {
+			const ctx = c.getContext("2d")
+			ctx.translate(x, y);
+		}
+	} else {
+		for (c of global_canvases) {
+			const ctx = c.getContext("2d")
+			const currentTransform = ctx.getTransform();
+			const dx = x - currentTransform.e;
+			const dy = y - currentTransform.f;
+			ctx.translate(dx, dy);
+		}
+	}
+	redrawEntireCanvas()
 }
