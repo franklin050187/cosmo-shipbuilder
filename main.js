@@ -263,8 +263,6 @@ function sprite_position(part) {
 
 function get_all_locations(sprites) {
 	const locations = [];
-	// let width;
-	// let height;
 
 	for (const sprite of sprites) {
 		getSpriteTileLocations(sprite);
@@ -401,6 +399,7 @@ function handleRightClick(event) {
 	} else if (cursorMode === "Select") {
 		global_selected_sprites = []
 		updateSpriteSelection()
+		updateCanvas()
 	} else if (cursorMode === "Supply") {
 		doIfCursorOverPart(event, (part) => {
 			addSupplyChains(part, global_selected_sprites)
@@ -440,12 +439,13 @@ function place_sprites(sprites_to_place) {//Places the first sprites with absolu
 function selectParts(parts) {
 	for (let part of parts) {
 		for (let sprite of global_selected_sprites) {
-			if (isSameSprite(sprite, sprite_to_select)) {
+			if (isSameSprite(sprite, part)) {
 				break
 			}
 		}
 		global_selected_sprites.push(part)
 	}
+	updateCanvas()
 	updateSpriteSelection();
 	handlePropertySelectionChange()
 }
@@ -538,8 +538,8 @@ function mousePosEv(canvasX, canvasY) {
 	const rect = canvas.getBoundingClientRect();
 
 	// Adjust for canvas transformations
-	const transformedX = (canvasX - rect.left) / global_zoom_factor;
-	const transformedY = (canvasY - rect.top) / global_zoom_factor;
+	const transformedX = (canvasX - rect.left) / getScalor()[0];
+	const transformedY = (canvasY - rect.top) / getScalor()[1];
 
 	// Map to logical grid coordinates
 	const logicalX = Math.floor(transformedX / gridSize) + minX;
@@ -712,4 +712,24 @@ function addSupplyChains(part2, parts) {
 function shiftMirrorCenter(vector) {
 	global_mirror_center = [global_mirror_center[0]+vector[0], global_mirror_center[1]+vector[1]]
 	updateCanvas()
+	drawPreview(global_sprites_to_place)
+}
+
+function partBoundingBox(sprite) {
+	const data = spriteData[sprite.ID]
+	const sprite_size = data.real_size || data.sprite_size || data.size;
+	const locations = [];
+	let base_location = [...sprite.Location]
+	if (!data.real_size && data.sprite_size && (sprite.Rotation === 0 || sprite.Rotation === 3)) {
+		let caze = (sprite.Rotation+1)%2
+		base_location[caze] = base_location[caze]-(data.sprite_size[1]-data.size[1])
+	}
+	if (sprite.Rotation % 2 === 0) {
+		width = sprite_size[0];
+		height = sprite_size[1];
+	} else {
+		width = sprite_size[1];
+		height = sprite_size[0];
+	}
+	return [base_location, [base_location[0]+width, base_location[1]+height]];
 }

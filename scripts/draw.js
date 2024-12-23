@@ -124,6 +124,9 @@ function updateCanvas() {
 	for (let sprite of sprites) {
 		drawPartIndicators(sprite)
 	}
+	if (cursorMode === "Select") {
+		drawSelectionindicators(global_selected_sprites)
+	}
 
 	if (cursorMode === "Supply") {
 		drawSupplyChains()
@@ -149,13 +152,30 @@ function drawPartIndicators(part) {
 	const canvas = document.getElementById("drawingCanvas");
 	const ctx = canvas.getContext("2d");
 	ctx.fillStyle = "red";
-	ctx.fillRect(x, y, 10, 10);
+	//ctx.fillRect(x, y, 10*getScalor()[0], 10*getScalor()[1]);
+
 	if (part.ID == "cosmoteer.shield_gen_small") {
 		ctx.fillStyle = "blue";
 		ctx.beginPath();
-		ctx.lineWidth = 10;
+		ctx.lineWidth = 3;
 		ctx.arc(centerX, centerY, 400, 4*Math.PI/3, 5*Math.PI/3);
 		ctx.stroke(); 
+	}
+}
+
+function drawSelectionindicators(parts) {
+	const canvas = document.getElementById("previewCanvas")
+	const ctx = canvas.getContext("2d")
+	ctx.strokeStyle  = "rgb(13, 130, 11)"
+	clearLayer(ctx)
+	for (let part of parts) {
+		ctx.beginPath()
+		ctx.lineWidth = 3
+		let box = partBoundingBox(part)
+		let [x1,y1] = convertCoordinatesToCanvas(box[0])
+		let [x2,y2] = convertCoordinatesToCanvas(box[1])
+		ctx.rect(x1, y1, x2-x1-1, y2-y1-1);
+		ctx.stroke()
 	}
 }
 

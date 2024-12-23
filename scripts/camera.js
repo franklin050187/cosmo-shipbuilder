@@ -9,6 +9,7 @@ function zoom(factor, event) {
 	global_zoom_factor += factor;
 
 	const scaleFactor = global_zoom_factor / previous_zoom_factor;
+	//const scaleFactor = 1/(getScalor()[0])+factor
 
 	for (let c of global_canvases) {
 		let ctx = c.getContext("2d");
@@ -46,4 +47,10 @@ function resetCamera() {
         ctx.resetTransform()
     }
     redrawEntireCanvas()
+}
+
+function getScalor() {
+	const ctx = canvas.getContext("2d")
+	const currentTransform = ctx.getTransform();
+	return [currentTransform.a, currentTransform.d]
 }
