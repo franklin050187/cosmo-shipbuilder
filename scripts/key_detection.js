@@ -92,31 +92,33 @@ let global_translation_amount = 20
 document.addEventListener('mousedown', (event) => {
     if (event.button === 1) {
         event.preventDefault();
-        translateCanvas(mousePos(event))
+        const ctx = c.getContext("2d")
+        const currentTransform = ctx.getTransform();
+        translateCanvas([100,100])
     }
 });
 document.addEventListener("keydown", function(event) {
     if (event.key === "w") {
         event.preventDefault()
-        translateCanvas([0,global_translation_amount*global_zoom_factor], true)
+        translateCanvas([0,global_translation_amount/canvas.getContext("2d").getTransform().a], true)
     }
 });
 document.addEventListener("keydown", function(event) {
     if (event.key === "s") {
         event.preventDefault()
-        translateCanvas([0,-global_translation_amount*global_zoom_factor], true)
+        translateCanvas([0,-global_translation_amount/canvas.getContext("2d").getTransform().a], true)
     }
 });
 document.addEventListener("keydown", function(event) {
     if (event.key === "a") {
         event.preventDefault()
-        translateCanvas([global_translation_amount*global_zoom_factor,0], true)
+        translateCanvas([global_translation_amount/canvas.getContext("2d").getTransform().a,0], true)
     }
 });
 document.addEventListener("keydown", function(event) {
     if (event.key === "d") {
         event.preventDefault()
-        translateCanvas([-global_translation_amount*global_zoom_factor,0], true)
+        translateCanvas([-global_translation_amount/canvas.getContext("2d").getTransform().a,0], true)
     }
 });
 

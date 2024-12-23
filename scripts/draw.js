@@ -279,7 +279,7 @@ function drawPreview(inputparts) {
 function clearPreview() {
 	const canvas = document.getElementById("previewCanvas");
 	const ctx = canvas.getContext("2d");
-	ctx.clearRect(0, 0, canvas.width, canvas.height);
+	clearLayer(ctx);
 }
 
 function drawDeletePreview(event) {
@@ -341,7 +341,12 @@ function rotate_img(image, angle, flipx) {
 }
 
 function clearLayer(layer) {
-	layer.clearRect(0, 0, canvas.width, canvas.height)
+    let transform = layer.getTransform();
+    let scaleX = transform.a; 
+    let scaleY = transform.d; 
+    let translateX = transform.e; 
+    let translateY = transform.f; 
+    layer.clearRect(-translateX / scaleX, -translateY / scaleY, canvas.width / scaleX, canvas.height / scaleY);
 }
 
 function drawArrow(ctx, loc1, loc2) {
@@ -373,41 +378,3 @@ function drawArrow(ctx, loc1, loc2) {
 	ctx.stroke();
 }
 
-function zoom(factor, event) {
-	const canvas = global_canvases[0]; 
-	const rect = canvas.getBoundingClientRect();
-	const [mouseX, mouseY] = [event.clientX - rect.left, event.clientY - rect.top];
-
-	const previous_zoom_factor = global_zoom_factor;
-	global_zoom_factor += factor;
-
-	const scaleFactor = global_zoom_factor / previous_zoom_factor;
-
-	for (let c of global_canvases) {
-		let ctx = c.getContext("2d");
-		ctx.translate(mouseX, mouseY);
-		ctx.scale(scaleFactor, scaleFactor);
-		ctx.translate(-mouseX, -mouseY);
-	}
-
-	redrawEntireCanvas();
-}
-
-function translateCanvas(pos,relative=false) {
-	let [x,y] = pos
-	if (relative) {
-		for (c of global_canvases) {
-			const ctx = c.getContext("2d")
-			ctx.translate(x, y);
-		}
-	} else {
-		for (c of global_canvases) {
-			const ctx = c.getContext("2d")
-			const currentTransform = ctx.getTransform();
-			const dx = x - currentTransform.e;
-			const dy = y - currentTransform.f;
-			ctx.translate(dx, dy);
-		}
-	}
-	redrawEntireCanvas()
-}
