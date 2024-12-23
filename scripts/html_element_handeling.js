@@ -11,14 +11,7 @@ const categoryButtons = document.querySelectorAll(".category-btn");
 const shiplink = document.getElementById("ship_link");
 const generate_ship = document.getElementById("post_json");
 
-const spriteSelect = document.getElementById("spriteSelect");
 const spriteNames = Object.keys(spriteData).sort();
-for (const spriteName of spriteNames) {
-	const option = document.createElement("option");
-	option.value = spriteName;
-	option.textContent = spriteName;
-	spriteSelect.appendChild(option);
-}
 const property_select = document.getElementById("propertySelect");
 const property_edit = document.getElementById("propertyEdit");
 const help = document.getElementById("helpButton");
@@ -65,7 +58,6 @@ document.addEventListener("DOMContentLoaded", () => {
 	export_json_button.addEventListener("click", export_json);
 	load_json_button.addEventListener("click", loadJson);
 	apply_property_button.addEventListener("click", applyProperty);
-	spriteSelect.addEventListener("click", applyProperty);
 	loadB64Button.addEventListener("click", get_json);
 	apply_ship_property_button.addEventListener("click", applyShipProperty);
 	recalculate_stats_button.addEventListener("click", handleRecalculateStats);
@@ -77,7 +69,6 @@ document.addEventListener("DOMContentLoaded", () => {
 	for (const radio of cursor_mode) {
 		radio.addEventListener("click", handleCursorMode);
 	}
-	document.getElementById("spriteSelect").addEventListener("change", handleSpriteSelectionChange);
 
 	property_select.addEventListener("change", handlePropertySelectionChange);
 	ship_property_select.addEventListener("change", handleShipPropertySelectionChange);

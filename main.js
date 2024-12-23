@@ -90,22 +90,14 @@ function handleCursorModeChange() {
 	clearPreview();
 	if (cursorMode === "Place") {
 		if (global_sprites_to_place.length === 0 || global_sprites_to_place.includes("cosmoteer.delete")) {
-			document.getElementById("spriteSelect").value = "cosmoteer.corridor";
 			global_sprites_to_place = [generatePart("cosmoteer.corridor")]
 		}
 	} else if (cursorMode === "Delete") {
 		global_sprites_to_place = []
-		document.getElementById("spriteSelect").value = "cosmoteer.delete";
 	} else if (cursorMode === "Move") {
 		global_sprites_to_place = [];
 	}
 	updateCanvas()
-}
-
-function handleSpriteSelectionChange() {
-	global_sprites_to_place = []
-	global_sprites_to_place.push(generatePart(document.getElementById("spriteSelect").value))
-	loadPreviewSpriteImage();
 }
 
 function export_json() {
@@ -309,16 +301,6 @@ function square_map(sprite) {
 			};
 		}
 	}
-}
-
-function loadPreviewSpriteImage() {
-	const selectedSprite = document.getElementById("spriteSelect").value;
-	const imageName = selectedSprite.replace("cosmoteer.", "");
-	previewSpriteImage.src = `sprites/${imageName}.png`;
-
-	previewSpriteImage.onload = () => {
-		isPreviewSpriteLoaded = true;
-	};
 }
 
 function handleCanvasMouseMove(event) {

@@ -1,10 +1,10 @@
 const global_help_message = `<p>
-Features:
+<h3>Features</h3> <br> 
 - Import any ship by uploading it somewhere (like the library), pasting the link in the "Load from url" field and hitting the button <br> <br>
 - Export any ship by pressing "generate ship file" and waiting until a link to the picture appears. <br> <br>
 - Mirror mode <br> <br>
 - Delete mode: left click for parts and right click for doors <br> <br>
-- Hotkeys  <br> 
+<h5>Hotkeys</h5>
     - wasd move the camera <br> 
     - hold ctr for a bigger step size (when moving camera, mirror line,...)
     - Press a number (1-4) key to select the corresponding tool <br> 

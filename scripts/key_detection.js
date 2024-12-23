@@ -87,7 +87,7 @@ document.addEventListener('wheel', (event) => {
     } 
   }, { passive: false });
 
-//translation
+//translation of camera
 let global_translation_amount = 20
 document.addEventListener('mousedown', (event) => {
     if (event.button === 1) {
@@ -119,6 +119,21 @@ document.addEventListener("keydown", function(event) {
     if (event.key === "d") {
         event.preventDefault()
         translateCanvas([-global_translation_amount/canvas.getContext("2d").getTransform().a*getMultiplier(event),0], true)
+    }
+});
+
+//Part selection
+document.addEventListener('mousedown', (event) => {
+    if (cursorMode === "Select" && event.button === 0) { // Left button
+        isMouseDown = true
+        console.log('Left mouse button held down')
+    }
+});
+
+document.addEventListener('mouseup', (event) => {
+    if (cursorMode === "Select" && event.button === 0) { // Left button
+        isMouseDown = false
+        console.log('Left mouse button released')
     }
 });
 

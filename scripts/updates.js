@@ -58,14 +58,12 @@ function updateCoordinates(canvasPositionX, canvasPositionY) {
 }
 
 function updateSpriteSelection() {
-	document.getElementById("selected_parts").innerText = "Selected sprites: "; //Update label
 	const old_toggles = [];
 	include_toggle = true;
 
 	property_select.innerHTML = ""; //Update Selection
 
 	for (sprite of global_selected_sprites) {
-		document.getElementById("selected_parts").innerText += `${sprite.ID}, `;
 		for (const toggle of getPartData(sprite)) {
 			for (const old_toggle of old_toggles) {
 				if (isSameToggleType(old_toggle, toggle)) {

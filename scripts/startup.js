@@ -24,3 +24,13 @@ function initializeCanvas() {
 	}
 	updateCanvas()
 }
+
+function loadPreviewSpriteImage() {
+	const selectedSprite = global_sprites_to_place[0].ID;
+	const imageName = selectedSprite.replace("cosmoteer.", "");
+	previewSpriteImage.src = `sprites/${imageName}.png`;
+
+	previewSpriteImage.onload = () => {
+		isPreviewSpriteLoaded = true;
+	};
+}
