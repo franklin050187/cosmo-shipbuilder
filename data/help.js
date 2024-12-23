@@ -5,6 +5,8 @@ Features:
 - Mirror mode <br> <br>
 - Delete mode: left click for parts and right click for doors <br> <br>
 - Hotkeys  <br> 
+    - wasd move the camera <br> 
+    - hold ctr for a bigger step size (when moving camera, mirror line,...)
     - Press a number (1-4) key to select the corresponding tool <br> 
     - ctrl + x to cut <br> 
     - ctrl + v to paste selected parts (without transferring properties) <br> 
