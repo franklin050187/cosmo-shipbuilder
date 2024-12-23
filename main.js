@@ -321,7 +321,7 @@ function handleCanvasMouseMove(event) {
 		return;
 	}
 
-	if (cursorMode === "Select") {
+	if (cursorMode === "Select" || cursorMode === "Supply") {
 		if (global_selection_box_start[0]) {
 			drawSelectionBox(mousePos(event))
 		}
@@ -659,37 +659,22 @@ function addSupplyChains(part2, parts) {
 
 		//No chain from a part to itself
 		if (!isSameSprite(part1, part2)) {
-			//check if chain already exists
-			let toggle = true
-			loop:
-			for (let chain of chainlist) {
-				for (let value of chain.Value) {
-					if(isSameSprite(part2, value)) {
-						toggle = false
-						break loop
-					}
-				}
-			}
-
-			//Add chain
-			if (toggle) {
-				if (part1Data.tags.includes("crew") || part2Data.tags.includes("crew")) {
-					const foundItem = global_crew_assignments.find(item => isSameSprite(item.Key, part1));
-					const value = foundItem ? foundItem.Value : null;
-					if (value === null) {
-						global_crew_assignments.push(generateSupplyChain(part1, part2))
-					} else {
-						value.push(part2)
-					}
-					
+			if (part1Data.tags.includes("crew") || part2Data.tags.includes("crew")) {
+				const foundItem = global_crew_assignments.find(item => isSameSprite(item.Key, part1));
+				const value = foundItem ? foundItem.Value : null;
+				if (value === null) {
+					global_crew_assignments.push(generateSupplyChain(part1, part2))
 				} else {
-					const foundItem = global_supply_chains.find(item => isSameSprite(item.Key, part1));
-					const value = foundItem ? foundItem.Value : null;
-					if (value === null) {
-						global_supply_chains.push(generateSupplyChain(part1, part2))
-					} else {
-						value.push(part2)
-					}
+					value.push(part2)
+				}
+				
+			} else {
+				const foundItem = global_supply_chains.find(item => isSameSprite(item.Key, part1));
+				const value = foundItem ? foundItem.Value : null;
+				if (value === null) {
+					global_supply_chains.push(generateSupplyChain(part1, part2))
+				} else {
+					value.push(part2)
 				}
 			}
 		}

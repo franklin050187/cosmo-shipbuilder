@@ -126,12 +126,12 @@ document.addEventListener("keydown", function(event) {
 
 //Part selection
 document.addEventListener('mousedown', (event) => {
-    if (cursorMode === "Select" && event.button === 0) { 
+    if ((cursorMode === "Select" || cursorMode === "Supply") && event.button === 0) { 
         startSelectionBox(mousePos(event))
     }
 });
 document.addEventListener('mouseup', (event) => {
-    if (cursorMode === "Select" && event.button === 0) { 
+    if ((cursorMode === "Select" || cursorMode === "Supply") && event.button === 0) { 
         endSelectionBox(mousePos(event), event)
     }
 });
@@ -181,7 +181,6 @@ function endSelectionBox(pos, event) {
     } else {
         global_selected_sprites.push(...selection)
     }
-    
     global_selection_box_start = []
     clearLayer(additionals_canvas.getContext("2d")) //clear selection box
     updateCanvas()

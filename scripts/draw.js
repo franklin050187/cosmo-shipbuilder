@@ -125,7 +125,8 @@ function updateCanvas() {
 	for (let sprite of sprites) {
 		drawPartIndicators(sprite)
 	}
-	if (cursorMode === "Select") {
+	if (cursorMode === "Select" || cursorMode === "Supply")  {
+		clearPreview()
 		drawSelectionindicators(global_selected_sprites)
 	}
 
@@ -168,7 +169,6 @@ function drawSelectionindicators(parts) {
 	const canvas = document.getElementById("previewCanvas")
 	const ctx = canvas.getContext("2d")
 	ctx.strokeStyle  = "rgb(13, 130, 11)"
-	clearLayer(ctx)
 	for (let part of parts) {
 		ctx.beginPath()
 		ctx.lineWidth = 3
@@ -272,7 +272,6 @@ function drawMirrorAxis() {
 function drawSupplyChains() {
 	const canvas = document.getElementById("previewCanvas");
 	const ctx = canvas.getContext("2d");
-	clearLayer(ctx)
 	for (let chain of [...global_supply_chains, ...global_crew_assignments]) {
 		let part1 = chain.Key
 		for (let part2 of chain.Value) {
