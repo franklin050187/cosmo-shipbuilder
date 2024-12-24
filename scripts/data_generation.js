@@ -56,3 +56,6 @@ function generateSupplyChain(part1, part2) {//Example: [{"Key": {"FlipX": false,
     return {Key: part1, Value: [part2]}
 }
 
+function generateControlGroup(number) {//Example: "PartControlGroups": [{"Key": 0, "Value": [{"FlipX": false, "ID": "cosmoteer.laser_blaster_small", "Location": [-4, -4], "Rotation": 0}]}]
+    return {"Key": number, "Value": []}
+}

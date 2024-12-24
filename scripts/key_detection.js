@@ -1,6 +1,8 @@
 //This is for detecting key inputs and handling them
 
 let global_selection_box_start = []
+let clickCount = 0;
+let clickTimer;
 
 //ctrl+ hotkeys
 document.addEventListener("keydown", function(event) {
@@ -26,27 +28,32 @@ document.addEventListener("keydown", function(event) {
 
 //Cursor modes
 document.addEventListener("keydown", function(event) {
-    if (event.key === "1") {
+    if (event.key === "F1") {
+        event.preventDefault();
         ChangeCursorMode("Place")
     }
 });
 document.addEventListener("keydown", function(event) {
-    if (event.key === "2") {
+    if (event.key === "F2") {
+        event.preventDefault();
         ChangeCursorMode("Select")
     }
 });
 document.addEventListener("keydown", function(event) {
-    if (event.key === "3") {
+    if (event.key === "F3") {
+        event.preventDefault();
         ChangeCursorMode("Delete")
     }
 });
 document.addEventListener("keydown", function(event) {
-    if (event.key === "4") {
+    if (event.key === "F4") {
+        event.preventDefault();
         ChangeCursorMode("Move")
     }
 });
 document.addEventListener("keydown", function(event) {
-    if (event.key === "5") {
+    if (event.key === "F5") {
+        event.preventDefault();
         ChangeCursorMode("Supply")
     }
 });
@@ -135,6 +142,35 @@ document.addEventListener('mouseup', (event) => {
         endSelectionBox(mousePos(event), event)
     }
 });
+element.addEventListener('dblclick', function(event) {//double click to select all parts with same name and orientation
+    console.log('Double-click detected at:', event.clientX, event.clientY);
+});
+element.addEventListener('click', function (event) {//triple click to select all parts with same name
+    clickCount++;
+
+    if (clickCount === 1) {
+        // Start a timer to reset the count if no triple-click happens
+        clickTimer = setTimeout(() => {
+            clickCount = 0;
+        }, 500); // 500ms threshold for triple-click
+    }
+
+    if (clickCount === 3) {
+        clearTimeout(clickTimer); // Clear the timer
+        clickCount = 0; // Reset the count
+        console.log('Triple-click detected at:', event.clientX, event.clientY);
+    }
+});
+
+//control groups
+for (let i=0;i<10;i++) {
+    document.addEventListener("keydown", function(event) {
+        if (event.key === i.toString()) {
+            selectControlGroup(i)
+        }
+    });
+}
+
 
 function getMultiplier(event) {
     if (event.ctrlKey) {  

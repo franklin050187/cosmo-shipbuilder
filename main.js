@@ -21,7 +21,6 @@ let shipdata = {}; // To store the ship data
 let cursorMode = "Place"; // Initial cursor mode
 let doors = []; // To store the doors
 let resources = []; // To store the resources
-let global_part_properties = [];
 let global_zoom_factor = 1
 let global_canvases = [canvas, resource_canvas, drawing_canvas, preview_canvas, additionals_canvas]
 
@@ -180,18 +179,6 @@ function applyShipProperty() {
 	shipdata[toggle] = new_value;
 	updateShipToggleSelection();
 	updateCanvas();
-}
-
-function applyProperty() {
-    new_value = parseInt(property_edit.value);
-    for (let sprite of global_selected_sprites) {
-        for (toggle of global_part_properties) {
-            if (isSameToggleType(toggle, JSON.parse(property_select.value)) && toggleBelongsToSprite(toggle, sprite)) {
-                toggle.Value = new_value;
-            }
-        }
-    }
-    updateCanvas()
 }
 
 function sprite_position(part) {
