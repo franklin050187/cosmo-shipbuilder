@@ -491,32 +491,6 @@ function findSprite(x, y) {
 	return null;
 }
 
-function getSpriteTileLocations(sprite) {
-	const data = spriteData[sprite.ID]
-	const sprite_size = data.real_size || data.sprite_size || data.size;
-	const locations = [];
-	let base_location = [...sprite.Location]
-	if (!data.real_size && data.sprite_size && (sprite.Rotation === 0 || sprite.Rotation === 3)) {
-		let caze = (sprite.Rotation+1)%2
-		base_location[caze] = base_location[caze]-(data.sprite_size[1]-data.size[1])
-	}
-
-	if (sprite.Rotation % 2 === 0) {
-		width = sprite_size[0];
-		height = sprite_size[1];
-	} else {
-		width = sprite_size[1];
-		height = sprite_size[0];
-	}
-
-	for (let i = 0; i < width; i++) {
-		for (let j = 0; j < height; j++) {
-			locations.push([base_location[0] + i, base_location[1] + j]);
-		}
-	}
-	return locations;
-}
-
 function mousePos(event) {
 	let transform = canvas.getContext("2d").getTransform()
 	return mousePosEv(event.clientX-transform.e, event.clientY-transform.f);
@@ -691,11 +665,14 @@ function shiftMirrorCenter(vector) {
 function partBoundingBox(sprite) {
 	const data = spriteData[sprite.ID]
 	const sprite_size = data.real_size || data.sprite_size || data.size;
-	const locations = [];
 	let base_location = [...sprite.Location]
-	if (!data.real_size && data.sprite_size && (sprite.Rotation === 0 || sprite.Rotation === 3)) {
+	if (!data.real_size && data.sprite_size) {
 		let caze = (sprite.Rotation+1)%2
-		base_location[caze] = base_location[caze]-(data.sprite_size[1]-data.size[1])
+		if (upTurrets.includes(sprite.ID) && (sprite.Rotation === 0 || sprite.Rotation === 3)) {
+			base_location[caze] = base_location[caze]-(data.sprite_size[1]-data.size[1])
+		} else if (downTurrets.includes(sprite.ID) && (sprite.Rotation === 1 || sprite.Rotation === 2)) {
+			base_location[caze] = base_location[caze]-(data.sprite_size[1]-data.size[1])
+		}
 	}
 	if (sprite.Rotation % 2 === 0) {
 		width = sprite_size[0];
@@ -705,4 +682,20 @@ function partBoundingBox(sprite) {
 		height = sprite_size[0];
 	}
 	return [base_location, [base_location[0]+width, base_location[1]+height]];
+}
+
+function getSpriteTileLocations(sprite) {
+	let box = partBoundingBox(sprite);
+	let base_location = box[0];
+	let bottom_right = box[1];
+	let width = bottom_right[0] - base_location[0];
+	let height = bottom_right[1] - base_location[1];
+	let locations = [];
+
+	for (let i = 0; i < width; i++) {
+		for (let j = 0; j < height; j++) {
+			locations.push([base_location[0] + i, base_location[1] + j]);
+		}
+	}
+	return locations;
 }
