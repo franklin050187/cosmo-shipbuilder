@@ -11,20 +11,13 @@ const categoryButtons = document.querySelectorAll(".category-btn");
 const shiplink = document.getElementById("ship_link");
 const generate_ship = document.getElementById("post_json");
 
-const spriteSelect = document.getElementById("spriteSelect");
 const spriteNames = Object.keys(spriteData).sort();
-for (const spriteName of spriteNames) {
-	const option = document.createElement("option");
-	option.value = spriteName;
-	option.textContent = spriteName;
-	spriteSelect.appendChild(option);
-}
 const property_select = document.getElementById("propertySelect");
 const property_edit = document.getElementById("propertyEdit");
 const help = document.getElementById("helpButton");
 const apply_property_button = document.getElementById("applyPropertyButton");
 const recalculate_stats_button = document.getElementById("reCalculateButton");
-const redraw_button = document.getElementById("redrawButton");
+const reset_camera_button = document.getElementById("restCameraButton");
 const mirror_select = document.getElementById("mirrorSelect");
 for (const spriteName of ["none", "vertical", "horizontal", "diagonal1", "diagonal2", "dot"]) {
 	const option = document.createElement("option");
@@ -58,43 +51,32 @@ if (b64) {
 
 //ensures these are loaded after the corresponding functions in main.js
 document.addEventListener("DOMContentLoaded", () => {
-	const canvas = document.getElementById("spriteCanvas"); 
-	canvas.addEventListener("mousemove", handleCanvasMouseMove);
-	canvas.addEventListener("click", handleCanvasClick);
-	canvas.addEventListener("contextmenu", handleRightClick); // Listen for right-click
 	export_json_button.addEventListener("click", export_json);
 	load_json_button.addEventListener("click", loadJson);
 	apply_property_button.addEventListener("click", applyProperty);
-	spriteSelect.addEventListener("click", applyProperty);
 	loadB64Button.addEventListener("click", get_json);
 	apply_ship_property_button.addEventListener("click", applyShipProperty);
 	recalculate_stats_button.addEventListener("click", handleRecalculateStats);
 	generate_ship.addEventListener("click", generateShip);
-	redraw_button.addEventListener("click", redrawEntireCanvas);
+	reset_camera_button.addEventListener("click", resetCamera);
+
 	//help.addEventListener("click", displayHelp);
 
 	for (const radio of cursor_mode) {
 		radio.addEventListener("click", handleCursorMode);
 	}
-	document.getElementById("spriteSelect").addEventListener("change", handleSpriteSelectionChange);
 
 	property_select.addEventListener("change", handlePropertySelectionChange);
 	ship_property_select.addEventListener("change", handleShipPropertySelectionChange);
 	mirror_select.addEventListener("change", handleMirrorSelectionChange);
 
-	// Event listeners for category buttons
-	categoryButtons.forEach(btn => {
-		btn.addEventListener("click", () => {
-		const category = btn.dataset.category;
-		loadParts(category);
-		});
-  	});
+	
 });
 
 // Function to load parts based on category
 function loadParts(category) {
 	partsContainer.innerHTML = ""; 
-	for (let part of getParts(getOneOfEachPart(), undefined, category)) {
+	for (let part of getParts(getOneOfEachPart(), isInTagsCondition(category))) {
 		const partDiv = document.createElement("div");
 		partDiv.classList.add("part-item");
 
@@ -167,4 +149,64 @@ function displayHelp() {
 function closeHelp() {
 	document.getElementById('overlay').style.display = 'none';
 	document.getElementById('helpModal').style.display = 'none';
+}
+
+function resetPlacementCategories() {
+	// Deselect all category buttons
+	const categoriesContainer = document.querySelector('.categories');
+	categoriesContainer.innerHTML = ''
+
+	// Clear the parts container
+	const partsContainer = document.getElementById('parts-container');
+	partsContainer.innerHTML = '';
+}
+
+function updatePlacementCategories() {
+	resetPlacementCategories()
+    const partsContainer = document.getElementById('parts-container');
+	const categoriesContainer = document.querySelector('.categories')
+    if (!partsContainer) return;
+
+    partsContainer.innerHTML = '';
+
+	let categories = []
+
+    // Define parts for each category 
+	if (["Select", "Place", "Delete", "Supply", "Move"].includes(cursorMode)) {
+		categories = [
+			{ category: 'energy weapon', label: 'Energy Weapon Part' },
+			{ category: 'projectile weapon', label: 'Projectile Weapon Part' },
+			{ category: 'defense', label: 'Defense Part' },
+			{ category: 'flight', label: 'Flight Part' },
+			{ category: 'crew_transport', label: 'Crew Transport Part' },
+			{ category: 'power', label: 'Power Part' },
+			{ category: 'factory', label: 'Factory Part' },
+			{ category: 'utilities', label: 'Utilities Part' },
+			{ category: 'structure', label: 'Structure Part' },
+			{ category: 'storage', label: 'Storage Part' },
+		]
+	}
+
+    // Populate the container with parts for all categories
+    categories.forEach(({ category, label }) => {
+        const button = document.createElement('button');
+        button.classList.add('category-btn');
+        button.dataset.category = category;
+        button.textContent = label;
+        categoriesContainer.appendChild(button);
+    });
+
+	const categoryButtons = document.querySelectorAll('.categories .category-btn')
+
+	// Event listeners for category buttons
+	if (["Select", "Place", "Delete", "Supply", "Move"].includes(cursorMode)) {
+		categoryButtons.forEach(btn => {
+			btn.addEventListener("click", () => {
+				const category = btn.dataset.category;
+				loadParts(category);
+			});
+  		});
+		  loadParts("energy weapon")
+	}
+	
 }

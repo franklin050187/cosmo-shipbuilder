@@ -64,3 +64,25 @@ function mirroredPositions(pos, allaxis, axislocations) {
 
     return [locations, rotationFlips];
 }
+
+function areBoxesOverlapping(box1, box2) {
+    const [x1a, y1a] = box1[0];
+    const [x1b, y1b] = box1[1];
+    const [x2a, y2a] = box2[0];
+    const [x2b, y2b] = box2[1];
+
+    const minX1 = Math.min(x1a, x1b);
+    const maxX1 = Math.max(x1a, x1b);
+    const minY1 = Math.min(y1a, y1b);
+    const maxY1 = Math.max(y1a, y1b);
+
+    const minX2 = Math.min(x2a, x2b);
+    const maxX2 = Math.max(x2a, x2b);
+    const minY2 = Math.min(y2a, y2b);
+    const maxY2 = Math.max(y2a, y2b);
+
+    return !(maxX1 <= minX2 ||
+             minX1 >= maxX2 ||
+             maxY1 <= minY2 || 
+             minY1 >= maxY2);
+}

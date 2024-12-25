@@ -4,6 +4,7 @@ const canvas = document.getElementById("spriteCanvas");
 const drawing_canvas = document.getElementById("drawingCanvas");
 const resource_canvas = document.getElementById("resourceCanvas");
 const preview_canvas = document.getElementById("previewCanvas");
+const additionals_canvas = document.getElementById("additionalsCanvas");
 const ctx = canvas.getContext("2d");
 
 let spritesDrawn = new Set(); // used in draw function
@@ -124,6 +125,10 @@ function updateCanvas() {
 	for (let sprite of sprites) {
 		drawPartIndicators(sprite)
 	}
+	if (cursorMode === "Select" || cursorMode === "Supply")  {
+		clearPreview()
+		drawSelectionindicators(global_selected_sprites)
+	}
 
 	if (cursorMode === "Supply") {
 		drawSupplyChains()
@@ -149,14 +154,42 @@ function drawPartIndicators(part) {
 	const canvas = document.getElementById("drawingCanvas");
 	const ctx = canvas.getContext("2d");
 	ctx.fillStyle = "red";
-	ctx.fillRect(x, y, 10, 10);
+	//ctx.fillRect(x, y, 10*getScalor()[0], 10*getScalor()[1]);
+
 	if (part.ID == "cosmoteer.shield_gen_small") {
 		ctx.fillStyle = "blue";
 		ctx.beginPath();
-		ctx.lineWidth = 10;
+		ctx.lineWidth = 3;
 		ctx.arc(centerX, centerY, 400, 4*Math.PI/3, 5*Math.PI/3);
 		ctx.stroke(); 
 	}
+}
+
+function drawSelectionindicators(parts) {
+	const canvas = document.getElementById("previewCanvas")
+	const ctx = canvas.getContext("2d")
+	ctx.strokeStyle  = "rgb(13, 130, 11)"
+	for (let part of parts) {
+		ctx.beginPath()
+		ctx.lineWidth = 3
+		let box = partBoundingBox(part)
+		let [x1,y1] = convertCoordinatesToCanvas(box[0])
+		let [x2,y2] = convertCoordinatesToCanvas(box[1])
+		ctx.rect(x1, y1, x2-x1-1, y2-y1-1);
+		ctx.stroke()
+	}
+}
+
+function drawSelectionBox(endpos) {
+	const ctx = preview_canvas.getContext("2d")
+	clearLayer(ctx)
+	ctx.strokeStyle  = "rgb(13, 130, 11)"
+	ctx.lineWidth = 3
+	ctx.beginPath()
+	let [x1,y1] = convertCoordinatesToCanvas(global_selection_box_start)
+	let [x2,y2] = convertCoordinatesToCanvas(endpos)
+	ctx.rect(x1, y1, x2-x1, y2-y1);
+	ctx.stroke()
 }
 
 function convertCoordinatesToCanvas(location) {
@@ -239,7 +272,6 @@ function drawMirrorAxis() {
 function drawSupplyChains() {
 	const canvas = document.getElementById("previewCanvas");
 	const ctx = canvas.getContext("2d");
-	clearLayer(ctx)
 	for (let chain of [...global_supply_chains, ...global_crew_assignments]) {
 		let part1 = chain.Key
 		for (let part2 of chain.Value) {
@@ -279,7 +311,7 @@ function drawPreview(inputparts) {
 function clearPreview() {
 	const canvas = document.getElementById("previewCanvas");
 	const ctx = canvas.getContext("2d");
-	ctx.clearRect(0, 0, canvas.width, canvas.height);
+	clearLayer(ctx);
 }
 
 function drawDeletePreview(event) {
@@ -341,7 +373,12 @@ function rotate_img(image, angle, flipx) {
 }
 
 function clearLayer(layer) {
-	layer.clearRect(-global_translationX, -global_translationY, global_translationX+canvas.width/global_zoom_factor, global_translationY+canvas.height/global_zoom_factor)
+    let transform = layer.getTransform();
+    let scaleX = transform.a; 
+    let scaleY = transform.d; 
+    let translateX = transform.e; 
+    let translateY = transform.f; 
+    layer.clearRect(-translateX / scaleX, -translateY / scaleY, canvas.width / scaleX, canvas.height / scaleY);
 }
 
 function drawArrow(ctx, loc1, loc2) {
@@ -373,30 +410,3 @@ function drawArrow(ctx, loc1, loc2) {
 	ctx.stroke();
 }
 
-function zoom(factor, event) {
-	const canvas = global_canvases[0]; 
-	const rect = canvas.getBoundingClientRect();
-	const [mouseX, mouseY] = [event.clientX - rect.left, event.clientY - rect.top];
-
-	const previous_zoom_factor = global_zoom_factor;
-	global_zoom_factor += factor;
-
-	const scaleFactor = global_zoom_factor / previous_zoom_factor;
-
-	for (let c of global_canvases) {
-		let ctx = c.getContext("2d");
-		ctx.translate(mouseX, mouseY);
-		ctx.scale(scaleFactor, scaleFactor);
-		ctx.translate(-mouseX, -mouseY);
-	}
-
-	global_translationX = (global_translationX - mouseX) * scaleFactor + mouseX;
-	global_translationY = (global_translationY - mouseY) * scaleFactor + mouseY;
-
-	redrawEntireCanvas();
-}
-
-function translateCanvasTo(x,y) {
-	global_translationX = x
-	global_translationX = y
-}

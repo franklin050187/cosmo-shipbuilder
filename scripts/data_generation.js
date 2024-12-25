@@ -59,3 +59,6 @@ function generateSupplyChain(part1, part2) {//Example: [{"Key": {"FlipX": false,
 function generateResource(id, location=[0,0]) {
     return {"Key": location, "Value": id}
 }
+function generateControlGroup(number) {//Example: "PartControlGroups": [{"Key": 0, "Value": [{"FlipX": false, "ID": "cosmoteer.laser_blaster_small", "Location": [-4, -4], "Rotation": 0}]}]
+    return {"Key": number, "Value": []}
+}

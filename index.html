@@ -80,6 +80,10 @@
                     <label for="Supply">Supply Chains</label>
                 </div>
                 <div>
+                    <input type="radio" id="Resource" name="cursor_mode" value="Resource" />
+                    <label for="Resource">Resources</label>
+                </div>
+                <div>
                     <label id="coord_on_canvas"></label>
                 </div>
             </fieldset>
@@ -87,11 +91,7 @@
             <fieldset>
                 <legend>Parts</legend>
                 <div>
-                    <label for="spriteSelect">Select a Sprite:</label>
-                    <select id="spriteSelect"></select>
-                </div>
-                <div>
-                    <label id="selected_parts">Selected Part(s):</label>
+                    <label id="selected_parts">Selected a property:</label>
                     <select id="propertySelect"></select>
                 </div>
                 <div>
@@ -107,8 +107,8 @@
                     <select id="mirrorSelect"></select>
                 </div>
                 <div>
-                    <label for="redrawButton">Radrawing in case the canvas got messed up:</label>
-                    <button id="redrawButton">Redraw Ship</button>
+                    <label for="restCameraButton">Resets the camera and removes grafical artifacts:</label>
+                    <button id="restCameraButton">Reset Canvas</button>
                 </div>
             </fieldset>
 
@@ -167,20 +167,12 @@
             <canvas id="resourceCanvas" width="64" height="64"></canvas>
             <canvas id="drawingCanvas" width="64" height="64"></canvas>
             <canvas id="previewCanvas" width="64" height="64"></canvas>
+            <canvas id="additionalsCanvas" width="64" height="64"></canvas>
         </div>
         <div class="part-container">
             <!-- Categories -->
             <div class="categories">
-              <button class="category-btn" data-category="energy weapon">Energy Weapons</button>
-              <button class="category-btn" data-category="projectile weapon">Projectile Weapons</button>
-              <button class="category-btn" data-category="defense">Defenses</button>
-              <button class="category-btn" data-category="flight">Flight</button>
-              <button class="category-btn" data-category="crew_transport">Crew</button>
-              <button class="category-btn" data-category="power">Power</button>
-              <button class="category-btn" data-category="factory">Factory</button>
-              <button class="category-btn" data-category="utilities">Utilities</button>
-              <button class="category-btn" data-category="structure">Structure</button>
-              <button class="category-btn" data-category="storage">Storage</button>
+              
             </div>
         
             <!-- Parts -->
@@ -191,7 +183,9 @@
     </div>
     <script src="data/data.js"></script>
     <script src="data/help.js"></script>
+    <script src="data/crew_roles.js"></script>
     <script src="scripts/math.js"></script>
+    <script src="scripts/conditions.js"></script>
     <script src="scripts/ship.js"></script>
     <script src="scripts/data_extraction.js"></script>
     <script src="scripts/stat_calculation.js"></script>
@@ -201,6 +195,8 @@
     <script src="scripts/updates.js"></script>
     <script src="scripts/key_detection.js"></script>
     <script src="scripts/draw.js"></script>
+    <script src="scripts/camera.js"></script>
+    <script src="scripts/part_properties.js"></script>
     <script src="scripts/data_generation.js"></script>
     <script src="scripts/html_element_handeling.js" defer></script>
     <script src="main.js" defer></script>

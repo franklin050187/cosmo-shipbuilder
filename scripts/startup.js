@@ -3,7 +3,7 @@ window.onload = () => {
 	loadJson(JSON.stringify(startup_ship_data))
 };
 // Load a default category
-loadParts("energy weapon")
+updatePlacementCategories()
 preloadSprites()
 // Initialize the canvas
 loadPreviewSpriteImage()
@@ -23,4 +23,14 @@ function initializeCanvas() {
 		c.height = height;
 	}
 	updateCanvas()
+}
+
+function loadPreviewSpriteImage() {
+	const selectedSprite = global_sprites_to_place[0].ID;
+	const imageName = selectedSprite.replace("cosmoteer.", "");
+	previewSpriteImage.src = `sprites/${imageName}.png`;
+
+	previewSpriteImage.onload = () => {
+		isPreviewSpriteLoaded = true;
+	};
 }

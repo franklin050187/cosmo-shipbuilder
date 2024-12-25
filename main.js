@@ -21,12 +21,9 @@ let shipdata = {}; // To store the ship data
 let cursorMode = "Place"; // Initial cursor mode
 let doors = []; // To store the doors
 let global_resources = []; // To store the resources
-let global_part_properties = [];
 let global_resources_to_place = []
 let global_zoom_factor = 1
-let global_canvases = [canvas, resource_canvas, drawing_canvas, preview_canvas]
-let global_translationX = 0
-let global_translationY = 0
+let global_canvases = [canvas, resource_canvas, drawing_canvas, preview_canvas, additionals_canvas]
 
 const spriteCache = {};
 const previewSpriteImage = new Image();
@@ -93,22 +90,15 @@ function handleCursorModeChange() {
 	clearPreview();
 	if (cursorMode === "Place") {
 		if (global_sprites_to_place.length === 0 || global_sprites_to_place.includes("cosmoteer.delete")) {
-			document.getElementById("spriteSelect").value = "cosmoteer.corridor";
 			global_sprites_to_place = [generatePart("cosmoteer.corridor")]
 		}
 	} else if (cursorMode === "Delete") {
 		global_sprites_to_place = []
-		document.getElementById("spriteSelect").value = "cosmoteer.delete";
 	} else if (cursorMode === "Move") {
 		global_sprites_to_place = [];
 	}
+	updatePlacementCategories()
 	updateCanvas()
-}
-
-function handleSpriteSelectionChange() {
-	global_sprites_to_place = []
-	global_sprites_to_place.push(generatePart(document.getElementById("spriteSelect").value))
-	loadPreviewSpriteImage();
 }
 
 function export_json() {
@@ -120,12 +110,13 @@ function export_json() {
 		sprite.height = undefined;
 		new_parts.push(sprite);
 	}
-	shipdata.Doors = doors;
-	shipdata.NewFlexResourceGridTypes = global_resources;
-	shipdata.Parts = new_parts;
-	shipdata.PartUIToggleStates = global_part_properties;
-	shipdata.ResourceSupplierTargets = global_supply_chains;
-	shipdata.CrewSourceTargets = global_crew_assignments;
+	shipdata.Doors = doors
+	shipdata.NewFlexResourceGridTypes = global_resources
+	shipdata.Parts = new_parts
+	shipdata.PartUIToggleStates = global_part_properties
+	shipdata.ResourceSupplierTargets = global_supply_chains
+	shipdata.CrewSourceTargets = global_crew_assignments
+	shipdata.PartControlGroups = global_control_groups
 
 	for ([key, value] of getShipDataMap()) {
 		shipdata[key] = value;
@@ -193,18 +184,6 @@ function applyShipProperty() {
 	updateCanvas();
 }
 
-function applyProperty() {
-    new_value = parseInt(property_edit.value);
-    for (let sprite of global_selected_sprites) {
-        for (toggle of global_part_properties) {
-            if (isSameToggleType(toggle, JSON.parse(property_select.value)) && toggleBelongsToSprite(toggle, sprite)) {
-                toggle.Value = new_value;
-            }
-        }
-    }
-    updateCanvas()
-}
-
 function sprite_position(part) {
 	position = [...(part.Location ?? part.Cell)]
 	const sprite_size =
@@ -266,8 +245,6 @@ function sprite_position(part) {
 
 function get_all_locations(sprites) {
 	const locations = [];
-	// let width;
-	// let height;
 
 	for (const sprite of sprites) {
 		getSpriteTileLocations(sprite);
@@ -316,105 +293,6 @@ function square_map(sprite) {
 	}
 }
 
-function loadPreviewSpriteImage() {
-	const selectedSprite = document.getElementById("spriteSelect").value;
-	const imageName = selectedSprite.replace("cosmoteer.", "");
-	previewSpriteImage.src = `sprites/${imageName}.png`;
-
-	previewSpriteImage.onload = () => {
-		isPreviewSpriteLoaded = true;
-	};
-}
-
-function handleCanvasMouseMove(event) {
-	let [canvasPositionX, canvasPositionY] = mousePos(event)
-
-	updateCoordinates(canvasPositionX, canvasPositionY);
-
-	if (cursorMode === "Delete") {
-		drawDeletePreview(event)
-		return;
-	}
-
-	if (cursorMode === "Place") {
-		if (!isPreviewSpriteLoaded) return;
-		global_sprites_to_place[0].Location = [canvasPositionX, canvasPositionY]
-
-		drawPreview(global_sprites_to_place);
-		return;
-	}
-
-	if (cursorMode === "Move") {
-		if (global_sprites_to_place.length > 0) {
-			global_sprites_to_place[0].Location = [canvasPositionX, canvasPositionY]
-			drawPreview(global_sprites_to_place);
-		}
-		return;
-	}
-}
-
-function handleCanvasClick(event) {
-	// place sprite
-	if (cursorMode === "Place") {
-		place_sprites(global_sprites_to_place);
-	}
-	// remove sprite
-	if (cursorMode === "Delete") {
-		doIfCursorOverPart(event, (part) => {
-			remove_multiple_from_sprites(mirroredParts([part]))
-			clearPreview()
-			updateCanvas();
-		})
-	}
-	// move sprite
-	if (cursorMode === "Move") {
-		const pos = mousePos(event);
-		if (global_sprites_to_place.length === 0) {
-			doIfCursorOverPart(event, (part) => {
-				global_sprites_to_place = [partCopy(part)]
-				remove_multiple_from_sprites(mirroredParts([part]))
-			})
-		} else {
-			place_sprites(global_sprites_to_place);
-			clearPreview()
-			global_sprites_to_place = []
-		}
-	}
-	// select sprite
-	if (cursorMode === "Select") {
-		doIfCursorOverPart(event, part => selectParts([part]));
-	}
-	// select sprite
-	if (cursorMode === "Supply") {
-		doIfCursorOverPart(event, part => selectParts([part]));
-	}
-}
-
-function handleRightClick(event) {
-	event.preventDefault();
-	let pos = mousePos(event)
-	if (cursorMode === "Place" || cursorMode === "Move") {
-		for (part of global_sprites_to_place) {
-			part.Rotation = (part.Rotation + 1) % 4
-		}
-		handleCanvasMouseMove(event); 
-	} else if (cursorMode === "Delete") {
-		removeDoor(pos);
-		updateCanvas();
-	} else if (cursorMode === "Select") {
-		global_selected_sprites = []
-		updateSpriteSelection()
-	} else if (cursorMode === "Supply") {
-		doIfCursorOverPart(event, (part) => {
-			addSupplyChains(part, global_selected_sprites)
-			let part2arr = existingMirroredParts([part], sprites, false)
-			if (part2arr[0]) {
-				addSupplyChains(part2arr[0], existingMirroredParts(global_selected_sprites,sprites, false))
-			}
-		});
-	} 
-}
-
 function place_sprites(sprites_to_place) {//Places the first sprites with absolute coordinates and the ones after with relative ones
 	let new_parts = mirroredParts(repositionPartsRalative(sprites_to_place))
 	toggle = true
@@ -449,12 +327,13 @@ function placeResources(resources) {
 function selectParts(parts) {
 	for (let part of parts) {
 		for (let sprite of global_selected_sprites) {
-			if (isSameSprite(sprite, sprite_to_select)) {
+			if (isSameSprite(sprite, part)) {
 				break
 			}
 		}
 		global_selected_sprites.push(part)
 	}
+	updateCanvas()
 	updateSpriteSelection();
 	handlePropertySelectionChange()
 }
@@ -512,60 +391,23 @@ function findSprite(x, y) {
 	return null;
 }
 
-function getSpriteTileLocations(sprite) {
-	const data = spriteData[sprite.ID]
-	const sprite_size = data.real_size || data.sprite_size || data.size;
-	const locations = [];
-	let base_location = [...sprite.Location]
-	if (!data.real_size && data.sprite_size && (sprite.Rotation === 0 || sprite.Rotation === 3)) {
-		let caze = (sprite.Rotation+1)%2
-		base_location[caze] = base_location[caze]-(data.sprite_size[1]-data.size[1])
-	}
-
-	if (sprite.Rotation % 2 === 0) {
-		width = sprite_size[0];
-		height = sprite_size[1];
-	} else {
-		width = sprite_size[1];
-		height = sprite_size[0];
-	}
-
-	for (let i = 0; i < width; i++) {
-		for (let j = 0; j < height; j++) {
-			locations.push([base_location[0] + i, base_location[1] + j]);
-		}
-	}
-	return locations;
-}
-
 function mousePos(event) {
-	return mousePosConverter(event.clientX-global_translationX, event.clientY-global_translationY);
+	let transform = canvas.getContext("2d").getTransform()
+	return mousePosConverter(event.clientX-transform.e, event.clientY-transform.f);
 }
 
 function mousePosConverter(canvasX, canvasY) {
 	const rect = canvas.getBoundingClientRect();
 
 	// Adjust for canvas transformations
-	const transformedX = (canvasX - rect.left) / global_zoom_factor;
-	const transformedY = (canvasY - rect.top) / global_zoom_factor;
+	const transformedX = (canvasX - rect.left) / getScalor()[0];
+	const transformedY = (canvasY - rect.top) / getScalor()[1];
 
 	// Map to logical grid coordinates
 	const logicalX = Math.floor(transformedX / gridSize) + minX;
 	const logicalY = Math.floor(transformedY / gridSize) + minY;
 
 	return [logicalX, logicalY];
-}
-
-function isSameSprite(sprite1, sprite2) {
-	return (
-		sprite1.ID === sprite2.ID &&
-		sprite1.Location[0] === sprite2.Location[0] &&
-		sprite1.Location[1] === sprite2.Location[1]
-	);
-}
-
-function isSameToggleType(toggle1, toggle2) {
-	return toggle1.Key[1] === toggle2.Key[1];
 }
 
 function toggleBelongsToSprite(toggle, sprite) {
@@ -679,37 +521,22 @@ function addSupplyChains(part2, parts) {
 
 		//No chain from a part to itself
 		if (!isSameSprite(part1, part2)) {
-			//check if chain already exists
-			let toggle = true
-			loop:
-			for (let chain of chainlist) {
-				for (let value of chain.Value) {
-					if(isSameSprite(part2, value)) {
-						toggle = false
-						break loop
-					}
-				}
-			}
-
-			//Add chain
-			if (toggle) {
-				if (part1Data.tags.includes("crew") || part2Data.tags.includes("crew")) {
-					const foundItem = global_crew_assignments.find(item => isSameSprite(item.Key, part1));
-					const value = foundItem ? foundItem.Value : null;
-					if (value === null) {
-						global_crew_assignments.push(generateSupplyChain(part1, part2))
-					} else {
-						value.push(part2)
-					}
-					
+			if (part1Data.tags.includes("crew") || part2Data.tags.includes("crew")) {
+				const foundItem = global_crew_assignments.find(item => isSameSprite(item.Key, part1));
+				const value = foundItem ? foundItem.Value : null;
+				if (value === null) {
+					global_crew_assignments.push(generateSupplyChain(part1, part2))
 				} else {
-					const foundItem = global_supply_chains.find(item => isSameSprite(item.Key, part1));
-					const value = foundItem ? foundItem.Value : null;
-					if (value === null) {
-						global_supply_chains.push(generateSupplyChain(part1, part2))
-					} else {
-						value.push(part2)
-					}
+					value.push(part2)
+				}
+				
+			} else {
+				const foundItem = global_supply_chains.find(item => isSameSprite(item.Key, part1));
+				const value = foundItem ? foundItem.Value : null;
+				if (value === null) {
+					global_supply_chains.push(generateSupplyChain(part1, part2))
+				} else {
+					value.push(part2)
 				}
 			}
 		}
@@ -720,4 +547,43 @@ function addSupplyChains(part2, parts) {
 function shiftMirrorCenter(vector) {
 	global_mirror_center = [global_mirror_center[0]+vector[0], global_mirror_center[1]+vector[1]]
 	updateCanvas()
+	drawPreview(global_sprites_to_place)
+}
+
+function partBoundingBox(sprite) {
+	const data = spriteData[sprite.ID]
+	const sprite_size = data.real_size || data.sprite_size || data.size;
+	let base_location = [...sprite.Location]
+	if (!data.real_size && data.sprite_size) {
+		let caze = (sprite.Rotation+1)%2
+		if (upTurrets.includes(sprite.ID) && (sprite.Rotation === 0 || sprite.Rotation === 3)) {
+			base_location[caze] = base_location[caze]-(data.sprite_size[1]-data.size[1])
+		} else if (downTurrets.includes(sprite.ID) && (sprite.Rotation === 1 || sprite.Rotation === 2)) {
+			base_location[caze] = base_location[caze]-(data.sprite_size[1]-data.size[1])
+		}
+	}
+	if (sprite.Rotation % 2 === 0) {
+		width = sprite_size[0];
+		height = sprite_size[1];
+	} else {
+		width = sprite_size[1];
+		height = sprite_size[0];
+	}
+	return [base_location, [base_location[0]+width, base_location[1]+height]];
+}
+
+function getSpriteTileLocations(sprite) {
+	let box = partBoundingBox(sprite);
+	let base_location = box[0];
+	let bottom_right = box[1];
+	let width = bottom_right[0] - base_location[0];
+	let height = bottom_right[1] - base_location[1];
+	let locations = [];
+
+	for (let i = 0; i < width; i++) {
+		for (let j = 0; j < height; j++) {
+			locations.push([base_location[0] + i, base_location[1] + j]);
+		}
+	}
+	return locations;
 }
