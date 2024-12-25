@@ -20,8 +20,9 @@ let maxY = 0; // adjust canvas size
 let shipdata = {}; // To store the ship data
 let cursorMode = "Place"; // Initial cursor mode
 let doors = []; // To store the doors
-let resources = []; // To store the resources
+let global_resources = []; // To store the resources
 let global_part_properties = [];
+let global_resources_to_place = []
 let global_zoom_factor = 1
 let global_canvases = [canvas, resource_canvas, drawing_canvas, preview_canvas]
 let global_translationX = 0
@@ -120,7 +121,7 @@ function export_json() {
 		new_parts.push(sprite);
 	}
 	shipdata.Doors = doors;
-	shipdata.NewFlexResourceGridTypes = resources;
+	shipdata.NewFlexResourceGridTypes = global_resources;
 	shipdata.Parts = new_parts;
 	shipdata.PartUIToggleStates = global_part_properties;
 	shipdata.ResourceSupplierTargets = global_supply_chains;
@@ -143,7 +144,7 @@ function loadJson(json) {
 	sprites = [];
 	shipdata = {};
 	doors = [];
-	resources = [];
+	global_resources = [];
 	global_part_properties = [];
 	if (typeof json !== 'string') {
         json = json_import_text.value;
@@ -169,7 +170,7 @@ function loadJson(json) {
 	}
 
 	for (const resource of resource_data) {
-		resources.push(resource);
+		global_resources.push(resource);
 	}
 
 	for (const toggle of partUIToggleStates) {
@@ -439,6 +440,12 @@ function place_sprites(sprites_to_place) {//Places the first sprites with absolu
 	updateCanvas()
 }
 
+function placeResources(resources) {
+	for (let r of resources) {
+		global_resources.push(r)
+	}
+}
+
 function selectParts(parts) {
 	for (let part of parts) {
 		for (let sprite of global_selected_sprites) {
@@ -532,10 +539,10 @@ function getSpriteTileLocations(sprite) {
 }
 
 function mousePos(event) {
-	return mousePosEv(event.clientX-global_translationX, event.clientY-global_translationY);
+	return mousePosConverter(event.clientX-global_translationX, event.clientY-global_translationY);
 }
 
-function mousePosEv(canvasX, canvasY) {
+function mousePosConverter(canvasX, canvasY) {
 	const rect = canvas.getBoundingClientRect();
 
 	// Adjust for canvas transformations

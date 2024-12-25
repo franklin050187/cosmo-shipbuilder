@@ -56,3 +56,6 @@ function generateSupplyChain(part1, part2) {//Example: [{"Key": {"FlipX": false,
     return {Key: part1, Value: [part2]}
 }
 
+function generateResource(id, location=[0,0]) {
+    return {"Key": location, "Value": id}
+}

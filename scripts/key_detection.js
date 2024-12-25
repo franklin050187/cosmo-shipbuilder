@@ -75,6 +75,16 @@ document.addEventListener("keydown", function(event) {
     }
 });
 
+document.addEventListener("mousedown", function(event) {
+    if (e.button === 1) { 
+        isPanning = true;
+        startX = e.clientX;
+        startY = e.clientY;
+        canvas.style.cursor = 'grabbing'; 
+        e.preventDefault(); 
+      }
+});
+
 //zoom
 document.addEventListener('wheel', (event) => {
     if (event.ctrlKey && event.shiftKey) {
@@ -86,6 +96,8 @@ document.addEventListener('wheel', (event) => {
         }
     } 
   }, { passive: false });
+
+//
 
 function undo() {
     if (ship_action_history_depth <= ship_action_history.length && ship_action_history.length>0) {

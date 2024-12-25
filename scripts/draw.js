@@ -15,11 +15,11 @@ function draw_resources(json = JSON.stringify(startup_ship_data)) {
 	const data = JSON.parse(json);
 	const part_data = data.Parts;
 
-	if (resources === "Unset") {
+	if (global_resources === "Unset") {
 		return;
 	}
 	for (const location of get_all_locations(sprites)) {
-		for (const resource of resources) {
+		for (const resource of global_resources) {
 			if (location[0] === resource.Key[0] && location[1] === resource.Key[1]) {
 				const imageName = resource.Value;
 				const img = new Image();
@@ -341,7 +341,7 @@ function rotate_img(image, angle, flipx) {
 }
 
 function clearLayer(layer) {
-	layer.clearRect(0, 0, canvas.width, canvas.height)
+	layer.clearRect(-global_translationX, -global_translationY, global_translationX+canvas.width/global_zoom_factor, global_translationY+canvas.height/global_zoom_factor)
 }
 
 function drawArrow(ctx, loc1, loc2) {
@@ -394,4 +394,9 @@ function zoom(factor, event) {
 	global_translationY = (global_translationY - mouseY) * scaleFactor + mouseY;
 
 	redrawEntireCanvas();
+}
+
+function translateCanvasTo(x,y) {
+	global_translationX = x
+	global_translationX = y
 }
