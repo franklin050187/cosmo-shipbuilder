@@ -80,6 +80,10 @@
                     <label for="Supply">Supply Chains</label>
                 </div>
                 <div>
+                    <input type="radio" id="Resource" name="cursor_mode" value="Resource" />
+                    <label for="Resource">Resources</label>
+                </div>
+                <div>
                     <label id="coord_on_canvas"></label>
                 </div>
             </fieldset>
@@ -168,16 +172,7 @@
         <div class="part-container">
             <!-- Categories -->
             <div class="categories">
-              <button class="category-btn" data-category="energy weapon">Energy Weapons</button>
-              <button class="category-btn" data-category="projectile weapon">Projectile Weapons</button>
-              <button class="category-btn" data-category="defense">Defenses</button>
-              <button class="category-btn" data-category="flight">Flight</button>
-              <button class="category-btn" data-category="crew_transport">Crew</button>
-              <button class="category-btn" data-category="power">Power</button>
-              <button class="category-btn" data-category="factory">Factory</button>
-              <button class="category-btn" data-category="utilities">Utilities</button>
-              <button class="category-btn" data-category="structure">Structure</button>
-              <button class="category-btn" data-category="storage">Storage</button>
+              
             </div>
         
             <!-- Parts -->
@@ -188,6 +183,7 @@
     </div>
     <script src="data/data.js"></script>
     <script src="data/help.js"></script>
+    <script src="data/crew_roles.js"></script>
     <script src="scripts/math.js"></script>
     <script src="scripts/conditions.js"></script>
     <script src="scripts/ship.js"></script>

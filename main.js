@@ -96,6 +96,7 @@ function handleCursorModeChange() {
 	} else if (cursorMode === "Move") {
 		global_sprites_to_place = [];
 	}
+	updatePlacementCategories()
 	updateCanvas()
 }
 

@@ -51,7 +51,6 @@ if (b64) {
 
 //ensures these are loaded after the corresponding functions in main.js
 document.addEventListener("DOMContentLoaded", () => {
-	const canvas = document.getElementById("spriteCanvas"); 
 	export_json_button.addEventListener("click", export_json);
 	load_json_button.addEventListener("click", loadJson);
 	apply_property_button.addEventListener("click", applyProperty);
@@ -71,13 +70,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	ship_property_select.addEventListener("change", handleShipPropertySelectionChange);
 	mirror_select.addEventListener("change", handleMirrorSelectionChange);
 
-	// Event listeners for category buttons
-	categoryButtons.forEach(btn => {
-		btn.addEventListener("click", () => {
-		const category = btn.dataset.category;
-		loadParts(category);
-		});
-  	});
+	
 });
 
 // Function to load parts based on category
@@ -156,4 +149,64 @@ function displayHelp() {
 function closeHelp() {
 	document.getElementById('overlay').style.display = 'none';
 	document.getElementById('helpModal').style.display = 'none';
+}
+
+function resetPlacementCategories() {
+	// Deselect all category buttons
+	const categoriesContainer = document.querySelector('.categories');
+	categoriesContainer.innerHTML = ''
+
+	// Clear the parts container
+	const partsContainer = document.getElementById('parts-container');
+	partsContainer.innerHTML = '';
+}
+
+function updatePlacementCategories() {
+	resetPlacementCategories()
+    const partsContainer = document.getElementById('parts-container');
+	const categoriesContainer = document.querySelector('.categories')
+    if (!partsContainer) return;
+
+    partsContainer.innerHTML = '';
+
+	let categories = []
+
+    // Define parts for each category 
+	if (["Select", "Place", "Delete", "Supply", "Move"].includes(cursorMode)) {
+		categories = [
+			{ category: 'energy weapon', label: 'Energy Weapon Part' },
+			{ category: 'projectile weapon', label: 'Projectile Weapon Part' },
+			{ category: 'defense', label: 'Defense Part' },
+			{ category: 'flight', label: 'Flight Part' },
+			{ category: 'crew_transport', label: 'Crew Transport Part' },
+			{ category: 'power', label: 'Power Part' },
+			{ category: 'factory', label: 'Factory Part' },
+			{ category: 'utilities', label: 'Utilities Part' },
+			{ category: 'structure', label: 'Structure Part' },
+			{ category: 'storage', label: 'Storage Part' },
+		]
+	}
+
+    // Populate the container with parts for all categories
+    categories.forEach(({ category, label }) => {
+        const button = document.createElement('button');
+        button.classList.add('category-btn');
+        button.dataset.category = category;
+        button.textContent = label;
+        categoriesContainer.appendChild(button);
+    });
+
+	const categoryButtons = document.querySelectorAll('.categories .category-btn')
+
+	// Event listeners for category buttons
+	if (["Select", "Place", "Delete", "Supply", "Move"].includes(cursorMode)) {
+		categoryButtons.forEach(btn => {
+			btn.addEventListener("click", () => {
+				const category = btn.dataset.category;
+				loadParts(category);
+			});
+  		});
+		  loadParts("energy weapon")
+	}
+	
 }

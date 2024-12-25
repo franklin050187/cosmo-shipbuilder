@@ -563,6 +563,9 @@ const spriteData = {
 		tags: ["crew", "crew_transport"],
 	},
 };
+const resourceData = {
+	"cosmoteer.ammo": {cost: 4, category: "ammo"},
+}
 const upTurrets = [
 	"cosmoteer.laser_blaster_small",
 	"cosmoteer.laser_blaster_large",
