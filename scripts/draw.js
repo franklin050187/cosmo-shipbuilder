@@ -9,38 +9,28 @@ const ctx = canvas.getContext("2d");
 
 let spritesDrawn = new Set(); // used in draw function
 
-function draw_resources(json = JSON.stringify(startup_ship_data)) {
-	if (typeof json !== 'string') {
-        json = json_import_text.value;
-    }
-	const data = JSON.parse(json);
-	const part_data = data.Parts;
-
+function draw_resources(resources, canvas) {
 	if (global_resources === "Unset") {
 		return;
 	}
-	for (const location of get_all_locations(sprites)) {
-		for (const resource of global_resources) {
-			if (location[0] === resource.Key[0] && location[1] === resource.Key[1]) {
-				const imageName = resource.Value;
-				const img = new Image();
+	const ctx = canvas.getContext("2d");
+	for (const resource of resources) {
+		const imageName = resource.Value
+		const img = new Image()
 
-				img.src = `sprites/${imageName}.png`;
+		img.src = `sprites/${imageName}.png`
 
-				img.onload = () => {
-					x = location[0];
-					y = location[1];
-					const rotatedImage = rotate_img(img, 0, false);
-					ctx.drawImage(
-						rotatedImage,
-						(x - minX) * gridSize + 1,
-						(y - minY) * gridSize + 1,
-						rotatedImage.width - 2,
-						rotatedImage.height - 2,
-					);
-				};
-			}
-		}
+		let [x,y] = convertCoordinatesToCanvas(resource.Key)
+		const rotatedImage = rotate_img(img, 0, false)
+		
+		ctx.drawImage(
+			rotatedImage,
+			x,
+			y,
+			rotatedImage.width*gridSize/64 - 2,
+			rotatedImage.height*gridSize/64 - 2,
+		)
+		
 	}
 }
 
@@ -131,11 +121,13 @@ function updateCanvas() {
 	}
 
 	if (cursorMode === "Supply") {
+		clearLayer(ctx)
 		drawSupplyChains()
 	}
 	drawMirrorAxis()
 	draw_doors();
-	draw_resources();
+	clearLayer(resource_canvas.getContext("2d"))
+	draw_resources(global_resources, resource_canvas);
 }
 
 function redrawEntireCanvas() {
@@ -282,7 +274,7 @@ function drawSupplyChains() {
 	}
 }
 
-function drawPreview(inputparts) {
+function drawPreview(inputparts, inputresources) {
 	const parts = mirroredParts(repositionPartsRalative(inputparts))
 	const canvas = document.getElementById("previewCanvas");
 	const ctx = canvas.getContext("2d");
@@ -303,7 +295,10 @@ function drawPreview(inputparts) {
 			rotatedImage.width*gridSize/64 - 2,
 			rotatedImage.height*gridSize/64 - 2,
 		);
-		
+	}
+	if (inputresources) {
+		const resources = mirroredResources(inputresources)
+		draw_resources(resources, canvas)
 	}
 	ctx.globalAlpha = 1.0;
 }
@@ -409,4 +404,3 @@ function drawArrow(ctx, loc1, loc2) {
 	ctx.lineTo(arrowheadX - headLength * Math.cos(angle + headAngle), arrowheadY - headLength * Math.sin(angle + headAngle));
 	ctx.stroke();
 }
-

@@ -564,7 +564,27 @@ const spriteData = {
 	},
 };
 const resourceData = {
-	"cosmoteer.ammo": {cost: 4, category: "ammo"},
+	"battery": {cost: 0, category: "power", stack_size: 1},
+	"bullet": {cost: 4, category: "ammo", stack_size: 40},
+	"carbon": {cost: 160, category: "ore", stack_size: 5},
+	"coil": {cost: 10, category: "refined", stack_size: 40},
+	"coil2": {cost: 300, category: "refined", stack_size: 40},
+	"copper": {cost: 80, category: "ore", stack_size: 5},
+	"diamond": {cost: 4000, category: "refined", stack_size: 5},
+	"enriched_uranium": {cost: 2000, category: "refined", stack_size: 10},
+	"gold": {cost: 500, category: "ore", stack_size: 5},
+	"hyperium": {cost: 50, category: "fuel", stack_size: 20},
+	"iron": {cost: 20, category: "ore", stack_size: 5},
+	"mine_part": {cost: 52, category: "ammo", stack_size: 8},
+	"missile_part_emp": {cost: 20, category: "ammo", stack_size: 10},
+	"missile_part_he": {cost: 8, category: "ammo", stack_size: 10},
+	"missile_part_nuke": {cost: 36, category: "ammo", stack_size: 10},
+	"processor": {cost: 2500, category: "refined", stack_size: 5},
+	"steel": {cost: 25, category: "refined", stack_size: 40},
+	"sulfur": {cost: 20, category: "ore", stack_size: 5},
+	"tristeel": {cost: 200, category: "refined", stack_size: 40},
+	"tritanium": {cost: 160, category: "ore", stack_size: 5},
+	"uranium": {cost: 400, category: "ore", stack_size: 5},
 }
 const upTurrets = [
 	"cosmoteer.laser_blaster_small",

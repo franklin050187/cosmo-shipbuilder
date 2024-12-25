@@ -96,6 +96,12 @@ function handleCursorModeChange() {
 		global_sprites_to_place = []
 	} else if (cursorMode === "Move") {
 		global_sprites_to_place = [];
+	} else if (cursorMode === "Resource") {
+		global_sprites_to_place = []
+		global_resources_to_place = [generateResource("bullet")];
+	}
+	if (cursorMode != "Resource") {
+		global_resources_to_place = []
 	}
 	updatePlacementCategories()
 	updateCanvas()
@@ -319,9 +325,10 @@ function place_sprites(sprites_to_place) {//Places the first sprites with absolu
 }
 
 function placeResources(resources) {
-	for (let r of resources) {
-		global_resources.push(r)
+	for (let r of mirroredResources(resources)) {
+		global_resources.push(resourceCopy(r))
 	}
+	updateCanvas()
 }
 
 function selectParts(parts) {
@@ -375,6 +382,25 @@ function removeDoor(location) {
 	for (let i=0; i<doors.length;i++) {
 		if (sameTile(doors[i].Cell, location)) {
 			doors.splice(i,1)
+		}
+	}
+}
+
+function removeResources(resources) {
+	let dummylist = [...global_resources];
+	for (let resource of resources) {
+		dummylist = dummylist.filter(
+			(dummyResource) => !areLocationsSame(resource.Key, dummyResource.Key)
+		);
+	}
+	global_resources = dummylist;
+	updateCanvas();
+}
+
+function getResourceFromLocation(pos) {
+	for (let i = 0; i < global_resources.length; i++) {
+		if (areLocationsSame(pos, global_resources[i].Key)) {
+			return global_resources[i]
 		}
 	}
 }
@@ -482,6 +508,19 @@ function mirroredParts(parts, also_adds_base_parts = true) {
 	return partsout
 }
 
+function mirroredResources(resources) {
+	let resourceout = [...resources]
+	for (let resource of resources) {
+		location_rotations = mirroredPositions(resourceCenter(resource), global_mirror_axis,global_mirror_center, false)
+		for (let i = 1;i< location_rotations[0].length; i++) {
+			let newresource = generateResource(resource.Value, location_rotations[0][i])
+			newresource.Key =  [newresource.Key[0]-0.5, newresource.Key[1]-0.5]
+			resourceout.push(newresource)
+		}
+	}
+	return resourceout
+}
+
 function existingMirroredParts(parts, all_parts, also_adds_base_parts = true) {
 	let partsout = []
 	let locations = []
@@ -547,7 +586,7 @@ function addSupplyChains(part2, parts) {
 function shiftMirrorCenter(vector) {
 	global_mirror_center = [global_mirror_center[0]+vector[0], global_mirror_center[1]+vector[1]]
 	updateCanvas()
-	drawPreview(global_sprites_to_place)
+	drawPreview(global_sprites_to_place, global_resources_to_place)
 }
 
 function partBoundingBox(sprite) {
@@ -586,4 +625,16 @@ function getSpriteTileLocations(sprite) {
 		}
 	}
 	return locations;
+}
+
+function getOneOfEach(data) {
+    let parts = []
+	for (let id in data) {
+		parts.push(generatePart(id))
+	}
+    return parts
+}
+
+function resourceCenter(res) {
+	return [res.Key[0]+0.5, res.Key[1]+0.5]
 }

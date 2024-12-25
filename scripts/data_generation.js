@@ -44,21 +44,18 @@ function generatePropertiesForParts(parts) {
     return properties
 }
 
-function getOneOfEachPart() {
-    let parts = []
-	for (let id in spriteData) {
-		parts.push(generatePart(id))
-	}
-    return parts
-}
-
 function generateSupplyChain(part1, part2) {//Example: [{"Key": {"FlipX": false, "ID": "cosmoteer.crew_quarters_med", "Location": [4, 10], "Rotation": 0}, "Value": [{"FlipX": false, "ID": "cosmoteer.point_defense", "Location": [4, 9], "Rotation": 0}]}], 
     return {Key: part1, Value: [part2]}
 }
 
 function generateResource(id, location=[0,0]) {
-    return {"Key": location, "Value": id}
+    return {"Value": id, "Key": [...location]}
 }
+
+function resourceCopy(resource) {
+    return generateResource(resource.Value, resource.Key)
+}
+
 function generateControlGroup(number) {//Example: "PartControlGroups": [{"Key": 0, "Value": [{"FlipX": false, "ID": "cosmoteer.laser_blaster_small", "Location": [-4, -4], "Rotation": 0}]}]
     return {"Key": number, "Value": []}
 }

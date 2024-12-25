@@ -84,16 +84,6 @@ document.addEventListener("keydown", function(event) {
     }
 });
 
-document.addEventListener("mousedown", function(event) {
-    if (e.button === 1) { 
-        isPanning = true;
-        startX = e.clientX;
-        startY = e.clientY;
-        canvas.style.cursor = 'grabbing'; 
-        e.preventDefault(); 
-      }
-});
-
 //zoom
 document.addEventListener('wheel', (event) => {
     if (event.ctrlKey && event.shiftKey) {
@@ -262,8 +252,7 @@ function handleCanvasMouseMove(event) {
 	if (cursorMode === "Place") {
 		if (!isPreviewSpriteLoaded) return;
 		global_sprites_to_place[0].Location = [canvasPositionX, canvasPositionY]
-
-		drawPreview(global_sprites_to_place);
+		drawPreview(global_sprites_to_place, global_resources_to_place);
 		return;
 	}
 
@@ -276,10 +265,15 @@ function handleCanvasMouseMove(event) {
 	if (cursorMode === "Move") {
 		if (global_sprites_to_place.length > 0) {
 			global_sprites_to_place[0].Location = [canvasPositionX, canvasPositionY]
-			drawPreview(global_sprites_to_place);
+			drawPreview(global_sprites_to_place, undefined);
 		}
 		return;
 	}
+
+    if (cursorMode === "Resource") {
+        global_resources_to_place[0].Key = mousePos(event)
+        drawPreview(global_sprites_to_place, global_resources_to_place)
+    }
 }
 
 function handleSingleCanvasClick(event) {
@@ -313,9 +307,12 @@ function handleSingleCanvasClick(event) {
     if (cursorMode === "Select") {
         doIfCursorOverPart(event, part => selectParts([part]));
     }
-    // select sprite
     if (cursorMode === "Supply") {
         doIfCursorOverPart(event, part => selectParts([part]));
+    }
+    if (cursorMode === "Resource") {
+        global_resources_to_place[0].Key = mousePos(event)
+        placeResources(global_resources_to_place);
     }
 } 
 
@@ -358,5 +355,10 @@ function handleRightClick(event) {
 				addSupplyChains(part2arr[0], existingMirroredParts(global_selected_sprites,sprites, false))
 			}
 		});
-	} 
+	} else if (cursorMode === "Resource") {
+        let resource = getResourceFromLocation(pos)
+        if (resource) {
+            removeResources(mirroredResources([resource]))
+        }
+	}
 }

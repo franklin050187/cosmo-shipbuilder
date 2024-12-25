@@ -65,6 +65,10 @@ function mirroredPositions(pos, allaxis, axislocations) {
     return [locations, rotationFlips];
 }
 
+function areLocationsSame(pos1, pos2) {
+    return pos1[0] === pos2[0] && pos1[1] === pos2[1]
+}
+
 function areBoxesOverlapping(box1, box2) {
     const [x1a, y1a] = box1[0];
     const [x1b, y1b] = box1[1];

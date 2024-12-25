@@ -76,7 +76,7 @@ document.addEventListener("DOMContentLoaded", () => {
 // Function to load parts based on category
 function loadParts(category) {
 	partsContainer.innerHTML = ""; 
-	for (let part of getParts(getOneOfEachPart(), isInTagsCondition(category))) {
+	for (let part of getParts(getOneOfEach(spriteData), isInTagsCondition(category))) {
 		const partDiv = document.createElement("div");
 		partDiv.classList.add("part-item");
 
@@ -96,6 +96,32 @@ function loadParts(category) {
 		});
 		partDiv.appendChild(button);
     	partsContainer.appendChild(partDiv);
+	};
+}
+
+function loadResources(category) {
+	partsContainer.innerHTML = ""; 
+	for (let resource in resourceData) {
+		if (resourceData[resource].category === category) {
+			const partDiv = document.createElement("div");
+			partDiv.classList.add("part-item");
+
+			const button = document.createElement("button");
+			button.classList.add("part-button")
+			let name = resource;
+			let src = "sprites/" + name + ".png"
+
+			button.innerHTML = `
+			<img src="${src}" alt="${name}">
+			<div>${name}</div>
+			<div>Cost: ${resourceData[name].cost}</div>
+			`;
+			button.addEventListener("click", () => {
+				global_resources_to_place = [generateResource(name)]
+			});
+			partDiv.appendChild(button);
+			partsContainer.appendChild(partDiv);
+		}
 	};
 }
 
@@ -185,6 +211,13 @@ function updatePlacementCategories() {
 			{ category: 'structure', label: 'Structure Part' },
 			{ category: 'storage', label: 'Storage Part' },
 		]
+	} else if (cursorMode === "Resource") {
+		categories = [
+			{ category: 'ammo', label: 'Ammo' },
+			{ category: 'ore', label: 'Raw Ores' },
+			{ category: 'fuel', label: 'Fuel' },
+			{ category: 'refined', label: 'Refined' },
+		]
 	}
 
     // Populate the container with parts for all categories
@@ -206,7 +239,15 @@ function updatePlacementCategories() {
 				loadParts(category);
 			});
   		});
-		  loadParts("energy weapon")
+		loadParts("energy weapon")
+	} else if (cursorMode === "Resource") {
+		categoryButtons.forEach(btn => {
+			btn.addEventListener("click", () => {
+				const category = btn.dataset.category;
+				loadResources(category);
+			});
+  		});
+		loadResources("ammo")
 	}
 	
 }
