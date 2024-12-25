@@ -33,6 +33,7 @@ function removeFromControlGroup(group_num, parts) {
 }
 
 function selectControlGroup(group_num) {
-    const parts = global_control_groups.find(item => item.Key === group_num);
+    const parts = global_control_groups.find(item => item.Key === group_num-1);
     global_selected_sprites = parts ? parts.Value : [];
+    updateCanvas()
 }

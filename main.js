@@ -108,12 +108,13 @@ function export_json() {
 		sprite.height = undefined;
 		new_parts.push(sprite);
 	}
-	shipdata.Doors = doors;
-	shipdata.NewFlexResourceGridTypes = resources;
-	shipdata.Parts = new_parts;
-	shipdata.PartUIToggleStates = global_part_properties;
-	shipdata.ResourceSupplierTargets = global_supply_chains;
-	shipdata.CrewSourceTargets = global_crew_assignments;
+	shipdata.Doors = doors
+	shipdata.NewFlexResourceGridTypes = resources
+	shipdata.Parts = new_parts
+	shipdata.PartUIToggleStates = global_part_properties
+	shipdata.ResourceSupplierTargets = global_supply_chains
+	shipdata.CrewSourceTargets = global_crew_assignments
+	shipdata.PartControlGroups = global_control_groups
 
 	for ([key, value] of getShipDataMap()) {
 		shipdata[key] = value;
@@ -290,102 +291,6 @@ function square_map(sprite) {
 	}
 }
 
-function handleCanvasMouseMove(event) {
-	let [canvasPositionX, canvasPositionY] = mousePos(event)
-
-	updateCoordinates(canvasPositionX, canvasPositionY);
-
-	if (cursorMode === "Delete") {
-		drawDeletePreview(event)
-		return;
-	}
-
-	if (cursorMode === "Place") {
-		if (!isPreviewSpriteLoaded) return;
-		global_sprites_to_place[0].Location = [canvasPositionX, canvasPositionY]
-
-		drawPreview(global_sprites_to_place);
-		return;
-	}
-
-	if (cursorMode === "Select" || cursorMode === "Supply") {
-		if (global_selection_box_start[0]) {
-			drawSelectionBox(mousePos(event))
-		}
-	}
-
-	if (cursorMode === "Move") {
-		if (global_sprites_to_place.length > 0) {
-			global_sprites_to_place[0].Location = [canvasPositionX, canvasPositionY]
-			drawPreview(global_sprites_to_place);
-		}
-		return;
-	}
-}
-
-function handleCanvasClick(event) {
-	// place sprite
-	if (cursorMode === "Place") {
-		place_sprites(global_sprites_to_place);
-	}
-	// remove sprite
-	if (cursorMode === "Delete") {
-		doIfCursorOverPart(event, (part) => {
-			remove_multiple_from_sprites(mirroredParts([part]))
-			clearPreview()
-			updateCanvas();
-		})
-	}
-	// move sprite
-	if (cursorMode === "Move") {
-		const pos = mousePos(event);
-		if (global_sprites_to_place.length === 0) {
-			doIfCursorOverPart(event, (part) => {
-				global_sprites_to_place = [partCopy(part)]
-				remove_multiple_from_sprites(mirroredParts([part]))
-			})
-		} else {
-			place_sprites(global_sprites_to_place);
-			clearPreview()
-			global_sprites_to_place = []
-		}
-	}
-	// select sprite
-	if (cursorMode === "Select") {
-		doIfCursorOverPart(event, part => selectParts([part]));
-	}
-	// select sprite
-	if (cursorMode === "Supply") {
-		doIfCursorOverPart(event, part => selectParts([part]));
-	}
-}
-
-function handleRightClick(event) {
-	event.preventDefault();
-	let pos = mousePos(event)
-	if (cursorMode === "Place" || cursorMode === "Move") {
-		for (part of global_sprites_to_place) {
-			part.Rotation = (part.Rotation + 1) % 4
-		}
-		handleCanvasMouseMove(event); 
-	} else if (cursorMode === "Delete") {
-		removeDoor(pos);
-		updateCanvas();
-	} else if (cursorMode === "Select") {
-		global_selected_sprites = []
-		updateSpriteSelection()
-		updateCanvas()
-	} else if (cursorMode === "Supply") {
-		doIfCursorOverPart(event, (part) => {
-			addSupplyChains(part, global_selected_sprites)
-			let part2arr = existingMirroredParts([part], sprites, false)
-			if (part2arr[0]) {
-				addSupplyChains(part2arr[0], existingMirroredParts(global_selected_sprites,sprites, false))
-			}
-		});
-	} 
-}
-
 function place_sprites(sprites_to_place) {//Places the first sprites with absolute coordinates and the ones after with relative ones
 	let new_parts = mirroredParts(repositionPartsRalative(sprites_to_place))
 	toggle = true
@@ -495,18 +400,6 @@ function mousePosEv(canvasX, canvasY) {
 	const logicalY = Math.floor(transformedY / gridSize) + minY;
 
 	return [logicalX, logicalY];
-}
-
-function isSameSprite(sprite1, sprite2) {
-	return (
-		sprite1.ID === sprite2.ID &&
-		sprite1.Location[0] === sprite2.Location[0] &&
-		sprite1.Location[1] === sprite2.Location[1]
-	);
-}
-
-function isSameToggleType(toggle1, toggle2) {
-	return toggle1.Key[1] === toggle2.Key[1];
 }
 
 function toggleBelongsToSprite(toggle, sprite) {

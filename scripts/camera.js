@@ -41,7 +41,6 @@ function translateCanvas(pos,relative=false) {
 }
 
 function resetCamera() {
-    console.log("das")
     for (let c of global_canvases) {
         const ctx = c.getContext("2d")
         ctx.resetTransform()

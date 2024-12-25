@@ -29,7 +29,7 @@ function getShipStats(ship) {
 function getShipCost(stats, id = null, category = null) {
     sum = 0;
     //regular part price
-    for (sprite of getParts(stats.parts, id, category)) {
+    for (sprite of getParts(stats.parts, part => isInTagsCondition(category)(part) && hasIDCondition(id)(part))) {
         sum += spriteData[sprite["ID"]].cost;
     }
     //extra costs from loaded missiles
@@ -82,7 +82,7 @@ function getShipCommandPoints(stats) {
 
 function crewCount(stats) {
     let sum = 0
-    let quarters = getParts(stats.parts, null, "crew")
+    let quarters = getParts(stats.parts, isInTagsCondition("crew"))
     for (let quarter of quarters) {
         switch (quarter.ID) { 
             case "cosmoteer.crew_quarters_large": {
@@ -154,7 +154,7 @@ function partThrustVector(part, stats) {
 
 function shipThrustVector(stats) {
     let thrust_vector = [0, 0, 0, 0]
-    let parts = getParts(stats.parts, null, "thruster")
+    let parts = getParts(stats.parts, isInTagsCondition("thruster"))
     for (let part of parts) {
         let part_vector = partThrustVector(part, stats)
         for (i of [0, 1, 2, 3]) {
@@ -208,7 +208,7 @@ function getShipHyperdriveEfficiency(stats) {
 }
 
 function getTileHyperdriveEfficiency(stats, part) {
-    let hyperdrives = getParts(stats.parts, null, "hyperdrive")
+    let hyperdrives = getParts(stats.parts, isInTagsCondition("hyperdrive"))
     let sum = 0
     let JumpEfficiency = 0.5
     let JumpEfficiencyDistanceRange = 0
@@ -247,7 +247,7 @@ function partLocationFromCenter(center, part) {
 }
 
 function getAllWeaponPartGroups(statsin) {
-    let parts = getParts(statsin.parts,null,"weapon")
+    let parts = getParts(statsin.parts,isInTagsCondition("weapon"))
     let parts_out = []
     let bool = true
     for (let part of parts) {

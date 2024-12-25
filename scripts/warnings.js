@@ -3,13 +3,13 @@
 
 const warning_function_list = [
     function feWarning(stats) {
-        let fes = getParts(stats.parts, "cosmoteer.fire_extinguisher")
+        let fes = getParts(stats.parts, hasIDCondition("cosmoteer.fire_extinguisher"))
         if (fes.length==0) {
             return {id: "no_fire_extinguisher", message: "Your ship does not contain any fire extinguishers", locations: [], tags: []}
         }
     },
     function airlockWarning(stats) {
-        let airlocks = getParts(stats.parts, "cosmoteer.airlock")
+        let airlocks = getParts(stats.parts, hasIDCondition("cosmoteer.airlock"))
         if (airlocks.length==0) {
             return {id: "no_airlock",  message: "Your ship does not contain any airlocks", locations: [], tags: []}
         }
@@ -25,8 +25,8 @@ const warning_function_list = [
         }
     },
     function crEfficiencyWarning(stats) {
-        let cockpits = getParts(stats.parts, "cosmoteer.control_room_small", null) 
-        let control_rooms = getParts(stats.parts, "cosmoteer.control_room_med", null) 
+        let cockpits = getParts(stats.parts, hasIDCondition("cosmoteer.control_room_small"))
+        let control_rooms = getParts(stats.parts, hasIDCondition("cosmoteer.control_room_med"))
         let bool_small = cockpits.length > 2
         let bool_med = cockpits.length > 2  
         let locations = []
@@ -47,8 +47,8 @@ const warning_function_list = [
     function tooMuchCpWarning(stats) {
         let cost = stats.command_cost
         let points = stats.command_points
-        let bridges = getParts(stats.parts,"cosmoteer.control_room_large", null) 
-        let control_rooms = getParts(stats.parts,"cosmoteer.control_room_med", null) 
+        let bridges = getParts(stats.parts, hasIDCondition("cosmoteer.control_room_large")) 
+        let control_rooms = getParts(stats.parts, hasIDCondition("cosmoteer.control_room_med")) 
         let bool_1= control_rooms.length > 0 && points-cost>=100
         let bool_2 = bridges.length > 0 && points-cost>=750
         let locations = []

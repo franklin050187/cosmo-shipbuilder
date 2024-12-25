@@ -40,11 +40,11 @@ function getPartToggles(part) {
 	return toggles;
 }
 
-function getParts(parts, id = null, tag = null) {
+function getParts(parts, condition) {
     parts_out = []
-    for (sprite of parts) {
-        if ((sprite.ID == id || id == null) && (tag == null || spriteData[sprite["ID"]].tags.includes(tag))) {
-            parts_out.push(sprite)
+    for (let part of parts) {
+        if (condition(part)) {
+            parts_out.push(part)
         }
     }
     return parts_out

@@ -2,7 +2,7 @@
 
 let global_selection_box_start = []
 let clickCount = 0;
-let clickTimer;
+let lastClickTime = 0;
 
 //ctrl+ hotkeys
 document.addEventListener("keydown", function(event) {
@@ -142,35 +142,50 @@ document.addEventListener('mouseup', (event) => {
         endSelectionBox(mousePos(event), event)
     }
 });
-element.addEventListener('dblclick', function(event) {//double click to select all parts with same name and orientation
-    console.log('Double-click detected at:', event.clientX, event.clientY);
-});
-element.addEventListener('click', function (event) {//triple click to select all parts with same name
-    clickCount++;
 
-    if (clickCount === 1) {
-        // Start a timer to reset the count if no triple-click happens
-        clickTimer = setTimeout(() => {
-            clickCount = 0;
-        }, 500); // 500ms threshold for triple-click
-    }
-
-    if (clickCount === 3) {
-        clearTimeout(clickTimer); // Clear the timer
-        clickCount = 0; // Reset the count
-        console.log('Triple-click detected at:', event.clientX, event.clientY);
-    }
+//mouse clicks
+document.addEventListener("DOMContentLoaded", () => {
+	const canvas = document.getElementById("spriteCanvas")
+	canvas.addEventListener("mousemove", handleCanvasMouseMove)
+	canvas.addEventListener("contextmenu", handleRightClick)
+    canvas.addEventListener("click", (event) => {
+        const now = Date.now()
+        
+        if (now - lastClickTime > 400) {
+            clickCount = 0
+        }
+    
+        clickCount++
+        lastClickTime = now
+    
+        if (clickCount === 1) {
+            handleSingleCanvasClick(event)
+        } else if (clickCount === 2) {
+            handleSingleCanvasClick(event)
+            handleDoubleCanvasClick(event)
+        } else if (clickCount === 3) {
+            handleSingleCanvasClick(event)
+            handleTripleCanvasClick(event)
+            clickCount = 0
+        }
+    });
 });
 
 //control groups
 for (let i=0;i<10;i++) {
     document.addEventListener("keydown", function(event) {
+        event.preventDefault()
         if (event.key === i.toString()) {
-            selectControlGroup(i)
-        }
+            if (event.ctrlKey) {
+                addToControlGroup(i, global_selected_sprites)
+            } else if (event.altKey) {
+                removeFromControlGroup(i, global_selected_sprites)
+            } else {
+                selectControlGroup(i)
+            }
+        } 
     });
 }
-
 
 function getMultiplier(event) {
     if (event.ctrlKey) {  
@@ -220,4 +235,116 @@ function endSelectionBox(pos, event) {
     global_selection_box_start = []
     clearLayer(additionals_canvas.getContext("2d")) //clear selection box
     updateCanvas()
+}
+
+function handleCanvasMouseMove(event) {
+	let [canvasPositionX, canvasPositionY] = mousePos(event)
+
+	updateCoordinates(canvasPositionX, canvasPositionY);
+
+	if (cursorMode === "Delete") {
+		drawDeletePreview(event)
+		return;
+	}
+
+	if (cursorMode === "Place") {
+		if (!isPreviewSpriteLoaded) return;
+		global_sprites_to_place[0].Location = [canvasPositionX, canvasPositionY]
+
+		drawPreview(global_sprites_to_place);
+		return;
+	}
+
+	if (cursorMode === "Select" || cursorMode === "Supply") {
+		if (global_selection_box_start[0]) {
+			drawSelectionBox(mousePos(event))
+		}
+	}
+
+	if (cursorMode === "Move") {
+		if (global_sprites_to_place.length > 0) {
+			global_sprites_to_place[0].Location = [canvasPositionX, canvasPositionY]
+			drawPreview(global_sprites_to_place);
+		}
+		return;
+	}
+}
+
+function handleSingleCanvasClick(event) {
+    // place sprite
+    if (cursorMode === "Place") {
+        place_sprites(global_sprites_to_place);
+    }
+    // remove sprite
+    if (cursorMode === "Delete") {
+        doIfCursorOverPart(event, (part) => {
+            remove_multiple_from_sprites(mirroredParts([part]))
+            clearPreview()
+            updateCanvas();
+        })
+    }
+    // move sprite
+    if (cursorMode === "Move") {
+        const pos = mousePos(event);
+        if (global_sprites_to_place.length === 0) {
+            doIfCursorOverPart(event, (part) => {
+                global_sprites_to_place = [partCopy(part)]
+                remove_multiple_from_sprites(mirroredParts([part]))
+            })
+        } else {
+            place_sprites(global_sprites_to_place);
+            clearPreview()
+            global_sprites_to_place = []
+        }
+    }
+    // select sprite
+    if (cursorMode === "Select") {
+        doIfCursorOverPart(event, part => selectParts([part]));
+    }
+    // select sprite
+    if (cursorMode === "Supply") {
+        doIfCursorOverPart(event, part => selectParts([part]));
+    }
+} 
+
+function handleDoubleCanvasClick(event) {
+    if (cursorMode === "Select") {
+        doIfCursorOverPart(event, (part_at_cursor) => {
+            selectParts(getParts(sprites, (part) => hasIDCondition(part_at_cursor.ID)(part) && hasRotationCondition(part_at_cursor.Rotation)(part)))
+        })
+    }
+}
+
+function handleTripleCanvasClick(event) {
+    if (cursorMode === "Select") {
+        doIfCursorOverPart(event, (part_at_cursor) => {
+            selectParts(getParts(sprites, hasIDCondition(part_at_cursor.ID)))
+        })
+    }
+}
+
+function handleRightClick(event) {
+	event.preventDefault();
+	let pos = mousePos(event)
+	if (cursorMode === "Place" || cursorMode === "Move") {
+		for (part of global_sprites_to_place) {
+			part.Rotation = (part.Rotation + 1) % 4
+		}
+		handleCanvasMouseMove(event); 
+	} else if (cursorMode === "Delete") {
+		removeDoor(pos);
+		updateCanvas();
+	} else if (cursorMode === "Select") {
+		global_selected_sprites = []
+		updateSpriteSelection()
+		updateCanvas()
+	} else if (cursorMode === "Supply") {
+		doIfCursorOverPart(event, (part) => {
+			addSupplyChains(part, global_selected_sprites)
+			let part2arr = existingMirroredParts([part], sprites, false)
+			if (part2arr[0]) {
+				addSupplyChains(part2arr[0], existingMirroredParts(global_selected_sprites,sprites, false))
+			}
+		});
+	} 
 }

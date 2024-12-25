@@ -52,9 +52,6 @@ if (b64) {
 //ensures these are loaded after the corresponding functions in main.js
 document.addEventListener("DOMContentLoaded", () => {
 	const canvas = document.getElementById("spriteCanvas"); 
-	canvas.addEventListener("mousemove", handleCanvasMouseMove);
-	canvas.addEventListener("click", handleCanvasClick);
-	canvas.addEventListener("contextmenu", handleRightClick); // Listen for right-click
 	export_json_button.addEventListener("click", export_json);
 	load_json_button.addEventListener("click", loadJson);
 	apply_property_button.addEventListener("click", applyProperty);
@@ -86,7 +83,7 @@ document.addEventListener("DOMContentLoaded", () => {
 // Function to load parts based on category
 function loadParts(category) {
 	partsContainer.innerHTML = ""; 
-	for (let part of getParts(getOneOfEachPart(), undefined, category)) {
+	for (let part of getParts(getOneOfEachPart(), isInTagsCondition(category))) {
 		const partDiv = document.createElement("div");
 		partDiv.classList.add("part-item");
 
