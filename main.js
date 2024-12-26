@@ -102,9 +102,14 @@ function handleCursorModeChange() {
 	} else if (cursorMode === "Resource") {
 		global_sprites_to_place = []
 		global_resources_to_place = [generateResource("bullet")];
+	} else if (cursorMode = "Crew") {
+		global_crew_role_to_place = crew_roles["Supply"]
 	}
 	if (cursorMode != "Resource") {
 		global_resources_to_place = []
+	}
+	if (cursorMode != "Crew") {
+		global_crew_role_to_place = undefined
 	}
 	updatePlacementCategories()
 	updateCanvas()
@@ -180,7 +185,7 @@ function loadJson(json) {
 		global_part_properties.push(toggle);
 	}
 
-	global_crew_roles.push([...crew_data])
+	global_crew_roles.push(...crew_data)
 
 	updateShipStats()
 	updateNonVisuals()
@@ -353,10 +358,11 @@ function selectParts(parts) {
 	handlePropertySelectionChange()
 }
 
-function remove_multiple_from_sprites(sprites_to_remove) {1
+function remove_multiple_from_sprites(sprites_to_remove) {
 	for (let sprite of sprites_to_remove) {
 		remove_from_sprites(sprite)
 	}
+	removePartsFromKeyList(parts, global_crew_role_sources)
 	addActionToHistory("remove_parts", sprites_to_remove)
 }
 
@@ -645,4 +651,24 @@ function getOneOfEach(data) {
 
 function resourceCenter(res) {
 	return [res.Key[0]+0.5, res.Key[1]+0.5]
+}
+
+function addCrewSource(partsin, role) {
+	let parts = getParts(partsin, isInTagsCondition("crew"))
+	removePartsFromKeyList(parts, global_crew_role_sources)
+	for (let part of parts) {
+		global_crew_role_sources.push(generateRoleSource(part,role))
+	}
+	console.log(global_crew_role_sources)
+	updateCanvas()
+}
+
+function removePartsFromKeyList(parts, list) {
+	for (let part of parts) {
+		for (let i=0;i<list.length;i++) {
+			if (isSameSprite(part, list[i].Key)) {
+				list.splice(i,1)
+			}
+		}
+	}
 }

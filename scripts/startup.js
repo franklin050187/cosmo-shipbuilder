@@ -11,7 +11,7 @@ initializeCanvas()
 closeHelp()
 
 for (let role in crew_roles) {
-	global_crew_roles.push(role)
+	global_crew_roles.push(crew_roles[role])
 }
 
 function initializeCanvas() {

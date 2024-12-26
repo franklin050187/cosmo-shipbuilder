@@ -123,6 +123,8 @@ function updateCanvas() {
 	if (cursorMode === "Supply") {
 		clearLayer(ctx)
 		drawSupplyChains()
+	} else if (cursorMode === "Crew") {
+		drawRoleIndicators(global_crew_role_sources)
 	}
 	drawMirrorAxis()
 	draw_doors();
@@ -154,6 +156,29 @@ function drawPartIndicators(part) {
 		ctx.lineWidth = 3;
 		ctx.arc(centerX, centerY, 400, 4*Math.PI/3, 5*Math.PI/3);
 		ctx.stroke(); 
+	}
+}
+
+function drawRoleIndicators(sources) {
+	for (let source of sources) {
+		let part = source.Key
+		let loc = partCenter(part)
+		let [x,y] = convertCoordinatesToCanvas(part.Location)
+		let [centerX,centerY] = convertCoordinatesToCanvas(loc)
+
+		const canvas = document.getElementById("drawingCanvas");
+		const ctx = canvas.getContext("2d");
+		ctx.fillStyle = "red"
+		for (let role in crew_roles) {
+			if (crew_roles[role].ID === source.Value) {
+				if (crew_roles[role].Name === "Supply") {
+					ctx.fillStyle = "purple"
+				} else if (crew_roles[role].Name === "Operator") {
+					ctx.fillStyle = "green"
+				}
+			} 
+		}
+		ctx.fillRect(x, y, 10*getScalor()[0], 10*getScalor()[1]);
 	}
 }
 

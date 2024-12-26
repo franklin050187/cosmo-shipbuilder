@@ -174,8 +174,8 @@ document.addEventListener("DOMContentLoaded", () => {
 //control groups
 for (let i=0;i<10;i++) {
     document.addEventListener("keydown", function(event) {
-        event.preventDefault()
         if (event.key === i.toString()) {
+            event.preventDefault()
             if (event.ctrlKey) {
                 addToControlGroup(i, global_selected_sprites)
             } else if (event.altKey) {
@@ -314,6 +314,11 @@ function handleSingleCanvasClick(event) {
     if (cursorMode === "Resource") {
         global_resources_to_place[0].Key = mousePos(event)
         placeResources(global_resources_to_place);
+    }
+    if (cursorMode === "Crew") {
+        doIfCursorOverPart(event, (part) => {
+            addCrewSource(existingMirroredParts([part], sprites), global_crew_role_to_place)
+        });
     }
 } 
 

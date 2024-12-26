@@ -541,7 +541,7 @@ const spriteData = {
 		cost: 15,
 		tags: ["thruster", "on_off", "flight"],
 		cp_cost: 16,
-		thrust: [0, 0, 8, 0],
+		thrust: [0, 0, 10, 0],
 	},
 	"cosmoteer.hyperdrive_med": {
 		mass: 9,

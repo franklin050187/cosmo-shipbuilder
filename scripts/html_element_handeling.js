@@ -140,7 +140,7 @@ function loadCrewRoles(category) {
 		<div>${name}</div>
 		`;
 		button.addEventListener("click", () => {
-			global_resources_to_place = [generateResource(name)]
+			global_crew_role_to_place = crew_roles[role]
 		});
 		partDiv.appendChild(button);
 		partsContainer.appendChild(partDiv);

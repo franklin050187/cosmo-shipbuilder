@@ -59,3 +59,7 @@ function resourceCopy(resource) {
 function generateControlGroup(number) {//Example: "PartControlGroups": [{"Key": 0, "Value": [{"FlipX": false, "ID": "cosmoteer.laser_blaster_small", "Location": [-4, -4], "Rotation": 0}]}]
     return {"Key": number, "Value": []}
 }
+
+function generateRoleSource(part, role) {//Example: {"Key": {"FlipX": false, "ID": "cosmoteer.crew_quarters_med", "Location": [-7, -5], "Rotation": 2}, "Value": 2147483650}
+    return {"Key": part, "Value": role.ID}
+}
