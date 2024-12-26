@@ -315,7 +315,9 @@ function drawDeletePreview(event) {
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 
 	doIfCursorOverPart(event, ((part) => {
-		drawDeleteSymbol(part.Location, spriteData[part.ID].size, part.Rotation)
+		for (let part2 of existingMirroredParts([part], sprites)) {
+			drawDeleteSymbol(part2.Location, spriteData[part2.ID].size, part2.Rotation)
+		}
 	}))
 }
 
