@@ -10,6 +10,10 @@ loadPreviewSpriteImage()
 initializeCanvas()
 closeHelp()
 
+for (let role in crew_roles) {
+	global_crew_roles.push(role)
+}
+
 function initializeCanvas() {
 	// Adjust canvas size
 	minX = -10;

@@ -125,6 +125,28 @@ function loadResources(category) {
 	};
 }
 
+function loadCrewRoles(category) {
+	for (let role in crew_roles) {
+		const partDiv = document.createElement("div");
+		partDiv.classList.add("part-item");
+
+		const button = document.createElement("button");
+		button.classList.add("part-button")
+		let name = crew_roles[role].Name;
+		let src = "sprites/crew/role_base.png"
+
+		button.innerHTML = `
+		<img src="${src}" alt="${name}">
+		<div>${name}</div>
+		`;
+		button.addEventListener("click", () => {
+			global_resources_to_place = [generateResource(name)]
+		});
+		partDiv.appendChild(button);
+		partsContainer.appendChild(partDiv);
+	}
+}
+
 function handleCursorMode() {
 	const cursor_mode = document.getElementsByName("cursor_mode");
 	for (const radio of cursor_mode) {
@@ -218,7 +240,11 @@ function updatePlacementCategories() {
 			{ category: 'fuel', label: 'Fuel' },
 			{ category: 'refined', label: 'Refined' },
 		]
-	}
+	} else if (cursorMode === "Crew") {
+		categories = [
+			{ category: 'crew', label: 'Crew' },
+		]
+	} 
 
     // Populate the container with parts for all categories
     categories.forEach(({ category, label }) => {
@@ -248,6 +274,14 @@ function updatePlacementCategories() {
 			});
   		});
 		loadResources("ammo")
+	} else if (cursorMode === "Crew") {
+		categoryButtons.forEach(btn => {
+			btn.addEventListener("click", () => {
+				const category = btn.dataset.category;
+				loadCrewRoles(category);
+			});
+  		});
+		loadCrewRoles("crew")
 	}
 	
 }

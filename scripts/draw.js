@@ -406,3 +406,40 @@ function drawArrow(ctx, loc1, loc2) {
 	ctx.lineTo(arrowheadX - headLength * Math.cos(angle + headAngle), arrowheadY - headLength * Math.sin(angle + headAngle));
 	ctx.stroke();
 }
+
+function changeWhiteToRed(imgSrc, callback) {
+    const img = new Image();
+    img.crossOrigin = "anonymous"; // Necessary if the image is from a different origin
+    img.src = imgSrc;
+
+    img.onload = function () {
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+
+        // Set canvas size to the image dimensions
+        canvas.width = img.width;
+        canvas.height = img.height;
+
+        // Draw the image onto the canvas
+        ctx.drawImage(img, 0, 0);
+
+        // Get the image data
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const data = imageData.data;
+
+        // Replace white pixels with red
+        for (let i = 0; i < data.length; i += 4) {
+            if (data[i] === 255 && data[i + 1] === 255 && data[i + 2] === 255) { // White pixel
+                data[i] = 255;   // Red channel
+                data[i + 1] = 0; // Green channel
+                data[i + 2] = 0; // Blue channel
+            }
+        }
+
+        // Put the modified data back on the canvas
+        ctx.putImageData(imageData, 0, 0);
+
+        // Return the modified image as a data URL
+        callback(canvas.toDataURL());
+    };
+}

@@ -24,6 +24,9 @@ let global_resources = []; // To store the resources
 let global_resources_to_place = []
 let global_zoom_factor = 1
 let global_canvases = [canvas, resource_canvas, drawing_canvas, preview_canvas, additionals_canvas]
+let global_crew_role_to_place = undefined
+let global_crew_roles = []
+let global_crew_role_sources = []
 
 const spriteCache = {};
 const previewSpriteImage = new Image();
@@ -123,6 +126,8 @@ function export_json() {
 	shipdata.ResourceSupplierTargets = global_supply_chains
 	shipdata.CrewSourceTargets = global_crew_assignments
 	shipdata.PartControlGroups = global_control_groups
+	shipdata.Roles = global_crew_roles
+	shipdata.CrewSourceRoles = global_crew_role_sources
 
 	for ([key, value] of getShipDataMap()) {
 		shipdata[key] = value;
@@ -149,6 +154,7 @@ function loadJson(json) {
 	const data = JSON.parse(json);
 	const part_data = Array.isArray(data.Parts) ? data.Parts : [];
 	const doordata = Array.isArray(data.Doors) ? data.Doors : [];
+	const crew_data = Array.isArray(data.Doors) ? data.Crew : [];
 	const resource_data = Array.isArray(data.NewFlexResourceGridTypes)
 		? data.NewFlexResourceGridTypes
 		: [];
@@ -173,6 +179,8 @@ function loadJson(json) {
 	for (const toggle of partUIToggleStates) {
 		global_part_properties.push(toggle);
 	}
+
+	global_crew_roles.push([...crew_data])
 
 	updateShipStats()
 	updateNonVisuals()
