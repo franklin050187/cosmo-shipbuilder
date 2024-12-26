@@ -102,7 +102,7 @@ function handleCursorModeChange() {
 	} else if (cursorMode === "Resource") {
 		global_sprites_to_place = []
 		global_resources_to_place = [generateResource("bullet")];
-	} else if (cursorMode = "Crew") {
+	} else if (cursorMode === "Crew") {
 		global_crew_role_to_place = crew_roles["Supply"]
 	}
 	if (cursorMode != "Resource") {

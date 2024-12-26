@@ -57,6 +57,18 @@ document.addEventListener("keydown", function(event) {
         ChangeCursorMode("Supply")
     }
 });
+document.addEventListener("keydown", function(event) {
+    if (event.key === "F6") {
+        event.preventDefault();
+        ChangeCursorMode("Resource")
+    }
+});
+document.addEventListener("keydown", function(event) {
+    if (event.key === "F7") {
+        event.preventDefault();
+        ChangeCursorMode("Crew")
+    }
+});
 
 //Mirror center shifts
 document.addEventListener("keydown", function(event) {
@@ -83,18 +95,6 @@ document.addEventListener("keydown", function(event) {
         shiftMirrorCenter([0,1])
     }
 });
-
-//zoom
-document.addEventListener('wheel', (event) => {
-    if (event.ctrlKey && event.shiftKey) {
-        event.preventDefault()
-        if (event.deltaY > 0) {//down
-            zoom(-0.1, event)
-        } else {//up
-            zoom(0.1, event)
-        }
-    } 
-  }, { passive: false });
 
 //translation of camera
 let global_translation_amount = 20
@@ -143,8 +143,9 @@ document.addEventListener('mouseup', (event) => {
     }
 });
 
-//mouse clicks
+//Stuff that requires the canvas so is loaded after it
 document.addEventListener("DOMContentLoaded", () => {
+    //mouse clicks
 	const canvas = document.getElementById("spriteCanvas")
 	canvas.addEventListener("mousemove", handleCanvasMouseMove)
 	canvas.addEventListener("contextmenu", handleRightClick)
@@ -169,6 +170,16 @@ document.addEventListener("DOMContentLoaded", () => {
             clickCount = 0
         }
     });
+    //zoom
+    canvas.addEventListener('wheel', (event) => {
+        event.preventDefault()
+        if (event.deltaY > 0) {//down
+            zoom(-0.1, event)
+        } else {//up
+            zoom(0.1, event)
+        }
+        
+    }, { passive: false });
 });
 
 //control groups
