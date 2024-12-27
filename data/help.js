@@ -5,7 +5,8 @@ const global_help_message = `<p>
 - Mirror mode <br> <br>
 - Delete mode: left click for parts and right click for doors <br> <br>
 - Resource mode: Select resource from the left. Right click to delete resource.
-<h5>Hotkeys</h5>
+<h5>Hotkeys </h5>
+    - The hotkeys only work if the mouse is on the canvas
     - wasd move the camera and scroll to zoom <br> 
     - right click to rotate part <br> 
     - arrow keys to shift the mirror axis <br> 
