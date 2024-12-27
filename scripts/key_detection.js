@@ -5,163 +5,161 @@ let clickCount = 0;
 let lastClickTime = 0;
 let global_mousdown_toggle = false
 
-//ctrl+ hotkeys
-document.addEventListener("keydown", function(event) {
-    if (event.ctrlKey && event.key === "z") {
-        undo()
-    }
-});
-document.addEventListener("keydown", function(event) {
-    if (event.ctrlKey && event.key === "x") {
-        cut()
-    }
-});
-document.addEventListener("keydown", function(event) {
-    if (event.ctrlKey && event.key === "c") {
-        copy()
-    }
-});
-document.addEventListener("keydown", function(event) {
-    if (event.ctrlKey && event.key === "v") {
-        paste()
-    }
-});
-
-//Cursor modes
-document.addEventListener("keydown", function(event) {
-    if (event.key === "F1") {
-        event.preventDefault();
-        ChangeCursorMode("Place")
-    }
-});
-document.addEventListener("keydown", function(event) {
-    if (event.key === "F2") {
-        event.preventDefault();
-        ChangeCursorMode("Select")
-    }
-});
-document.addEventListener("keydown", function(event) {
-    if (event.key === "F3") {
-        event.preventDefault();
-        ChangeCursorMode("Delete")
-    }
-});
-document.addEventListener("keydown", function(event) {
-    if (event.key === "F4") {
-        event.preventDefault();
-        ChangeCursorMode("Move")
-    }
-});
-document.addEventListener("keydown", function(event) {
-    if (event.key === "F5") {
-        event.preventDefault();
-        ChangeCursorMode("Supply")
-    }
-});
-document.addEventListener("keydown", function(event) {
-    if (event.key === "F6") {
-        event.preventDefault();
-        ChangeCursorMode("Resource")
-    }
-});
-document.addEventListener("keydown", function(event) {
-    if (event.key === "F7") {
-        event.preventDefault();
-        ChangeCursorMode("Crew")
-    }
-});
-
-//Mirror center shifts
-document.addEventListener("keydown", function(event) {
-    if (event.key === "ArrowUp") {
-        event.preventDefault()
-        shiftMirrorCenter([0,-getMultiplier(event)])
-    }
-});
-document.addEventListener("keydown", function(event) {
-    if (event.key === "ArrowLeft") {
-        event.preventDefault()
-        shiftMirrorCenter([-getMultiplier(event),0])
-    }
-});
-document.addEventListener("keydown", function(event) {
-    if (event.key === "ArrowRight") {
-        event.preventDefault()
-        shiftMirrorCenter([getMultiplier(event),0])
-    }
-});
-document.addEventListener("keydown", function(event) {
-    if (event.key === "ArrowDown") {
-        event.preventDefault()
-        shiftMirrorCenter([0,1])
-    }
-});
-
-//translation of camera
-let global_translation_amount = 20
-document.addEventListener('mousedown', (event) => {
-    if (event.button === 1) {
-        event.preventDefault();
-        const ctx = c.getContext("2d")
-        const currentTransform = ctx.getTransform();
-        translateCanvas([100,100])
-    }
-});
-document.addEventListener("keydown", function(event) {
-    if (event.key === "w") {
-        event.preventDefault()
-        translateCanvas([0,global_translation_amount/canvas.getContext("2d").getTransform().a*getMultiplier(event)], true)
-    }
-});
-document.addEventListener("keydown", function(event) {
-    if (event.key === "s") {
-        event.preventDefault()
-        translateCanvas([0,-global_translation_amount/canvas.getContext("2d").getTransform().a*getMultiplier(event)], true)
-    }
-});
-document.addEventListener("keydown", function(event) {
-    if (event.key === "a") {
-        event.preventDefault()
-        translateCanvas([global_translation_amount/canvas.getContext("2d").getTransform().a*getMultiplier(event),0], true)
-    }
-});
-document.addEventListener("keydown", function(event) {
-    if (event.key === "d") {
-        event.preventDefault()
-        translateCanvas([-global_translation_amount/canvas.getContext("2d").getTransform().a*getMultiplier(event),0], true)
-    }
-});
-
-//Part selection
-document.addEventListener('mousedown', (event) => {
-    if ((cursorMode === "Select" || cursorMode === "Supply") && event.button === 0) { 
-        startSelectionBox(mousePos(event))
-    }
-    global_mousdown_toggle = true
-});
-document.addEventListener('mouseup', (event) => {
-    if ((cursorMode === "Select" || cursorMode === "Supply") && event.button === 0) { 
-        endSelectionBox(mousePos(event), event)
-    }
-    global_mousdown_toggle = false
-});
-
-//Delete supply chains
-document.addEventListener("keydown", function(event) {
-    if (event.key === "x") {
-        event.preventDefault()
-
-        let parts = existingMirroredParts(global_selected_sprites, sprites)
-        removePartsFromKeyList(parts, global_crew_assignments)
-        removePartsFromKeyList(parts, global_supply_chains)
-		updateCanvas()
-    }
-});
-
 //Stuff that requires the canvas so is loaded after it
 document.addEventListener("DOMContentLoaded", () => {
+    //ctrl+ hotkeys
+    canvas.addEventListener("keydown", function(event) {
+        if (event.ctrlKey && event.key === "z") {
+            undo()
+        }
+    });
+    canvas.addEventListener("keydown", function(event) {
+        if (event.ctrlKey && event.key === "x") {
+            cut()
+        }
+    });
+    canvas.addEventListener("keydown", function(event) {
+        if (event.ctrlKey && event.key === "c") {
+            copy()
+        }
+    });
+    canvas.addEventListener("keydown", function(event) {
+        if (event.ctrlKey && event.key === "v") {
+            paste()
+        }
+    });
+
+    //Cursor modes
+    canvas.addEventListener("keydown", function(event) {
+        if (event.key === "F1") {
+            event.preventDefault();
+            ChangeCursorMode("Place")
+        }
+    });
+    canvas.addEventListener("keydown", function(event) {
+        if (event.key === "F2") {
+            event.preventDefault();
+            ChangeCursorMode("Select")
+        }
+    });
+    canvas.addEventListener("keydown", function(event) {
+        if (event.key === "F3") {
+            event.preventDefault();
+            ChangeCursorMode("Delete")
+        }
+    });
+    canvas.addEventListener("keydown", function(event) {
+        if (event.key === "F4") {
+            event.preventDefault();
+            ChangeCursorMode("Move")
+        }
+    });
+    canvas.addEventListener("keydown", function(event) {
+        if (event.key === "F5") {
+            event.preventDefault();
+            ChangeCursorMode("Supply")
+        }
+    });
+    canvas.addEventListener("keydown", function(event) {
+        if (event.key === "F6") {
+            event.preventDefault();
+            ChangeCursorMode("Resource")
+        }
+    });
+    canvas.addEventListener("keydown", function(event) {
+        if (event.key === "F7") {
+            event.preventDefault();
+            ChangeCursorMode("Crew")
+        }
+    });
+
+    //Mirror center shifts
+    canvas.addEventListener("keydown", function(event) {
+        if (event.key === "ArrowUp") {
+            event.preventDefault()
+            shiftMirrorCenter([0,-getMultiplier(event)])
+        }
+    });
+    canvas.addEventListener("keydown", function(event) {
+        if (event.key === "ArrowLeft") {
+            event.preventDefault()
+            shiftMirrorCenter([-getMultiplier(event),0])
+        }
+    });
+    canvas.addEventListener("keydown", function(event) {
+        if (event.key === "ArrowRight") {
+            event.preventDefault()
+            shiftMirrorCenter([getMultiplier(event),0])
+        }
+    });
+    canvas.addEventListener("keydown", function(event) {
+        if (event.key === "ArrowDown") {
+            event.preventDefault()
+            shiftMirrorCenter([0,1])
+        }
+    });
+
+    //translation of camera
+    let global_translation_amount = 20
+    canvas.addEventListener('mousedown', (event) => {
+        if (event.button === 1) {
+            event.preventDefault();
+            const ctx = c.getContext("2d")
+            const currentTransform = ctx.getTransform();
+            translateCanvas([100,100])
+        }
+    });
+    canvas.addEventListener("keydown", function(event) {
+        if (event.key === "w") {
+            event.preventDefault()
+            translateCanvas([0,global_translation_amount/canvas.getContext("2d").getTransform().a*getMultiplier(event)], true)
+        }
+    });
+    canvas.addEventListener("keydown", function(event) {
+        if (event.key === "s") {
+            event.preventDefault()
+            translateCanvas([0,-global_translation_amount/canvas.getContext("2d").getTransform().a*getMultiplier(event)], true)
+        }
+    });
+    canvas.addEventListener("keydown", function(event) {
+        if (event.key === "a") {
+            event.preventDefault()
+            translateCanvas([global_translation_amount/canvas.getContext("2d").getTransform().a*getMultiplier(event),0], true)
+        }
+    });
+    canvas.addEventListener("keydown", function(event) {
+        if (event.key === "d") {
+            event.preventDefault()
+            translateCanvas([-global_translation_amount/canvas.getContext("2d").getTransform().a*getMultiplier(event),0], true)
+        }
+    });
+
+    //Part selection
+    canvas.addEventListener('mousedown', (event) => {
+        if ((cursorMode === "Select" || cursorMode === "Supply") && event.button === 0) { 
+            startSelectionBox(mousePos(event))
+        }
+        global_mousdown_toggle = true
+    });
+    canvas.addEventListener('mouseup', (event) => {
+        if ((cursorMode === "Select" || cursorMode === "Supply") && event.button === 0) { 
+            endSelectionBox(mousePos(event), event)
+        }
+        global_mousdown_toggle = false
+    });
+
+    //Delete supply chains
+    canvas.addEventListener("keydown", function(event) {
+        if (event.key === "x") {
+            event.preventDefault()
+
+            let parts = existingMirroredParts(global_selected_sprites, sprites)
+            removePartsFromKeyList(parts, global_crew_assignments)
+            removePartsFromKeyList(parts, global_supply_chains)
+            updateCanvas()
+        }
+    });
     //mouse clicks
-	const canvas = document.getElementById("spriteCanvas")
 	canvas.addEventListener("mousemove", handleCanvasMouseMove)
 	canvas.addEventListener("contextmenu", handleRightClick)
     canvas.addEventListener("click", (event) => {
@@ -195,23 +193,25 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         
     }, { passive: false });
+
+    //control groups
+    for (let i=0;i<10;i++) {
+        canvas.addEventListener("keydown", function(event) {
+            if (event.key === (i).toString()) {
+                event.preventDefault()
+                if (event.ctrlKey) {
+                    addToControlGroup(i-1, global_selected_sprites)
+                } else if (event.altKey) {
+                    removeFromControlGroup(i, global_selected_sprites)
+                } else {
+                    selectControlGroup(i)
+                }
+            } 
+        });
+    }
 });
 
-//control groups
-for (let i=0;i<10;i++) {
-    document.addEventListener("keydown", function(event) {
-        if (event.key === (i).toString()) {
-            event.preventDefault()
-            if (event.ctrlKey) {
-                addToControlGroup(i-1, global_selected_sprites)
-            } else if (event.altKey) {
-                removeFromControlGroup(i, global_selected_sprites)
-            } else {
-                selectControlGroup(i)
-            }
-        } 
-    });
-}
+
 
 function getMultiplier(event) {
     if (event.ctrlKey) {  
