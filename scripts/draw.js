@@ -52,8 +52,8 @@ function draw_doors() {
 				rotatedImage,
 				(x - minX) * gridSize + 1,
 				(y - minY) * gridSize + 1,
-				rotatedImage.width - 2,
-				rotatedImage.height - 2,
+				rotatedImage.width*gridSize/64 - 2,
+				rotatedImage.height*gridSize/64 - 2,
 			);
 		};
 	}
@@ -121,7 +121,7 @@ function updateCanvas() {
 	}
 
 	if (cursorMode === "Supply") {
-		clearLayer(ctx)
+		clearLayer(drawing_canvas.getContext("2d"))
 		drawSupplyChains()
 	} else if (cursorMode === "Crew") {
 		drawRoleIndicators(global_crew_role_sources)

@@ -7,10 +7,12 @@ const global_help_message = `<p>
 - Resource mode: Select resource from the left. Right click to delete resource.
 <h5>Hotkeys</h5>
     - wasd move the camera and scroll to zoom <br> 
+    - right click to rotate part <br> 
     - arrow keys to shift the mirror axis <br> 
     - Selection boxes, double and triple clicks in select mdoe work like in game <br> 
     - Press the F keys key to select the corresponding tool <br> 
-    - in game hotkeys to form control groups (x to select control group x, ctrl+x to add to group x,...)
+    - in game hotkeys to form control groups (x to select control group x, ctrl+x to add to group x,...) <br> 
+    - press x to delete all supply lines of selected part(s)
     - ctrl + x to cut <br> 
     - ctrl + v to paste selected parts (without transferring properties) <br> 
     - hold ctr for a bigger step size (when moving camera, mirror line,...)

@@ -3,6 +3,7 @@
 let global_selection_box_start = []
 let clickCount = 0;
 let lastClickTime = 0;
+let global_mousdown_toggle = false
 
 //ctrl+ hotkeys
 document.addEventListener("keydown", function(event) {
@@ -136,10 +137,24 @@ document.addEventListener('mousedown', (event) => {
     if ((cursorMode === "Select" || cursorMode === "Supply") && event.button === 0) { 
         startSelectionBox(mousePos(event))
     }
+    global_mousdown_toggle = true
 });
 document.addEventListener('mouseup', (event) => {
     if ((cursorMode === "Select" || cursorMode === "Supply") && event.button === 0) { 
         endSelectionBox(mousePos(event), event)
+    }
+    global_mousdown_toggle = false
+});
+
+//Delete supply chains
+document.addEventListener("keydown", function(event) {
+    if (event.key === "x") {
+        event.preventDefault()
+
+        let parts = existingMirroredParts(global_selected_sprites, sprites)
+        removePartsFromKeyList(parts, global_crew_assignments)
+        removePartsFromKeyList(parts, global_supply_chains)
+		updateCanvas()
     }
 });
 
@@ -185,10 +200,10 @@ document.addEventListener("DOMContentLoaded", () => {
 //control groups
 for (let i=0;i<10;i++) {
     document.addEventListener("keydown", function(event) {
-        if (event.key === i.toString()) {
+        if (event.key === (i).toString()) {
             event.preventDefault()
             if (event.ctrlKey) {
-                addToControlGroup(i, global_selected_sprites)
+                addToControlGroup(i-1, global_selected_sprites)
             } else if (event.altKey) {
                 removeFromControlGroup(i, global_selected_sprites)
             } else {
@@ -265,6 +280,9 @@ function handleCanvasMouseMove(event) {
 		if (!isPreviewSpriteLoaded) return;
 		global_sprites_to_place[0].Location = [canvasPositionX, canvasPositionY]
 		drawPreview(global_sprites_to_place, global_resources_to_place);
+        if (global_mousdown_toggle) {
+            place_sprites(global_sprites_to_place);
+        }
 		return;
 	}
 
