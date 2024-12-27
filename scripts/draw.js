@@ -4,7 +4,7 @@ const canvas = document.getElementById("spriteCanvas");
 const drawing_canvas = document.getElementById("drawingCanvas");
 const resource_canvas = document.getElementById("resourceCanvas");
 const preview_canvas = document.getElementById("previewCanvas");
-const additionals_canvas = document.getElementById("additionalsCanvas");
+const door_canvas = document.getElementById("doorCanvas");
 const ctx = canvas.getContext("2d");
 
 let spritesDrawn = new Set(); // used in draw function
@@ -35,7 +35,17 @@ function draw_resources(resources, canvas) {
 }
 
 function draw_doors() {
-	for (const door of doors) {
+	let ctx = door_canvas.getContext("2d")
+	for (const door of global_doors_to_delete) {
+		let pos = door.Cell
+		let [x1,y1] = convertCoordinatesToCanvas(pos)
+		let [x2,y2] = convertCoordinatesToCanvas([pos[0]+1/2, pos[1]+1/2])
+		let [x3,y3] = convertCoordinatesToCanvas([pos[0], pos[1]+1])
+		let [x4,y4] = convertCoordinatesToCanvas([pos[0]-1/2, pos[1]+1/2])
+		clearPoly(door_canvas, [[x1,y1],[x2,y2],[x3,y3],[x4,y4]])
+	}
+	global_doors_to_delete = []
+	for (const door of global_doors_to_draw) {
 		const img = new Image();
 
 		img.src = "sprites/door.png";
@@ -57,6 +67,7 @@ function draw_doors() {
 			);
 		};
 	}
+	global_doors_to_draw = []
 }
 
 function updateCanvas() {
@@ -467,4 +478,34 @@ function changeWhiteToRed(imgSrc, callback) {
         // Return the modified image as a data URL
         callback(canvas.toDataURL());
     };
+}
+
+function clearPoly(canvas, vertecies) {
+	let ctx = canvas.getContext("2d")
+	ctx.beginPath()
+	ctx.moveTo(vertecies[0][0], vertecies[0][1])
+	for (vertex of vertecies) {
+		ctx.lineTo(vertex[0], vertex[1])
+	}
+	ctx.closePath()
+
+	ctx.save() 
+	ctx.clip();
+
+	ctx.clearRect(-canvas.width, -canvas.height, canvas.width * 2, canvas.height * 2)
+
+	ctx.restore()
+
+}
+
+function fillPoly(canvas, vertecies) {
+	let ctx = canvas.getContext("2d")
+	ctx.beginPath()
+	ctx.moveTo(vertecies[0][0], vertecies[0][1])
+	for (vertex of vertecies) {
+		ctx.lineTo(vertex[0], vertex[1])
+	}
+	ctx.closePath()
+	ctx.fill()
+	ctx.restore()
 }

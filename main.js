@@ -11,6 +11,8 @@ let global_crew_assignments = []
 let global_supply_chains = []
 let global_sprites_to_draw = [] //Saves the sprites that are yet to be drawn
 let global_sprites_to_delete = [] //Saves the sprites that are drawn to which should be deleted
+let global_doors_to_draw = [] //Saves the doors that are yet to be drawn
+let global_doors_to_delete = [] //Saves the doors that are drawn to which should be deleted
 let sprites = []; // To store the sprites
 let all_ship_stats = []
 let minX = 0;
@@ -23,7 +25,7 @@ let doors = []; // To store the doors
 let global_resources = []; // To store the resources
 let global_resources_to_place = []
 let global_zoom_factor = 1
-let global_canvases = [canvas, resource_canvas, drawing_canvas, preview_canvas, additionals_canvas]
+let global_canvases = [canvas, resource_canvas, drawing_canvas, preview_canvas, door_canvas]
 let global_crew_role_to_place = undefined
 let global_crew_roles = []
 let global_crew_role_sources = []
@@ -318,10 +320,11 @@ function place_sprites(sprites_to_place) {//Places the first sprites with absolu
 	for (let sprite of new_parts){
 		const location = sprite.Location;
 		if (sprite.ID === "cosmoteer.door") {
-			const string = JSON.parse(
+			const door = JSON.parse(
 				`{"Cell": [${location}], "ID": "cosmoteer.door", "Orientation": ${(sprite.Rotation + 1) % 2}}`,
 			);
-			doors.push(string);
+			doors.push(door);
+			global_doors_to_draw.push(door)
 		} else {
 			overlaps = overlappingParts(sprite, sprites)
 			if (overlaps.length>0) {
@@ -393,9 +396,11 @@ function remove_from_sprites(sprite_to_remove) {
 }
 
 function removeDoor(location) {
-	for (let i=0; i<doors.length;i++) {
-		if (sameTile(doors[i].Cell, location)) {
+	let dummy = [...doors]
+	for (let i=0; i<dummy.length;i++) {
+		if (sameTile(dummy[i].Cell, location)) {
 			doors.splice(i,1)
+			global_doors_to_delete.push(dummy[i])
 		}
 	}
 }

@@ -68,9 +68,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	property_select.addEventListener("change", handlePropertySelectionChange);
 	ship_property_select.addEventListener("change", handleShipPropertySelectionChange);
-	mirror_select.addEventListener("change", handleMirrorSelectionChange);
-
-	
+	mirror_select.addEventListener("change", handleMirrorSelectionChange);	
 });
 
 // Function to load parts based on category

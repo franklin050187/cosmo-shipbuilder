@@ -3,7 +3,8 @@
 let global_selection_box_start = []
 let clickCount = 0;
 let lastClickTime = 0;
-let global_mousdown_toggle = false
+let global_left_mousdown_toggle = false
+let global_right_mousdown_toggle = false
 
 //Stuff that requires the canvas so is loaded after it
 document.addEventListener("DOMContentLoaded", () => {
@@ -134,18 +135,28 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    //Part selection
+    //Click dragging
     canvas.addEventListener('mousedown', (event) => {
-        if ((cursorMode === "Select" || cursorMode === "Supply") && event.button === 0) { 
+        if (event.button === 0) {
+            global_left_mousdown_toggle = true
+        }
+        if (event.button === 2) {
+            global_right_mousdown_toggle = true
+        }
+        if ((cursorMode === "Select" || cursorMode === "Supply")) { 
             startSelectionBox(mousePos(event))
         }
-        global_mousdown_toggle = true
     });
-    canvas.addEventListener('mouseup', (event) => {
-        if ((cursorMode === "Select" || cursorMode === "Supply") && event.button === 0) { 
+    canvas.addEventListener('mouseup', (event) => {  
+        if (event.button === 0) {
+            global_left_mousdown_toggle = false
+        }
+        if (event.button === 2) {
+            global_right_mousdown_toggle = false
+        }
+        if ((cursorMode === "Select" || cursorMode === "Supply")) { 
             endSelectionBox(mousePos(event), event)
         }
-        global_mousdown_toggle = false
     });
 
     //Delete supply chains
@@ -262,7 +273,6 @@ function endSelectionBox(pos, event) {
         global_selected_sprites.push(...sel)
     }
     global_selection_box_start = []
-    clearLayer(additionals_canvas.getContext("2d")) //clear selection box
     updateCanvas()
 }
 
@@ -272,6 +282,17 @@ function handleCanvasMouseMove(event) {
 	updateCoordinates(canvasPositionX, canvasPositionY);
 
 	if (cursorMode === "Delete") {
+        if (global_left_mousdown_toggle) {
+            doIfCursorOverPart(event, (part) => {
+                remove_multiple_from_sprites(mirroredParts([part]))
+                clearPreview()
+                updateCanvas();
+            })
+        }
+        if (global_right_mousdown_toggle) {
+            removeDoor([canvasPositionX, canvasPositionY])
+		    updateCanvas()
+        }
 		drawDeletePreview(event)
 		return;
 	}
@@ -280,7 +301,7 @@ function handleCanvasMouseMove(event) {
 		if (!isPreviewSpriteLoaded) return;
 		global_sprites_to_place[0].Location = [canvasPositionX, canvasPositionY]
 		drawPreview(global_sprites_to_place, global_resources_to_place);
-        if (global_mousdown_toggle) {
+        if (global_left_mousdown_toggle) {
             place_sprites(global_sprites_to_place);
         }
 		return;
@@ -376,8 +397,8 @@ function handleRightClick(event) {
 		}
 		handleCanvasMouseMove(event); 
 	} else if (cursorMode === "Delete") {
-		removeDoor(pos);
-		updateCanvas();
+		removeDoor(pos)
+		updateCanvas()
 	} else if (cursorMode === "Select") {
 		global_selected_sprites = []
 		updateSpriteSelection()
