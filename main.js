@@ -535,18 +535,24 @@ function mirroredParts(parts, also_adds_base_parts = true) {//This code is a fuc
 					} else {
 						newpart.Rotation = (part.Rotation+3)%4
 					}
-				}
+				}	
 				newpart.Location = partLocationFromCenter(location_rotations[0][i], part, true)
 			}
-			
-
 			//doors are a fucking mess
-			if (newpart.ID === "cosmoteer.door" && newpart.FlipX === true && newpart.Rotation%2 === 0) {
-				newpart.Location[0] += 1
-			} else if (newpart.ID === "cosmoteer.door" && newpart.FlipX === false && newpart.Rotation%2 === 1) {
-				newpart.Location[1] += 1
+			if (newpart.ID === "cosmoteer.door") {
+				if (location_rotations[1][i][0] == 0) {
+					if (newpart.FlipX === true && newpart.Rotation%2 === 0) {
+						newpart.Location[0] += 1
+					} else if (newpart.FlipX === false && newpart.Rotation%2 === 1) {
+						newpart.Location[1] += 1
+					}
+				} else {
+					if (newpart.FlipX === true && newpart.Rotation%2 === 1) {
+						newpart.Location[1] += 1
+					}
+				}
 			}
-
+			
 			partsout.push(newpart)
 		}
 	}

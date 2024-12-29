@@ -5,6 +5,7 @@ let clickCount = 0;
 let lastClickTime = 0;
 let global_left_mousdown_toggle = false
 let global_right_mousdown_toggle = false
+let canvas_is_focused = false
 
 //Mirror center shifts
 document.addEventListener("keydown", function(event) {
@@ -34,6 +35,17 @@ document.addEventListener("keydown", function(event) {
 
 //Stuff that requires the canvas so is loaded after it
 document.addEventListener("DOMContentLoaded", () => {
+    //Track if canvas is focused
+    canvas.addEventListener("mouseenter", () => {
+        canvas_is_focused = true;
+      });
+      
+      // Detect when the cursor leaves the canvas
+      canvas.addEventListener("mouseleave", () => {
+        canvas_is_focused = false;
+      });
+      
+
     //ctrl+ hotkeys
     canvas.addEventListener("keydown", function(event) {
         if (event.ctrlKey && event.key === "z") {
@@ -110,26 +122,26 @@ document.addEventListener("DOMContentLoaded", () => {
             translateCanvas([100,100])
         }
     });
-    canvas.addEventListener("keydown", function(event) {
-        if (event.key === "w") {
+    document.addEventListener("keydown", function(event) {
+        if (event.key === "w" && canvas_is_focused) {
             event.preventDefault()
             translateCanvas([0,global_translation_amount/canvas.getContext("2d").getTransform().a*getMultiplier(event)], true)
         }
     });
-    canvas.addEventListener("keydown", function(event) {
-        if (event.key === "s") {
+    document.addEventListener("keydown", function(event) {
+        if (event.key === "s" && canvas_is_focused) {
             event.preventDefault()
             translateCanvas([0,-global_translation_amount/canvas.getContext("2d").getTransform().a*getMultiplier(event)], true)
         }
     });
-    canvas.addEventListener("keydown", function(event) {
-        if (event.key === "a") {
+    document.addEventListener("keydown", function(event) {
+        if (event.key === "a" && canvas_is_focused) {
             event.preventDefault()
             translateCanvas([global_translation_amount/canvas.getContext("2d").getTransform().a*getMultiplier(event),0], true)
         }
     });
-    canvas.addEventListener("keydown", function(event) {
-        if (event.key === "d") {
+    document.addEventListener("keydown", function(event) {
+        if (event.key === "d" && canvas_is_focused) {
             event.preventDefault()
             translateCanvas([-global_translation_amount/canvas.getContext("2d").getTransform().a*getMultiplier(event),0], true)
         }
