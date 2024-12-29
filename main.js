@@ -518,8 +518,10 @@ function mirroredParts(parts, also_adds_base_parts = true) {//This code is a fuc
 		location_rotations = mirroredPositions(partCenter(part), global_mirror_axis,global_mirror_center, false)
 		for (let i = 1;i< location_rotations[0].length; i++) {
 			let newpart = partCopy(part)
+			newpart.FlipX = location_rotations[1][i][1]
 			if (location_rotations[1][i][2]) {
-				newpart.Rotation = part.Rotation+(part.Rotation+location_rotations[1][i][0])%2*2
+				newpart.Rotation = (part.Rotation+(part.Rotation+location_rotations[1][i][0])%2*2)%4
+				newpart.Location = partLocationFromCenter(location_rotations[0][i], part)
 			} else {//Diagonals are a fucking mess
 				if (location_rotations[1][i][0] == 0) {
 					if (part.Rotation%2==0) {
@@ -534,9 +536,9 @@ function mirroredParts(parts, also_adds_base_parts = true) {//This code is a fuc
 						newpart.Rotation = (part.Rotation+3)%4
 					}
 				}
+				newpart.Location = partLocationFromCenter(location_rotations[0][i], part, true)
 			}
-			newpart.Location = partLocationFromCenter(location_rotations[0][i], part)
-			newpart.FlipX = location_rotations[1][i][1]
+			
 
 			//doors are a fucking mess
 			if (newpart.ID === "cosmoteer.door" && newpart.FlipX === true && newpart.Rotation%2 === 0) {
