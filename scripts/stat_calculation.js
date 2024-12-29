@@ -242,8 +242,8 @@ function partCenter(part) {
 }
 
 function partLocationFromCenter(center, part) {
-    let size = spriteData[part["ID"]].size;
-    return [center[0] - size[part.Rotation%2] / 2, center[1] - size[(part.Rotation+1)%2] / 2];
+    let size = spriteData[part["ID"]].size
+    return [center[0] - size[(part.Rotation+1)%2] / 2, center[1] - size[(part.Rotation)%2] / 2]
 }
 
 function getAllWeaponPartGroups(statsin) {

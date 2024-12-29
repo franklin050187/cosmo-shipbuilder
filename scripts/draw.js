@@ -148,6 +148,7 @@ function redrawEntireCanvas() {
 		clearLayer(c.getContext("2d"))
 	}
 	global_sprites_to_draw.push(...sprites)
+	global_doors_to_draw.push(...doors)
 	updateCanvas()
 }
 

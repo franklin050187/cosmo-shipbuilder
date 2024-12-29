@@ -6,6 +6,32 @@ let lastClickTime = 0;
 let global_left_mousdown_toggle = false
 let global_right_mousdown_toggle = false
 
+//Mirror center shifts
+document.addEventListener("keydown", function(event) {
+    if (event.key === "ArrowUp") {
+        event.preventDefault()
+        shiftMirrorCenter([0,-getMultiplier(event)])
+    }
+});
+document.addEventListener("keydown", function(event) {
+    if (event.key === "ArrowLeft") {
+        event.preventDefault()
+        shiftMirrorCenter([-getMultiplier(event),0])
+    }
+});
+document.addEventListener("keydown", function(event) {
+    if (event.key === "ArrowRight") {
+        event.preventDefault()
+        shiftMirrorCenter([getMultiplier(event),0])
+    }
+});
+document.addEventListener("keydown", function(event) {
+    if (event.key === "ArrowDown") {
+        event.preventDefault()
+        shiftMirrorCenter([0,1])
+    }
+});
+
 //Stuff that requires the canvas so is loaded after it
 document.addEventListener("DOMContentLoaded", () => {
     //ctrl+ hotkeys
@@ -71,32 +97,6 @@ document.addEventListener("DOMContentLoaded", () => {
         if (event.key === "F7") {
             event.preventDefault();
             ChangeCursorMode("Crew")
-        }
-    });
-
-    //Mirror center shifts
-    canvas.addEventListener("keydown", function(event) {
-        if (event.key === "ArrowUp") {
-            event.preventDefault()
-            shiftMirrorCenter([0,-getMultiplier(event)])
-        }
-    });
-    canvas.addEventListener("keydown", function(event) {
-        if (event.key === "ArrowLeft") {
-            event.preventDefault()
-            shiftMirrorCenter([-getMultiplier(event),0])
-        }
-    });
-    canvas.addEventListener("keydown", function(event) {
-        if (event.key === "ArrowRight") {
-            event.preventDefault()
-            shiftMirrorCenter([getMultiplier(event),0])
-        }
-    });
-    canvas.addEventListener("keydown", function(event) {
-        if (event.key === "ArrowDown") {
-            event.preventDefault()
-            shiftMirrorCenter([0,1])
         }
     });
 

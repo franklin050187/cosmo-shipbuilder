@@ -509,7 +509,7 @@ function absoluteToRalativePartCoordinates(parts) { //Uses the first part as ref
 	return new_parts
 }
 
-function mirroredParts(parts, also_adds_base_parts = true) {
+function mirroredParts(parts, also_adds_base_parts = true) {//This code is a fucking mess (but Im not gonna clean it up)
 	let partsout = []
 	if (also_adds_base_parts) {
 		partsout = [...parts]
@@ -518,9 +518,33 @@ function mirroredParts(parts, also_adds_base_parts = true) {
 		location_rotations = mirroredPositions(partCenter(part), global_mirror_axis,global_mirror_center, false)
 		for (let i = 1;i< location_rotations[0].length; i++) {
 			let newpart = partCopy(part)
+			if (location_rotations[1][i][2]) {
+				newpart.Rotation = part.Rotation+(part.Rotation+location_rotations[1][i][0])%2*2
+			} else {//Diagonals are a fucking mess
+				if (location_rotations[1][i][0] == 0) {
+					if (part.Rotation%2==0) {
+						newpart.Rotation = (part.Rotation+3)%4
+					} else {
+						newpart.Rotation = (part.Rotation+1)%4
+					}
+				} else {
+					if (part.Rotation%2==0) {
+						newpart.Rotation = (part.Rotation+1)%4
+					} else {
+						newpart.Rotation = (part.Rotation+3)%4
+					}
+				}
+			}
 			newpart.Location = partLocationFromCenter(location_rotations[0][i], part)
-			newpart.Rotation = part.Rotation+(part.Rotation+location_rotations[1][i][0])%2*2
 			newpart.FlipX = location_rotations[1][i][1]
+
+			//doors are a fucking mess
+			if (newpart.ID === "cosmoteer.door" && newpart.FlipX === true && newpart.Rotation%2 === 0) {
+				newpart.Location[0] += 1
+			} else if (newpart.ID === "cosmoteer.door" && newpart.FlipX === false && newpart.Rotation%2 === 1) {
+				newpart.Location[1] += 1
+			}
+
 			partsout.push(newpart)
 		}
 	}
@@ -664,7 +688,6 @@ function addCrewSource(partsin, role) {
 	for (let part of parts) {
 		global_crew_role_sources.push(generateRoleSource(part,role))
 	}
-	console.log(global_crew_role_sources)
 	updateCanvas()
 }
 
