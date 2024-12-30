@@ -155,7 +155,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (event.button === 2) {
             global_right_mousdown_toggle = true
         }
-        if ((cursorMode === "Select" || cursorMode === "Supply")) { 
+        if ((cursorMode === "Select" || cursorMode === "Supply") && event.button === 0) { 
             startSelectionBox(mousePos(event))
         }
     });
@@ -166,7 +166,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (event.button === 2) {
             global_right_mousdown_toggle = false
         }
-        if ((cursorMode === "Select" || cursorMode === "Supply")) { 
+        if ((cursorMode === "Select" || cursorMode === "Supply" && event.button === 0)) { 
             endSelectionBox(mousePos(event), event)
         }
     });
@@ -302,8 +302,9 @@ function handleCanvasMouseMove(event) {
             })
         }
         if (global_right_mousdown_toggle) {
-            removeDoor([canvasPositionX, canvasPositionY])
-		    updateCanvas()
+            doIfCursorOverDoor(event, (part) => {
+                removeDoors(part)
+            })
         }
 		drawDeletePreview(event)
 		return;
@@ -409,8 +410,9 @@ function handleRightClick(event) {
 		}
 		handleCanvasMouseMove(event); 
 	} else if (cursorMode === "Delete") {
-		removeDoor(pos)
-		updateCanvas()
+        doIfCursorOverDoor(event, (part) => {
+            removeDoors(part)
+		})
 	} else if (cursorMode === "Select") {
 		global_selected_sprites = []
 		updateSpriteSelection()
@@ -422,7 +424,7 @@ function handleRightClick(event) {
 			if (part2arr[0]) {
 				addSupplyChains(part2arr[0], existingMirroredParts(global_selected_sprites,sprites, false))
 			}
-		});
+		})
 	} else if (cursorMode === "Resource") {
         let resource = getResourceFromLocation(pos)
         if (resource) {

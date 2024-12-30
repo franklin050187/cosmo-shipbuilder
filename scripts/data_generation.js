@@ -63,3 +63,7 @@ function generateControlGroup(number) {//Example: "PartControlGroups": [{"Key": 
 function generateRoleSource(part, role) {//Example: {"Key": {"FlipX": false, "ID": "cosmoteer.crew_quarters_med", "Location": [-7, -5], "Rotation": 2}, "Value": 2147483650}
     return {"Key": part, "Value": role.ID}
 }
+
+function generateDoorAsPart(door) {
+    return generatePart(door.ID, door.Cell, door.Rotation)
+}

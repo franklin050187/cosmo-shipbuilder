@@ -21,7 +21,7 @@ let maxX = 0;
 let maxY = 0; // adjust canvas size
 let shipdata = {}; // To store the ship data
 let cursorMode = "Place"; // Initial cursor mode
-let doors = []; // To store the doors
+let global_doors = []; // To store the doors
 let global_resources = []; // To store the resources
 let global_resources_to_place = []
 let global_zoom_factor = 1
@@ -126,7 +126,7 @@ function export_json() {
 		sprite.height = undefined;
 		new_parts.push(sprite);
 	}
-	shipdata.Doors = doors
+	shipdata.Doors = global_doors
 	shipdata.NewFlexResourceGridTypes = global_resources
 	shipdata.Parts = new_parts
 	shipdata.PartUIToggleStates = global_part_properties
@@ -152,7 +152,7 @@ function loadJson(json) {
 	// Clear the sprite data
 	sprites = [];
 	shipdata = {};
-	doors = [];
+	global_doors = [];
 	global_resources = [];
 	global_part_properties = [];
 	if (typeof json !== 'string') {
@@ -176,7 +176,7 @@ function loadJson(json) {
 	}
 	
 	for (const door of doordata) {
-		doors.push(door);
+		global_doors.push(door);
 	}
 
 	for (const resource of resource_data) {
@@ -323,7 +323,7 @@ function place_sprites(sprites_to_place) {//Places the first sprites with absolu
 			const door = JSON.parse(
 				`{"Cell": [${location}], "ID": "cosmoteer.door", "Orientation": ${(sprite.Rotation + 1) % 2}}`,
 			);
-			doors.push(door);
+			global_doors.push(door);
 			global_doors_to_draw.push(door)
 		} else {
 			overlaps = overlappingParts(sprite, sprites)
@@ -395,14 +395,18 @@ function remove_from_sprites(sprite_to_remove) {
 	}
 }
 
-function removeDoor(location) {
-	let dummy = [...doors]
-	for (let i=0; i<dummy.length;i++) {
-		if (sameTile(dummy[i].Cell, location)) {
-			doors.splice(i,1)
-			global_doors_to_delete.push(dummy[i])
+function removeDoors(door1) {
+	let doors = mirroredParts([generateDoorAsPart(door1)])
+	console.log(doors)
+	for (let door of doors) {
+		for (let i = global_doors.length - 1; i >= 0; i--) {
+			if (sameTile(global_doors[i].Cell, door.Location)) {
+				global_doors_to_delete.push(global_doors[i])
+				global_doors.splice(i, 1)
+			}
 		}
 	}
+	updateCanvas()
 }
 
 function removeResources(resources) {
@@ -433,6 +437,15 @@ function findSprite(x, y) {
 		}
 	}
 
+	return null;
+}
+
+function findDoor(x, y) {
+	for (const door of global_doors) {
+		if (door.Cell[0] === x && door.Cell[1] === y) {
+			return door;
+		}
+	}
 	return null;
 }
 
@@ -551,6 +564,18 @@ function mirroredParts(parts, also_adds_base_parts = true) {//This code is a fuc
 						newpart.Location[1] += 1
 					}
 				}
+				if (!location_rotations[1][i][2]) {//Diagonals
+					if (newpart.Rotation%2 == 1) {
+						
+					} else {
+						if (location_rotations[1][i][0] == 0) {
+							newpart.Location[0] -= 1
+						} else {
+							newpart.Location[0] += 1
+						}
+						
+					}
+				}
 			}
 			
 			partsout.push(newpart)
@@ -598,6 +623,14 @@ function existingMirroredParts(parts, all_parts, also_adds_base_parts = true) {
 function doIfCursorOverPart(event, code) {
 	const pos = mousePos(event);
 	let part = findSprite(pos[0], pos[1])
+	if (part) {
+		code(part);
+	}
+}
+
+function doIfCursorOverDoor(event, code) {
+	const pos = mousePos(event);
+	let part = findDoor(pos[0], pos[1])
 	if (part) {
 		code(part);
 	}

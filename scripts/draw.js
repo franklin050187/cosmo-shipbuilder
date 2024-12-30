@@ -148,7 +148,7 @@ function redrawEntireCanvas() {
 		clearLayer(c.getContext("2d"))
 	}
 	global_sprites_to_draw.push(...sprites)
-	global_doors_to_draw.push(...doors)
+	global_doors_to_draw.push(...global_doors)
 	updateCanvas()
 }
 
@@ -299,8 +299,7 @@ function drawMirrorAxis() {
 }
 
 function drawSupplyChains() {
-	const canvas = document.getElementById("previewCanvas");
-	const ctx = canvas.getContext("2d");
+	const ctx = drawing_canvas.getContext("2d");
 	for (let chain of [...global_supply_chains, ...global_crew_assignments]) {
 		let part1 = chain.Key
 		for (let part2 of chain.Value) {
@@ -319,7 +318,13 @@ function drawPreview(inputparts, inputresources) {
 	ctx.globalAlpha = 0.5;
 
 	for (let part of parts) {
-		let [x,y] = convertCoordinatesToCanvas(sprite_position(part))
+		let x, y, pos;
+		if (part.ID !== "cosmoteer.door" || part.Rotation%2==0) {
+			[x, y] = convertCoordinatesToCanvas(sprite_position(part));
+		} else {
+			pos = sprite_position(part);
+			[x, y] = convertCoordinatesToCanvas([pos[0] + 0.5, pos[1] - 0.5]);
+		}
 		const rotatedImage = rotate_img(
 			partSprite(part),
 			part.Rotation,

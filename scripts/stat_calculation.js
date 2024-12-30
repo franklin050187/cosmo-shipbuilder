@@ -50,7 +50,7 @@ function getShipCost(stats, id = null, category = null) {
         }
     }
     //Door costs 
-    for (door of doors) {
+    for (door of global_doors) {
         sum += 0.1;
     }
     return sum * 1000;

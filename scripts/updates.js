@@ -21,7 +21,7 @@ function updateShipToggleSelection() {
 }
 
 function updateShipStatsVariable() {
-    all_ship_stats = getShipStats(getShip(sprites, doors, global_part_properties))
+    all_ship_stats = getShipStats(getShip(sprites, global_doors, global_part_properties))
     return all_ship_stats
 }
 
