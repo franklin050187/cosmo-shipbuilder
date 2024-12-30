@@ -9,27 +9,78 @@ let canvas_is_focused = false
 
 //Mirror center shifts
 document.addEventListener("keydown", function(event) {
-    if (event.key === "ArrowUp") {
+    if (event.key === "ArrowUp"&& canvas_is_focused) {
         event.preventDefault()
         shiftMirrorCenter([0,-getMultiplier(event)])
     }
 });
 document.addEventListener("keydown", function(event) {
-    if (event.key === "ArrowLeft") {
+    if (event.key === "ArrowLeft"&& canvas_is_focused) {
         event.preventDefault()
         shiftMirrorCenter([-getMultiplier(event),0])
     }
 });
 document.addEventListener("keydown", function(event) {
-    if (event.key === "ArrowRight") {
+    if (event.key === "ArrowRight"&& canvas_is_focused) {
         event.preventDefault()
         shiftMirrorCenter([getMultiplier(event),0])
     }
 });
 document.addEventListener("keydown", function(event) {
-    if (event.key === "ArrowDown") {
+    if (event.key === "ArrowDown"&& canvas_is_focused) {
         event.preventDefault()
         shiftMirrorCenter([0,1])
+    }
+});
+
+//ctrl+ hotkeys
+document.addEventListener("keydown", function(event) {
+    if (event.ctrlKey && event.key === "z"&& canvas_is_focused) {
+        undo()
+    }
+});
+document.addEventListener("keydown", function(event) {
+    if (event.ctrlKey && event.key === "x"&& canvas_is_focused) {
+        cut()
+    }
+});
+document.addEventListener("keydown", function(event) {
+    if (event.ctrlKey && event.key === "c"&& canvas_is_focused) {
+        copy()
+    }
+});
+document.addEventListener("keydown", function(event) {
+    if (event.ctrlKey && event.key === "v"&& canvas_is_focused) {
+        paste()
+    }
+});
+
+//control groups
+for (let i=0;i<10;i++) {
+    document.addEventListener("keydown", function(event) {
+        if (event.key === (i).toString() && canvas_is_focused) {
+            event.preventDefault()
+            if (event.ctrlKey) {
+                addToControlGroup(i-1, global_selected_sprites)
+            } else if (event.altKey) {
+                removeFromControlGroup(i, global_selected_sprites)
+            } else {
+                selectControlGroup(i)
+            }
+        } 
+    });
+}
+
+
+//Delete supply chains
+document.addEventListener("keydown", function(event) {
+    if (event.key === "x" && canvas_is_focused) {
+        event.preventDefault()
+
+        let parts = existingMirroredParts(global_selected_sprites, sprites)
+        removePartsFromKeyList(parts, global_crew_assignments)
+        removePartsFromKeyList(parts, global_supply_chains)
+        updateCanvas()
     }
 });
 
@@ -44,73 +95,6 @@ document.addEventListener("DOMContentLoaded", () => {
       canvas.addEventListener("mouseleave", () => {
         canvas_is_focused = false;
       });
-      
-
-    //ctrl+ hotkeys
-    canvas.addEventListener("keydown", function(event) {
-        if (event.ctrlKey && event.key === "z") {
-            undo()
-        }
-    });
-    canvas.addEventListener("keydown", function(event) {
-        if (event.ctrlKey && event.key === "x") {
-            cut()
-        }
-    });
-    canvas.addEventListener("keydown", function(event) {
-        if (event.ctrlKey && event.key === "c") {
-            copy()
-        }
-    });
-    canvas.addEventListener("keydown", function(event) {
-        if (event.ctrlKey && event.key === "v") {
-            paste()
-        }
-    });
-
-    //Cursor modes
-    canvas.addEventListener("keydown", function(event) {
-        if (event.key === "F1") {
-            event.preventDefault();
-            ChangeCursorMode("Place")
-        }
-    });
-    canvas.addEventListener("keydown", function(event) {
-        if (event.key === "F2") {
-            event.preventDefault();
-            ChangeCursorMode("Select")
-        }
-    });
-    canvas.addEventListener("keydown", function(event) {
-        if (event.key === "F3") {
-            event.preventDefault();
-            ChangeCursorMode("Delete")
-        }
-    });
-    canvas.addEventListener("keydown", function(event) {
-        if (event.key === "F4") {
-            event.preventDefault();
-            ChangeCursorMode("Move")
-        }
-    });
-    canvas.addEventListener("keydown", function(event) {
-        if (event.key === "F5") {
-            event.preventDefault();
-            ChangeCursorMode("Supply")
-        }
-    });
-    canvas.addEventListener("keydown", function(event) {
-        if (event.key === "F6") {
-            event.preventDefault();
-            ChangeCursorMode("Resource")
-        }
-    });
-    canvas.addEventListener("keydown", function(event) {
-        if (event.key === "F7") {
-            event.preventDefault();
-            ChangeCursorMode("Crew")
-        }
-    });
 
     //translation of camera
     let global_translation_amount = 20
@@ -147,6 +131,50 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
+    //Cursor modes
+    canvas.addEventListener("keydown", function(event) {
+        if (event.key === "F1" && canvas_is_focused) {
+            event.preventDefault();
+            ChangeCursorMode("Place")
+        }
+    });
+    canvas.addEventListener("keydown", function(event) {
+        if (event.key === "F2" && canvas_is_focused) {
+            event.preventDefault();
+            ChangeCursorMode("Select")
+        }
+    });
+    canvas.addEventListener("keydown", function(event) {
+        if (event.key === "F3" && canvas_is_focused) {
+            event.preventDefault();
+            ChangeCursorMode("Delete")
+        }
+    });
+    canvas.addEventListener("keydown", function(event) {
+        if (event.key === "F4" && canvas_is_focused) {
+            event.preventDefault();
+            ChangeCursorMode("Move")
+        }
+    });
+    canvas.addEventListener("keydown", function(event) {
+        if (event.key === "F5" && canvas_is_focused) {
+            event.preventDefault();
+            ChangeCursorMode("Supply")
+        }
+    });
+    canvas.addEventListener("keydown", function(event) {
+        if (event.key === "F6" && canvas_is_focused) {
+            event.preventDefault();
+            ChangeCursorMode("Resource")
+        }
+    });
+    canvas.addEventListener("keydown", function(event) {
+        if (event.key === "F7" && canvas_is_focused) {
+            event.preventDefault();
+            ChangeCursorMode("Crew")
+        }
+    });
+
     //Click dragging
     canvas.addEventListener('mousedown', (event) => {
         if (event.button === 0) {
@@ -171,17 +199,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    //Delete supply chains
-    canvas.addEventListener("keydown", function(event) {
-        if (event.key === "x") {
-            event.preventDefault()
-
-            let parts = existingMirroredParts(global_selected_sprites, sprites)
-            removePartsFromKeyList(parts, global_crew_assignments)
-            removePartsFromKeyList(parts, global_supply_chains)
-            updateCanvas()
-        }
-    });
     //mouse clicks
 	canvas.addEventListener("mousemove", handleCanvasMouseMove)
 	canvas.addEventListener("contextmenu", handleRightClick)
@@ -216,22 +233,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         
     }, { passive: false });
-
-    //control groups
-    for (let i=0;i<10;i++) {
-        canvas.addEventListener("keydown", function(event) {
-            if (event.key === (i).toString()) {
-                event.preventDefault()
-                if (event.ctrlKey) {
-                    addToControlGroup(i-1, global_selected_sprites)
-                } else if (event.altKey) {
-                    removeFromControlGroup(i, global_selected_sprites)
-                } else {
-                    selectControlGroup(i)
-                }
-            } 
-        });
-    }
 });
 
 function getMultiplier(event) {
@@ -277,7 +278,7 @@ function endSelectionBox(pos, event) {
     let sel = existingMirroredParts([...selection], sprites)
     if (!event.shiftKey) {
         global_selected_sprites = [...sel]
-        global_unmirrored_selected_sprites = [...sel]
+        global_unmirrored_selected_sprites = [...selection]
     } else {
         global_selected_sprites.push(...sel)
         global_unmirrored_selected_sprites.push(...sel)
