@@ -648,32 +648,32 @@ function doIfCursorOverDoor(event, code) {
 }
 
 function addSupplyChains(part2, parts) {
-	let part2Data = spriteData[part2.ID]
+	let part2Data = spriteData[part2.ID];
 	for (let part1 of parts) {
-		let part1Data = spriteData[part1.ID]
+		let part1Data = spriteData[part1.ID];
 
-		//No chain from a part to itself
+		// No chain from a part to itself
 		if (!isSameSprite(part1, part2)) {
 			if (part1Data.tags.includes("crew") || part2Data.tags.includes("crew")) {
 				const foundItem = global_crew_assignments.find(item => isSameSprite(item.Key, part1));
 				const value = foundItem ? foundItem.Value : null;
 				if (value === null) {
-					global_crew_assignments.push(generateSupplyChain(part1, part2))
-				} else {
-					value.push(part2)
+					global_crew_assignments.push(generateSupplyChain(part1, part2));
+				} else if (!value.some(sprite => isSameSprite(sprite, part2))) {//No duplicate chains
+					value.push(part2);
 				}
 			} else {
 				const foundItem = global_supply_chains.find(item => isSameSprite(item.Key, part1));
 				const value = foundItem ? foundItem.Value : null;
 				if (value === null) {
-					global_supply_chains.push(generateSupplyChain(part1, part2))
-				} else {
-					value.push(part2)
+					global_supply_chains.push(generateSupplyChain(part1, part2));
+				} else if (!value.some(sprite => isSameSprite(sprite, part2))) {//No duplicate chains
+					value.push(part2);
 				}
 			}
 		}
 	}
-	updateCanvas()
+	updateCanvas();
 }
 
 function shiftMirrorCenter(vector) {

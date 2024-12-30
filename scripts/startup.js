@@ -16,10 +16,11 @@ for (let role in crew_roles) {
 
 function initializeCanvas() {
 	// Adjust canvas size
-	minX = -10;
-	minY = -10;
-	maxX = 10;
-	maxY = 10; 
+	let size = 16
+	minX = -size;
+	minY = -size;
+	maxX = size;
+	maxY = size; 
 	const width = (maxX - minX + 1) * gridSize;
 	const height = (maxY - minY + 1) * gridSize;
 	for (let c of global_canvases) {
