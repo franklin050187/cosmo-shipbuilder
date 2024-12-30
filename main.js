@@ -3,7 +3,8 @@ let isPreviewSpriteLoaded = false; // init sprite preview
 const gridMap = {}; // To store the grid map
 let sprite_delete_mode = []; // To store the sprite delete mode
 let global_sprites_to_place = [generatePart("cosmoteer.corridor")]; // To store the sprites to place
-let global_selected_sprites = [];
+let global_selected_sprites = []
+let global_unmirrored_selected_sprites = []
 let global_toggles_to_add = []
 let global_mirror_axis = []
 let global_mirror_center = [0,0]
@@ -347,7 +348,8 @@ function placeResources(resources) {
 	updateCanvas()
 }
 
-function selectParts(parts) {
+function selectParts(parts, unmirrored_parts_in) {
+	let unmirrored_parts = unmirrored_parts_in || parts
 	for (let part of parts) {
 		for (let sprite of global_selected_sprites) {
 			if (isSameSprite(sprite, part)) {
@@ -356,6 +358,15 @@ function selectParts(parts) {
 		}
 		global_selected_sprites.push(part)
 	}
+	for (let part of unmirrored_parts) {
+		for (let sprite of global_selected_sprites) {
+			if (isSameSprite(sprite, part)) {
+				break
+			}
+		}
+		global_unmirrored_selected_sprites.push(part)
+	}
+	
 	updateCanvas()
 	updateSpriteSelection();
 	handlePropertySelectionChange()
@@ -638,7 +649,6 @@ function doIfCursorOverDoor(event, code) {
 
 function addSupplyChains(part2, parts) {
 	let part2Data = spriteData[part2.ID]
-	let chainlist = [...global_supply_chains, ...global_crew_assignments]
 	for (let part1 of parts) {
 		let part1Data = spriteData[part1.ID]
 
@@ -652,7 +662,6 @@ function addSupplyChains(part2, parts) {
 				} else {
 					value.push(part2)
 				}
-				
 			} else {
 				const foundItem = global_supply_chains.find(item => isSameSprite(item.Key, part1));
 				const value = foundItem ? foundItem.Value : null;
@@ -741,3 +750,5 @@ function removePartsFromKeyList(parts, list) {
 		}
 	}
 }
+
+

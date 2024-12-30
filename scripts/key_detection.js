@@ -234,16 +234,12 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 });
 
-
-
 function getMultiplier(event) {
     if (event.ctrlKey) {  
         return 5
     } 
     return 1
 }
-
-//
 
 function undo() {
     if (ship_action_history_depth <= ship_action_history.length && ship_action_history.length>0) {
@@ -281,8 +277,10 @@ function endSelectionBox(pos, event) {
     let sel = existingMirroredParts([...selection], sprites)
     if (!event.shiftKey) {
         global_selected_sprites = [...sel]
+        global_unmirrored_selected_sprites = [...sel]
     } else {
         global_selected_sprites.push(...sel)
+        global_unmirrored_selected_sprites.push(...sel)
     }
     global_selection_box_start = []
     updateCanvas()
@@ -369,10 +367,10 @@ function handleSingleCanvasClick(event) {
     }
     // select sprite
     if (cursorMode === "Select") {
-        doIfCursorOverPart(event, part => selectParts(existingMirroredParts([part], sprites)));
+        doIfCursorOverPart(event, part => selectParts(existingMirroredParts([part], sprites), [part]));
     }
     if (cursorMode === "Supply") {
-        doIfCursorOverPart(event, part => selectParts(existingMirroredParts([part], sprites)));
+        doIfCursorOverPart(event, part => selectParts(existingMirroredParts([part], sprites), [part]));
     }
     if (cursorMode === "Resource") {
         global_resources_to_place[0].Key = mousePos(event)
@@ -419,10 +417,10 @@ function handleRightClick(event) {
 		updateCanvas()
 	} else if (cursorMode === "Supply") {
 		doIfCursorOverPart(event, (part) => {
-			addSupplyChains(part, global_selected_sprites)
+			addSupplyChains(part, global_unmirrored_selected_sprites)
 			let part2arr = existingMirroredParts([part], sprites, false)
 			if (part2arr[0]) {
-				addSupplyChains(part2arr[0], existingMirroredParts(global_selected_sprites,sprites, false))
+				addSupplyChains(part2arr[0], existingMirroredParts(global_unmirrored_selected_sprites,sprites, false))
 			}
 		})
 	} else if (cursorMode === "Resource") {
