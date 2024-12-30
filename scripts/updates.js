@@ -1,12 +1,14 @@
-function updateEverything() {
-    redrawCanvas()
-    updateShipStats()
-	updateShipToggleSelection();
-}
-
 function updateNonVisuals() {
 	updateShipStats()
 	updateShipToggleSelection();
+}
+
+function updateObjectExistences() {
+	console.log(...global_part_properties)
+	deleteNonExistingproperties()
+	console.log(...global_part_properties)
+	deleteDuplicateProperties()
+	console.log(...global_part_properties)
 }
 
 function updateShipToggleSelection() {
@@ -84,4 +86,36 @@ function updateSpriteSelection() {
 			}
 		}
 	}
+}
+
+function deleteNonExistingproperties() {
+	let new_part_properties = []
+	for (let property of global_part_properties) {
+		for (let part of sprites) {
+			if (isSameSprite(property.Key[0], part)) {
+				new_part_properties.push(property)
+			}
+		}
+	}
+	global_part_properties = new_part_properties
+}
+
+function deleteDuplicateProperties() {
+	let new_part_properties = [];
+	for (let i = 0; i < global_part_properties.length; i++) {
+		let isDuplicate = false;
+		for (let j = 0; j < new_part_properties.length; j++) {
+			if (
+				isSameSprite(global_part_properties[i].Key[0], new_part_properties[j].Key[0]) &&
+				global_part_properties[i].Key[1] === new_part_properties[j].Key[1]
+			) {
+				isDuplicate = true;
+				break;
+			}
+		}
+		if (!isDuplicate) {
+			new_part_properties.push(global_part_properties[i]);
+		}
+	}
+	global_part_properties = new_part_properties;
 }

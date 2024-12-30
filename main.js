@@ -127,6 +127,7 @@ function export_json() {
 		sprite.height = undefined;
 		new_parts.push(sprite);
 	}
+	updateObjectExistences()
 	shipdata.Doors = global_doors
 	shipdata.NewFlexResourceGridTypes = global_resources
 	shipdata.Parts = new_parts
@@ -162,7 +163,7 @@ function loadJson(json) {
 	const data = JSON.parse(json);
 	const part_data = Array.isArray(data.Parts) ? data.Parts : [];
 	const doordata = Array.isArray(data.Doors) ? data.Doors : [];
-	const crew_data = Array.isArray(data.Doors) ? data.Crew : [];
+	const crew_data = Array.isArray(data.Crew) ? data.Crew : [];
 	const resource_data = Array.isArray(data.NewFlexResourceGridTypes)
 		? data.NewFlexResourceGridTypes
 		: [];
@@ -750,5 +751,6 @@ function removePartsFromKeyList(parts, list) {
 		}
 	}
 }
+
 
 

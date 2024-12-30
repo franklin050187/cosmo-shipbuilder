@@ -190,7 +190,7 @@ function drawRoleIndicators(sources) {
 				}
 			} 
 		}
-		ctx.fillRect(x, y, 10*getScalor()[0], 10*getScalor()[1]);
+		ctx.fillRect(x, y, 10/getScalor()[0], 10/getScalor()[1]);
 	}
 }
 
@@ -515,3 +515,5 @@ function fillPoly(canvas, vertecies) {
 	ctx.fill()
 	ctx.restore()
 }
+
+

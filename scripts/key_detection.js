@@ -63,7 +63,7 @@ for (let i=0;i<10;i++) {
             if (event.ctrlKey) {
                 addToControlGroup(i-1, global_selected_sprites)
             } else if (event.altKey) {
-                removeFromControlGroup(i, global_selected_sprites)
+                removeFromControlGroup(i-1, global_selected_sprites)
             } else {
                 selectControlGroup(i)
             }
