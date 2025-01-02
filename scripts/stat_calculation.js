@@ -5,9 +5,13 @@ function getShipStats(ship) {
     let stats = {}
     stats.ship = ship
     stats.parts = ship.parts
-    stats.cost = getShipCost(stats,null, null)
+    stats.resources = ship.resources
+    stats.cost = getShipCost(stats)
     stats.command_points = getShipCommandPoints(stats, null, null)
     stats.command_cost = getShipCommandCost(stats)
+    stats.dps = shipDps(stats)
+    stats.lighnessCoeff = shipLightnessCoeff(stats)
+    console.log(stats.lighnessCoeff)
     stats.crew = crewCount(stats)
     stats.connection_graph = getShipPartConnectionGraph(stats)
     stats.connection_graph_partition = getConnectedComponents(stats.connection_graph[0],stats.connection_graph[1])
@@ -23,14 +27,19 @@ function getShipStats(ship) {
     stats.inertia = momentOfInertiaShip(stats)
     stats.hyperdrive_efficiency = getShipHyperdriveEfficiency(stats)
     stats.primary_weapon = getPrimaryWeaponID(stats)
+    stats.isUl = isUl(stats)
+    stats.archetype = shipArchetype(stats)
     return stats
 } 
 
-function getShipCost(stats, id = null, category = null) {
+function getShipCost(stats) {
     sum = 0;
     //regular part price
-    for (sprite of getParts(stats.parts, part => isInTagsCondition(category)(part) && hasIDCondition(id)(part))) {
+    for (sprite of stats.parts) {
         sum += spriteData[sprite["ID"]].cost;
+    }
+    for (resource of stats.resources) {
+        sum += resourceData[resource.Value].cost/1000;
     }
     //extra costs from loaded missiles
     for (toggle of global_part_properties) {
@@ -80,6 +89,14 @@ function getShipCommandPoints(stats) {
     return sum;
 }
 
+function shipDps(stats) {
+    sum = 0
+    for (part of stats.parts) {
+        sum += spriteData[part.ID].dps || 0
+    }
+    return sum
+}
+
 function crewCount(stats) {
     let sum = 0
     let quarters = getParts(stats.parts, isInTagsCondition("crew"))
@@ -105,6 +122,36 @@ function shipWeight(stats) {
         sum += spriteData[sprite["ID"]].mass
     }
     return sum * 1000
+}
+
+function shipLightnessCoeff(stats) {
+    let merging_part_tile_sum = 0
+    let energy_tile_weight = 0
+    for (sprite of getParts(stats.parts, isInTagsCondition("reactor"))) {
+        energy_tile_weight += spriteData[sprite["ID"]].mass
+    }
+    for (sprite of getParts(stats.parts, (part) => {return isMergingPartCondition()(part) || isInTagsCondition("armor")(part) || hasIDCondition("cosmoteer.fire_extinguisher")(part)})) {
+        merging_part_tile_sum += spriteData[sprite["ID"]].mass
+    } 
+    console.log(energy_tile_weight/merging_part_tile_sum)
+    return energy_tile_weight/merging_part_tile_sum
+}
+
+function isUl(stats) {//lighness coeff of at least 1, no armor
+    if (stats.lighnessCoeff >= 1 && getParts(stats.parts, isInTagsCondition("armor")).length == 0) {
+        return true
+    } else {
+        return false
+    }
+}
+
+function shipArchetype(stats) {
+    let string = "" 
+    if (stats.isUl) {
+        string += "UL "
+    }
+    string += getThrustArrangement(stats) + " thrust " + getPartNameAbbreviation(stats.primary_weapon)
+    return string
 }
 
 function part_com_location(sprite) {
@@ -256,36 +303,65 @@ function partLocationFromCenter(center, part, messy_toggle=false) {
 }
 
 function getAllWeaponPartGroups(statsin) {
-    let parts = getParts(statsin.parts,isInTagsCondition("weapon"))
-    let parts_out = []
-    let bool = true
+    let parts = getParts(statsin.parts, isInTagsCondition("weapon"))
+    let partsMap = new Map()
+
     for (let part of parts) {
-        bool = true
-        for (let i = 0;i<parts_out.length;i++) {
-            list = parts_out[i]
-            if (list[0] == part.ID) {
-                list[i].push(part)
-                bool = false
-            } else if (bool) {
-                parts_out.push([part.ID, part])
-            }
+        if (!partsMap.has(part.ID)) {
+            partsMap.set(part.ID, [part.ID])
         }
+        partsMap.get(part.ID).push(part)
     }
-    return parts_out
+
+    return Array.from(partsMap.values())
 }
 
 function getPrimaryWeaponID(stats) {
     let weapon_groups = getAllWeaponPartGroups(stats)
     let sum = new Array(weapon_groups.length).fill(0)
-    let part
-    for (let i=0;i<weapon_groups.length;i++) {
-        for (let i=1; i < group.length;i++) {
-            part = group[i]
-            sum[i] += spriteData[part.ID].cost
+    
+    for (let i = 0; i < weapon_groups.length; i++) {
+        let group = weapon_groups[i]
+        for (let j = 1; j < group.length; j++) { 
+            let part = group[j]
+            if (spriteData[part.ID]) { 
+                sum[i] += spriteData[part.ID].cost 
+            }
         }
     }
-    index = indexOfListMax(sum)
-    //return weapon_groups[index][0]
+    let index = indexOfListMax(sum)
+    return weapon_groups[index] ? weapon_groups[index][0] : ""
+}
+
+function getThrustArrangement(stats) {
+    let thrust = stats.thrust
+    let thrust_sum = thrust[0]+thrust[1]+thrust[2]+thrust[3]
+    if (thrust_sum === 0) {
+        return "none"
+    }
+    let thrust_averages = [thrust[0]/thrust_sum, thrust[1]/thrust_sum, thrust[2]/thrust_sum, thrust[3]/thrust_sum]
+    let evenIndices = thrust_averages.filter((_, index) => index % 2 === 0);
+    let oddIndices = thrust_averages.filter((_, index) => index % 2 !== 0);
+    if (thrust_averages.some(value => value > 0.9)) {
+        return "mono"
+    } else if (evenIndices.every(evenValue => evenValue > 0.4) || oddIndices.every(oddValue => oddValue > 0.4)) {
+        return "bi"
+    } else if (thrust_averages.every(evenValue => evenValue > 0.15)) {
+        return "omni"
+    } else {
+        return "strange"
+    }
+}
+
+function getPartNameAbbreviation(id) {
+    let name = id
+    name = name.replace("cosmoteer.", "")
+    name = name.replace(/_/g, " ")
+    name = name.replace(/\b\w/g, char => char.toUpperCase())
+    if (name === "Ion Beam Emitter") {
+        return "Ion"
+    } 
+    return name
 }
 
 function getPartTagMap(stats) {

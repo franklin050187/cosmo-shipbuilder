@@ -1,7 +1,6 @@
 //This file is for html element variable declearations and their event handles
 
 const cursor_mode = document.getElementsByName("cursor_mode");
-const json_import_text = document.getElementById("jsonInput");
 const load_json_button = document.getElementById("loadButton");
 const export_json_button = document.getElementById("exportButton");
 
@@ -13,6 +12,7 @@ const generate_ship = document.getElementById("post_json");
 
 const spriteNames = Object.keys(spriteData).sort();
 const property_select = document.getElementById("propertySelect");
+const stats_select = document.getElementById("statsSelect");
 const property_edit = document.getElementById("propertyEdit");
 const help = document.getElementById("helpButton");
 const apply_property_button = document.getElementById("applyPropertyButton");
@@ -24,6 +24,12 @@ for (const spriteName of ["none", "vertical", "horizontal", "diagonal1", "diagon
 	option.value = spriteName;
 	option.textContent = spriteName;
 	mirror_select.appendChild(option);
+}
+for (const name of ["none", "stats", "warnings", "all"]) {
+	const option = document.createElement("option");
+	option.value = name;
+	option.textContent = name;
+	stats_select.appendChild(option);
 }
 
 const ship_property_select = document.getElementById("shipPropertySelect");
@@ -67,6 +73,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	}
 
 	property_select.addEventListener("change", handlePropertySelectionChange);
+	stats_select.addEventListener("change", handleStatsSelectionChange);
 	ship_property_select.addEventListener("change", handleShipPropertySelectionChange);
 	mirror_select.addEventListener("change", handleMirrorSelectionChange);	
 });
@@ -282,4 +289,8 @@ function updatePlacementCategories() {
 		loadCrewRoles("crew")
 	}
 	
+}
+
+function handleStatsSelectionChange() {
+	updateShipStats()
 }

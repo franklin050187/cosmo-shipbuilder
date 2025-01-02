@@ -4,11 +4,8 @@ function updateNonVisuals() {
 }
 
 function updateObjectExistences() {
-	console.log(...global_part_properties)
 	deleteNonExistingproperties()
-	console.log(...global_part_properties)
 	deleteDuplicateProperties()
-	console.log(...global_part_properties)
 }
 
 function updateShipToggleSelection() {
@@ -23,7 +20,7 @@ function updateShipToggleSelection() {
 }
 
 function updateShipStatsVariable() {
-    all_ship_stats = getShipStats(getShip(sprites, global_doors, global_part_properties))
+    all_ship_stats = getShipStats(getShip(sprites, global_doors, global_part_properties, global_resources))
     return all_ship_stats
 }
 
@@ -31,28 +28,37 @@ function updateShipStats() {
     parts = sprites
     stats = updateShipStatsVariable()
     warnings = getWarnings(stats)
-    ship_stats_label.innerHTML = 'Weight :' + stats.weight.toFixed(0).toString() + 'kg<br>'
-    ship_stats_label.innerHTML += 'Acceleration :' + stats.acceleration[0].toFixed(2).toString() + 'm/s^2<br>'
-    ship_stats_label.innerHTML += 'Max speed :' + stats.speed.toFixed(2).toString() + 'm/s<br>'
-    ship_stats_label.innerHTML += 'Thrust :' + stats.thrust.toString() + 'N<br>'
-    ship_stats_label.innerHTML += 'Cost :' + stats.cost.toFixed(0).toString() + '₡<br>'
-    const commandPoints = stats.command_points;
-    const commandCost = stats.command_cost;
-    const commandPointText = `Command Points : ${commandCost}/${commandPoints}`;
-    if (commandCost > commandPoints) {
-        ship_stats_label.innerHTML += `<span style="color: red">${commandPointText}</span><br>`;
-    } else {
-        ship_stats_label.innerHTML += `${commandPointText}<br>`;
-    }
-    ship_stats_label.innerHTML += 'Crew :' + stats.crew.toString() + '웃<br>'
-    ship_stats_label.innerHTML += 'moment of inertia:' + stats.inertia.toFixed(2).toString()+ 'kgm^2<br>'
-    ship_stats_label.innerHTML += 'hyperdrive efficiency:' + (stats.hyperdrive_efficiency*100).toString() + '%<br>'
-    ship_stats_label.innerHTML += 'crew count:' + stats.crew.toString() + '<br>'
-    ship_stats_label.innerHTML += '<br>Warnings:'
-    for (warning of warnings) {
-        ship_stats_label.innerHTML += "<br>"
-        ship_stats_label.innerHTML += warning.message
-    }
+	ship_stats_label.innerHTML = ''
+	if (stats_select.value === "stats" || stats_select.value === "all") {
+		ship_stats_label.innerHTML += stats.archetype+'<br>'
+		ship_stats_label.innerHTML += 'Weight :' + (stats.weight/1000).toFixed(1).toString() + 't<br>'
+		ship_stats_label.innerHTML += 'Acceleration :' + stats.acceleration[0].toFixed(2).toString() + 'm/s^2<br>'
+		ship_stats_label.innerHTML += 'Max speed :' + stats.speed.toFixed(2).toString() + 'm/s<br>'
+		ship_stats_label.innerHTML += 'Thrust :' + stats.thrust.toString() + 'N<br>'
+		ship_stats_label.innerHTML += 'Cost :' + stats.cost.toFixed(0).toString() + '₡<br>'
+		ship_stats_label.innerHTML += 'DPS :' + stats.dps.toFixed(0).toString() + '<br>'
+		const commandPoints = stats.command_points;
+		const commandCost = stats.command_cost;
+		const commandPointText = `Command Points : ${commandCost}/${commandPoints}`;
+		if (commandCost > commandPoints) {
+			ship_stats_label.innerHTML += `<span style="color: red">${commandPointText}</span><br>`;
+		} else {
+			ship_stats_label.innerHTML += `${commandPointText}<br>`;
+		}
+		ship_stats_label.innerHTML += 'Crew :' + stats.crew.toString() + '웃<br>'
+		ship_stats_label.innerHTML += 'moment of inertia:' + stats.inertia.toFixed(2).toString()+ 'kgm^2<br>'
+		ship_stats_label.innerHTML += 'hyperdrive efficiency:' + (stats.hyperdrive_efficiency*100).toString() + '%<br>'
+		ship_stats_label.innerHTML += 'crew count:' + stats.crew.toString() + '<br>'
+	}
+	if (stats_select.value === "all") {
+		ship_stats_label.innerHTML += '<br>Warnings:<br>'
+	}
+	if (stats_select.value === "warnings" || stats_select.value === "all") {
+		for (warning of warnings) {
+			ship_stats_label.innerHTML += warning.message
+			ship_stats_label.innerHTML += "<br>"
+		}
+	}
 }
 
 function updateCoordinates(canvasPositionX, canvasPositionY) {

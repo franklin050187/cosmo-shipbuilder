@@ -64,7 +64,7 @@ function generateShip() {
 function get_json() {
 	const b64Input = document.getElementById("b64_input");
 	const encodedB64 = b64Input.value.replace(/-/g, "+").replace(/_/g, "/");
-	const jsonInput = document.getElementById("jsonInput");
+	const jsonInput = document.getElementById("b64_input");
 	const xhr = new XMLHttpRequest();
 	const url = `https://cosmo-api-git-docker-franklin050187s-projects.vercel.app/edit?url=${encodedB64}`;
 	xhr.open("GET", url, true);
@@ -321,7 +321,6 @@ function place_sprites(sprites_to_place) {//Places the first sprites with absolu
 	let new_parts = mirroredParts(repositionPartsRalative(sprites_to_place))
 	toggle = true
 	if (overlappingParts(new_parts, global_recently_placed).length==0 || !global_left_mousdown_toggle) {
-		console.log(global_recently_placed)
 		for (let sprite of new_parts){
 			const location = sprite.Location;
 			if (sprite.ID === "cosmoteer.door") {
@@ -414,7 +413,6 @@ function remove_from_sprites(sprite_to_remove) {
 
 function removeDoors(door1) {
 	let doors = mirroredParts([generateDoorAsPart(door1)])
-	console.log(doors)
 	for (let door of doors) {
 		for (let i = global_doors.length - 1; i >= 0; i--) {
 			if (sameTile(global_doors[i].Cell, door.Location)) {

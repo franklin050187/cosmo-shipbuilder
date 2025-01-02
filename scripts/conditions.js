@@ -23,3 +23,7 @@ function hasIDCondition(id) {
 function hasRotationCondition(rotation) {
     return part => part.Rotation === rotation
 }
+
+function isMergingPartCondition() {
+	return part => mergingParts.includes(part.ID)
+}
