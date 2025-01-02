@@ -14,6 +14,7 @@ let global_sprites_to_draw = [] //Saves the sprites that are yet to be drawn
 let global_sprites_to_delete = [] //Saves the sprites that are drawn to which should be deleted
 let global_doors_to_draw = [] //Saves the doors that are yet to be drawn
 let global_doors_to_delete = [] //Saves the doors that are drawn to which should be deleted
+let global_recently_placed = [] //Saves recently palced parts
 let sprites = []; // To store the sprites
 let all_ship_stats = []
 let minX = 0;
@@ -319,25 +320,29 @@ function square_map(sprite) {
 function place_sprites(sprites_to_place) {//Places the first sprites with absolute coordinates and the ones after with relative ones
 	let new_parts = mirroredParts(repositionPartsRalative(sprites_to_place))
 	toggle = true
-	for (let sprite of new_parts){
-		const location = sprite.Location;
-		if (sprite.ID === "cosmoteer.door") {
-			const door = JSON.parse(
-				`{"Cell": [${location}], "ID": "cosmoteer.door", "Orientation": ${(sprite.Rotation + 1) % 2}}`,
-			);
-			global_doors.push(door);
-			global_doors_to_draw.push(door)
-		} else {
-			overlaps = overlappingParts(sprite, sprites)
-			if (overlaps.length>0) {
-				remove_multiple_from_sprites(overlaps)
+	if (overlappingParts(new_parts, global_recently_placed).length==0 || !global_left_mousdown_toggle) {
+		console.log(global_recently_placed)
+		for (let sprite of new_parts){
+			const location = sprite.Location;
+			if (sprite.ID === "cosmoteer.door") {
+				const door = JSON.parse(
+					`{"Cell": [${location}], "ID": "cosmoteer.door", "Orientation": ${(sprite.Rotation + 1) % 2}}`,
+				);
+				global_doors.push(door);
+				global_doors_to_draw.push(door)
+			} else {
+				overlaps = overlappingParts([sprite], sprites)
+				if (overlaps.length>0) {
+					remove_multiple_from_sprites(overlaps)
+				}
+				sprites.push(sprite);
+				global_sprites_to_draw.push(sprite)
+				addActionToHistory("add_parts", [sprite])
+				let prop = generatePropertiesForPart(sprite)
+				global_part_properties.push(...prop)
 			}
-			sprites.push(sprite);
-			global_sprites_to_draw.push(sprite)
-			addActionToHistory("add_parts", [sprite])
-			let prop = generatePropertiesForPart(sprite)
-			global_part_properties.push(...prop)
 		}
+		global_recently_placed = [...new_parts]
 	}
 	updateCanvas()
 }
@@ -484,16 +489,18 @@ function toggleBelongsToSprite(toggle, sprite) {
 	return isSameSprite(toggle.Key[0], sprite);
 }
 
-function overlappingParts(part, parts) {
+function overlappingParts(parts1, parts2) {
 	let overlapping_parts = []
-	for (let part2 of parts) {
-		for (let location1 of getSpriteTileLocations(part)) {
-			for (let location2 of getSpriteTileLocations(part2)) {
-				if (sameTile(location1, location2)) {
-					overlapping_parts.push(part2)
+	for (let part1 of parts1) {
+		for (let part2 of parts2) {
+			for (let location1 of getSpriteTileLocations(part1)) {
+				for (let location2 of getSpriteTileLocations(part2)) {
+					if (sameTile(location1, location2)) {
+						overlapping_parts.push(part2)
+					}
 				}
 			}
-		}
+		} 
 	} 
 	return overlapping_parts
 }

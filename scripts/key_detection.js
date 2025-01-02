@@ -336,6 +336,10 @@ function handleCanvasMouseMove(event) {
     if (cursorMode === "Resource") {
         global_resources_to_place[0].Key = mousePos(event)
         drawPreview(global_sprites_to_place, global_resources_to_place)
+        if (global_left_mousdown_toggle) {
+            global_resources_to_place[0].Key = mousePos(event)
+            placeResources(global_resources_to_place);
+        }
     }
 }
 
@@ -431,3 +435,5 @@ function handleRightClick(event) {
         }
 	}
 }
+
+
