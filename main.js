@@ -378,8 +378,10 @@ function selectParts(parts, unmirrored_parts_in) {
 }
 
 function remove_multiple_from_sprites(sprites_to_remove) {
+	sprites_to_remove = removeDuplicates(sprites_to_remove, isSameSprite)
+	global_sprites_to_draw = removeDuplicates(global_sprites_to_draw, isSameSprite)
 	for (let sprite of sprites_to_remove) {
-		remove_from_sprites(sprite)
+		remove_from_sprites(sprite);
 	}
 	removePartsFromKeyList(parts, global_crew_role_sources)
 	addActionToHistory("remove_parts", sprites_to_remove)
@@ -388,7 +390,6 @@ function remove_multiple_from_sprites(sprites_to_remove) {
 function remove_from_sprites(sprite_to_remove) {
 	const spriteToRemove = sprite_to_remove;
 
-	
 	for (const sprite of sprites) {
 		// find the sprite in sprites and remove it
 		// check id and location
@@ -398,6 +399,13 @@ function remove_from_sprites(sprite_to_remove) {
 			break;
 		}
 	}
+	
+	for (const sprite of global_sprites_to_draw) {
+		if (isSameSprite(sprite, spriteToRemove)) {
+			global_sprites_to_draw.splice(global_sprites_to_draw.indexOf(sprite), 1);
+			break;
+		}
+	} 
 	// remove from key from gridmap
 	const key_loc_x = spriteToRemove.Location[0];
 	const key_loc_y = spriteToRemove.Location[1];
@@ -755,6 +763,23 @@ function removePartsFromKeyList(parts, list) {
 			}
 		}
 	}
+}
+
+function removeDuplicates(array, isSame) {
+	let uniqueArray = [];
+	for (let item of array) {
+		let isUnique = true;
+		for (let uniqueItem of uniqueArray) {
+			if (isSame(item, uniqueItem)) {
+				isUnique = false;
+				break;
+			}
+		}
+		if (isUnique) {
+			uniqueArray.push(item);
+		}
+	}
+	return uniqueArray;
 }
 
 

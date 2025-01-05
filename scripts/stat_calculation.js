@@ -11,7 +11,6 @@ function getShipStats(ship) {
     stats.command_cost = getShipCommandCost(stats)
     stats.dps = shipDps(stats)
     stats.lighnessCoeff = shipLightnessCoeff(stats)
-    console.log(stats.lighnessCoeff)
     stats.crew = crewCount(stats)
     stats.connection_graph = getShipPartConnectionGraph(stats)
     stats.connection_graph_partition = getConnectedComponents(stats.connection_graph[0],stats.connection_graph[1])
@@ -133,7 +132,6 @@ function shipLightnessCoeff(stats) {
     for (sprite of getParts(stats.parts, (part) => {return isMergingPartCondition()(part) || isInTagsCondition("armor")(part) || hasIDCondition("cosmoteer.fire_extinguisher")(part)})) {
         merging_part_tile_sum += spriteData[sprite["ID"]].mass
     } 
-    console.log(energy_tile_weight/merging_part_tile_sum)
     return energy_tile_weight/merging_part_tile_sum
 }
 
