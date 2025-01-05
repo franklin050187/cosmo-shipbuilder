@@ -159,7 +159,7 @@ function loadJson(json) {
 	global_resources = [];
 	global_part_properties = [];
 	if (typeof json !== 'string') {
-        json = json_import_text.value;
+        json = b64Input.value;
     }
 	const data = JSON.parse(json);
 	const part_data = Array.isArray(data.Parts) ? data.Parts : [];
@@ -330,7 +330,7 @@ function place_sprites(sprites_to_place) {//Places the first sprites with absolu
 				global_doors.push(door);
 				global_doors_to_draw.push(door)
 			} else {
-				overlaps = overlappingParts([sprite], sprites)
+				let overlaps = overlappingParts([sprite], sprites)
 				if (overlaps.length>0) {
 					remove_multiple_from_sprites(overlaps)
 				}
@@ -377,13 +377,13 @@ function selectParts(parts, unmirrored_parts_in) {
 	handlePropertySelectionChange()
 }
 
-function remove_multiple_from_sprites(sprites_to_remove) {
-	sprites_to_remove = removeDuplicates(sprites_to_remove, isSameSprite)
+function remove_multiple_from_sprites(sprites_to_remove_in) {
+	let sprites_to_remove = removeDuplicates(sprites_to_remove_in, isSameSprite)
 	global_sprites_to_draw = removeDuplicates(global_sprites_to_draw, isSameSprite)
 	for (let sprite of sprites_to_remove) {
 		remove_from_sprites(sprite);
 	}
-	removePartsFromKeyList(parts, global_crew_role_sources)
+	removePartsFromKeyList(sprites_to_remove, global_crew_role_sources)
 	addActionToHistory("remove_parts", sprites_to_remove)
 }
 
