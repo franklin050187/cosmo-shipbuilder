@@ -59,6 +59,21 @@ function updateShipStats() {
 			ship_stats_label.innerHTML += "<br>"
 		}
 	}
+	if (stats_select.value === "all") {
+		ship_stats_label.innerHTML += '<br>Cost breakdown:<br>'
+	}
+	if (stats_select.value === "cost breakdown" || stats_select.value === "all") {
+		for (let cathegory in costBreakdownData) {
+			let sum = 0
+			for (let part_name of costBreakdownData[cathegory]) {
+				let id = "cosmoteer."+part_name
+				for (let part of getParts(stats.parts, hasIDCondition(id))) {
+					sum += spriteData[id].cost
+				}
+			}
+			ship_stats_label.innerHTML += cathegory + ': ' + (sum*1000).toFixed(0).toString() + ' / ' + (sum/stats.cost*100*1000).toFixed(2).toString() + '%<br>'
+		}
+	}
 }
 
 function updateCoordinates(canvasPositionX, canvasPositionY) {

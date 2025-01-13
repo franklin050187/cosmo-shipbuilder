@@ -384,6 +384,7 @@ function remove_multiple_from_sprites(sprites_to_remove_in) {
 		remove_from_sprites(sprite);
 	}
 	removePartsFromKeyList(sprites_to_remove, global_crew_role_sources)
+	updateShipToggleSelection()
 	addActionToHistory("remove_parts", sprites_to_remove)
 }
 

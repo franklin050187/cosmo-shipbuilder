@@ -1,4 +1,10 @@
 /*
+When a new part gets added into the game: 
+adjust all data variables here
+
+When a new resource gets added into the game: 
+adjust resourceData and costBreakdownData
+
 meanings of tags:
 
 crew_transport: in game section for crew related parts
@@ -563,6 +569,17 @@ const spriteData = {
 		tags: ["crew", "crew_transport"],
 	},
 };
+const costBreakdownData = {
+	"weapon": ["laser_blaster_small", "laser_blaster_large", "cannon_deck", "cannon_large", "cannon_med", "chaingun", "chaingun_magazine", "disruptor", "flak_cannon_large", "ion_beam_emitter", "ion_beam_prism", "mining_laser_small", "missile_launcher", "point_defense", "railgun_accelerator", "railgun_launcher", "railgun_loader", "railgun_accelerator"],
+	"armor": ["armor", "armor_1x2_wedge", "armor_1x3_wedge", "armo_2x1", "armor", "armor_structure_hybrid_1x1", "armor_structure_hybrid_1x2", "armor_structure_hybrid_1x3", "armor_tri", "armor_wedge"],
+	"shields": ["shield_gen_large", "shield_gen_small"],
+	"infrastructure": ["airlock", "conveyor", "corridor", "crew_quarters_large", "crew_quarters_med", "crew_quarters_small", "door", "power_storage"],
+	"thrust": ["engine_room", "thruster_boost", "thruster_huge", "thruster_large", "thruster_med", "thruster_small", "thruster_small_2way", "thruster_small_3way", "thruster_rocket_battery", "thruster_rocket_extender", "thruster_rocket_nozzle", ],
+	"reactors": ["reactor_large", "reactor_med", "reactor_small"],
+	"resources": ["storage_2x2","storage_3x2", "storage_3x3", "storage_4x3", "storage_4x4", "factory_ammo", "factory_coil", "factory_coil2", "factory_diamond", "factory_emp", "factory_he", "factory_mine", "factory_nuke", "factory_processor", "factory_steel", "factory_tristeel", "factory_uranium"],
+	"utility": ["hyperdrive_beacon", "manipulator_beam_emitter", "sensor_array", "tractor_beam_emitter"],
+	"other": ["control_room_small", "control_room_med", "control_room_large", "explosive_charge", "fire_extinguisher", "hyperdrive_small", "hyperdrive_med", "hyperdrive_large", "roof_headlight", "roof_light", "structure", "structure_1x2_wedge", "structure_1x3_wedge", "structure_tri", "structure_wedge"],
+}
 const resourceData = {
 	"battery": {cost: 0, category: "power", stack_size: 1},
 	"bullet": {cost: 4, category: "ammo", stack_size: 40},

@@ -25,7 +25,7 @@ for (const spriteName of ["none", "vertical", "horizontal", "diagonal1", "diagon
 	option.textContent = spriteName;
 	mirror_select.appendChild(option);
 }
-for (const name of ["none", "stats", "warnings", "all"]) {
+for (const name of ["none", "stats", "warnings", "cost breakdown", "all"]) {
 	const option = document.createElement("option");
 	option.value = name;
 	option.textContent = name;
