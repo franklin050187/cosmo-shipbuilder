@@ -131,12 +131,16 @@ function updateCanvas() {
 		clearPreview()
 		drawSelectionindicators(global_selected_sprites)
 	}
-	drawHitboxes(sprites)
 	if (cursorMode === "Supply") {
 		clearLayer(drawing_canvas.getContext("2d"))
 		drawSupplyChains()
 	} else if (cursorMode === "Crew") {
 		drawRoleIndicators(global_crew_role_sources)
+	}
+	if (hitbox_checkbox.checked) {
+		drawHitboxes(sprites)
+	} else {
+		clearLayer(hitbox_canvas.getContext("2d"))
 	}
 	drawMirrorAxis()
 	draw_doors();
@@ -223,13 +227,26 @@ function drawSelectionBox(endpos) {
 }
 
 function drawHitboxes(parts) {
-	const canvas = door_canvas
+	const canvas = hitbox_canvas
 	const ctx = canvas.getContext("2d")
 	ctx.strokeStyle  = "rgb(199, 14, 174)"
 	clearLayer(ctx)
+	ctx.lineWidth = 2
 	for (let part of parts) {
-		for (let poly of spriteData[part.ID].hitboxes || []) {
-			drawPoly(canvas, convertPolyToCanvas(translatedPoly(poly, part.Location)))
+		let data = spriteData[part.ID]
+		for (let poly of data.hitboxes || []) {
+			let newpoly = rotatePoly(translatedPoly(poly,part.Location), Math.PI/2*part.Rotation, part.Location)
+			let adder = [0,0]
+			let size =  data.size 
+			if (part.Rotation === 1) {
+				adder[0] += size[1]
+			} else if (part.Rotation === 3) {
+				adder[1] += size[0]
+			} else if (part.Rotation === 2) {
+				adder[1] += size[1]
+				adder[0] += size[0]
+			}
+			drawPoly(canvas, convertPolyToCanvas(translatedPoly(newpoly, adder)))
 		}
 	}
 }

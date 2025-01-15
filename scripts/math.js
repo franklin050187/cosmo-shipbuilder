@@ -4,6 +4,14 @@ function vecLength(vec) {
 	return Math.sqrt(vec[0] ** 2 + vec[1] ** 2);
 }
 
+function diffVecs(vec1, vec2) {
+    return vec1.map((v, i) => v - vec2[i]);
+}
+
+function addVecs(vec1, vec2) {
+    return vec1.map((v, i) => v + vec2[i]);
+}
+
 function pointDist(vec1, vec2) {
 	return vecLength([vec1[0] - vec2[0], vec1[1] - vec2[1]]);
 }
@@ -118,4 +126,23 @@ function circle(pos, r) {//Intended to be used for the hitbox creation
 function translatedPoly(poly, pos1) {
     let newpoly = poly.map(pos2 => [pos2[0] + pos1[0], pos2[1] + pos1[1]]);
     return newpoly;
+}
+
+function rotatePoly(poly, angle, center = [0, 0]) {
+    const cosA = Math.cos(angle);
+    const sinA = Math.sin(angle);
+    const [cx, cy] = center;
+
+    return poly.map(([x, y]) => {
+        // Translate point to origin based on the center
+        const dx = x - cx;
+        const dy = y - cy;
+
+        // Rotate around the origin
+        const rotatedX = dx * cosA - dy * sinA;
+        const rotatedY = dx * sinA + dy * cosA;
+
+        // Translate back to the original center
+        return [rotatedX + cx, rotatedY + cy];
+    });
 }

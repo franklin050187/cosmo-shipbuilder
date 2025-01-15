@@ -40,6 +40,11 @@ const previewSprite = document.createElement("img");
 const ship_stats_label = document.getElementById("shipStatsLabel");
 const coordinates_label = document.getElementById("coord_on_canvas");
 
+const hitbox_checkbox = document.getElementById("hitboxCheckbox");
+hitbox_checkbox.addEventListener("change", () => {
+	updateCanvas()
+  });
+
 previewSprite.id = "previewSprite";
 document.body.appendChild(previewSprite);
 
