@@ -92,3 +92,30 @@ function areBoxesOverlapping(box1, box2) {
              maxY1 <= minY2 || 
              minY1 >= maxY2);
 }
+
+function squareWithLength(x) {//Intended to be used for the hitbox creation
+    return [[0,0], [x,0], [x,x], [0,x]]
+}
+
+function rectWithLengths(x, y) {//Intended to be used for the hitbox creation
+    return [[0,0], [x,0], [x,y], [0,y]]
+}
+
+function circle(pos, r) {//Intended to be used for the hitbox creation
+    const points = [];
+    const angleStep = (2 * Math.PI) / 32;
+
+    for (let i = 0; i < 32; i++) {
+        const angle = i * angleStep;
+        const x = pos[0] + r * Math.cos(angle);
+        const y = pos[1] + r * Math.sin(angle);
+        points.push([ x, y ]);
+    }
+
+    return points;
+}
+
+function translatedPoly(poly, pos1) {
+    let newpoly = poly.map(pos2 => [pos2[0] + pos1[0], pos2[1] + pos1[1]]);
+    return newpoly;
+}

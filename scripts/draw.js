@@ -5,6 +5,7 @@ const drawing_canvas = document.getElementById("drawingCanvas");
 const resource_canvas = document.getElementById("resourceCanvas");
 const preview_canvas = document.getElementById("previewCanvas");
 const door_canvas = document.getElementById("doorCanvas");
+const hitbox_canvas = document.getElementById("hitboxCanvas");
 const ctx = canvas.getContext("2d");
 
 let spritesDrawn = new Set(); // used in draw function
@@ -130,7 +131,7 @@ function updateCanvas() {
 		clearPreview()
 		drawSelectionindicators(global_selected_sprites)
 	}
-
+	drawHitboxes(sprites)
 	if (cursorMode === "Supply") {
 		clearLayer(drawing_canvas.getContext("2d"))
 		drawSupplyChains()
@@ -219,6 +220,18 @@ function drawSelectionBox(endpos) {
 	let [x2,y2] = convertCoordinatesToCanvas(endpos)
 	ctx.rect(x1, y1, x2-x1, y2-y1);
 	ctx.stroke()
+}
+
+function drawHitboxes(parts) {
+	const canvas = door_canvas
+	const ctx = canvas.getContext("2d")
+	ctx.strokeStyle  = "rgb(199, 14, 174)"
+	clearLayer(ctx)
+	for (let part of parts) {
+		for (let poly of spriteData[part.ID].hitboxes || []) {
+			drawPoly(canvas, convertPolyToCanvas(translatedPoly(poly, part.Location)))
+		}
+	}
 }
 
 function convertCoordinatesToCanvas(location) {
@@ -504,16 +517,26 @@ function clearPoly(canvas, vertecies) {
 
 }
 
-function fillPoly(canvas, vertecies) {
-	let ctx = canvas.getContext("2d")
-	ctx.beginPath()
-	ctx.moveTo(vertecies[0][0], vertecies[0][1])
-	for (vertex of vertecies) {
-		ctx.lineTo(vertex[0], vertex[1])
-	}
-	ctx.closePath()
-	ctx.fill()
-	ctx.restore()
+function drawPoly(canvas, vertices, fill = false) {
+    let ctx = canvas.getContext("2d");
+    ctx.beginPath();
+    ctx.moveTo(vertices[0][0], vertices[0][1]);
+    for (let vertex of vertices) {
+        ctx.lineTo(vertex[0], vertex[1]);
+    }
+    ctx.closePath();
+    if (fill) {
+        ctx.fill();
+    } else {
+        ctx.stroke();
+    }
 }
 
+function convertPolyToCanvas(poly) {
+	let new_poly = []
+	for (let pos of poly) {
+		new_poly.push(convertCoordinatesToCanvas(pos))
+	}
+	return new_poly
+}
 

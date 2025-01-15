@@ -151,7 +151,7 @@
         position: relative;
     ">
             <style>
-            #drawingCanvas, #resourceCanvas, #previewCanvas, #doorCanvas  {
+            #drawingCanvas, #resourceCanvas, #previewCanvas, #doorCanvas, #hitboxCanvas  {
                 position: absolute;
                 top: 0;
                 left: 0;
@@ -170,6 +170,7 @@
             <canvas id="drawingCanvas" width="64" height="64"></canvas>
             <canvas id="previewCanvas" width="64" height="64"></canvas>
             <canvas id="doorCanvas" width="128" height="128"></canvas>
+            <canvas id="hitboxCanvas" width="128" height="128"></canvas>
         </div>
         <div class="part-container">
             <!-- Categories -->
@@ -183,10 +184,10 @@
             </div>
         </div>
     </div>
+    <script src="scripts/math.js"></script>
     <script src="data/data.js"></script>
     <script src="data/help.js"></script>
     <script src="data/crew_roles.js"></script>
-    <script src="scripts/math.js"></script>
     <script src="scripts/conditions.js"></script>
     <script src="scripts/ship.js"></script>
     <script src="scripts/data_extraction.js"></script>

@@ -29,33 +29,37 @@ real_size: Used if the sprite is bigger than the size but the hitbox isnt. This 
 */ 
 
 const spriteData = {
-	"cosmoteer.corridor": { mass: 1, size: [1, 1], cost: 0.1, tags: ["crew_transport"] },
+	"cosmoteer.corridor": { mass: 1, size: [1, 1], cost: 0.1, tags: ["crew_transport"], hitboxes: [squareWithLength(1)]},
 	"cosmoteer.door": { size: [1, 1], cost: 0.1, tags: ["crew_transport"] },
 	"cosmoteer.delete": { mass: 1, size: [1, 1], tags: [""] },
-	"cosmoteer.structure": { mass: 0.33, size: [1, 1], cost: 0.05, tags: ["structure"] },
+	"cosmoteer.structure": { mass: 0.33, size: [1, 1], cost: 0.05, tags: ["structure"], hitboxes: [squareWithLength(1)]},
 	"cosmoteer.structure_wedge": {
 		mass: 0.17,
 		size: [1, 1],
 		cost: 0.025,
 		tags: ["structure"],
+		hitboxes: [[[1,0], [0,1], [1,1]]],
 	},
 	"cosmoteer.structure_1x2_wedge": {
 		mass: 0.33,
 		size: [1, 2],
 		cost: 0.05,
 		tags: ["structure"],
+		hitboxes: [[[2,0], [0,1], [2,1]]],
 	},
 	"cosmoteer.structure_1x3_wedge": {
 		mass: 0.5,
 		size: [1, 3],
 		cost: 0.075,
 		tags: ["structure"],
+		hitboxes: [[[3,0], [0,1], [3,1]]],
 	},
 	"cosmoteer.structure_tri": {
 		mass: 0.08,
 		size: [1, 1],
 		cost: 0.025,
 		tags: ["structure"],
+		hitboxes: [[[1,1], [1,0], [0.5,0.5]]],
 	},
 	"cosmoteer.laser_blaster_small": {
 		mass: 2.5,
@@ -66,6 +70,7 @@ const spriteData = {
 		cost: 2,
 		tags: ["weapon", "on_off", "energy weapon"],
 		cp_cost: 2,
+		hitboxes: [rectWithLengths(1, 2), circle([0.5, -0.54], 0.46)],
 	},
 	"cosmoteer.laser_blaster_large": {
 		mass: 7.68,
@@ -76,6 +81,7 @@ const spriteData = {
 		cost: 6,
 		tags: ["weapon", "on_off", "energy weapon"],
 		cp_cost: 4,
+		hitboxes: [rectWithLengths(2, 3), circle([1, -1], 0.75)],
 	},
 	"cosmoteer.disruptor": {
 		mass: 3.48,
@@ -96,6 +102,7 @@ const spriteData = {
 		cost: 10,
 		tags: ["weapon", "on_off", "energy weapon"],
 		cp_cost: 4,
+		hitboxes: [rectWithLengths(2, 4)],
 	},
 	"cosmoteer.resource_collector": {
 		mass: 4,
@@ -103,6 +110,7 @@ const spriteData = {
 		cost: 0,
 		tags: ["on_off"],
 		cp_cost: 4,
+		hitboxes: [rectWithLengths(2, 2)],
 	},
 	"cosmoteer.ion_beam_prism": {
 		mass: 7.7,
@@ -112,6 +120,7 @@ const spriteData = {
 		cost: 5,
 		tags: ["energy weapon"],
 		cp_cost: 2,
+		hitboxes: [circle([1, 1], 0.75)],
 	},
 	"cosmoteer.tractor_beam_emitter": {
 		mass: 32.07,
@@ -571,7 +580,7 @@ const spriteData = {
 };
 const costBreakdownData = {
 	"weapon": ["laser_blaster_small", "laser_blaster_large", "cannon_deck", "cannon_large", "cannon_med", "chaingun", "chaingun_magazine", "disruptor", "flak_cannon_large", "ion_beam_emitter", "ion_beam_prism", "mining_laser_small", "missile_launcher", "point_defense", "railgun_accelerator", "railgun_launcher", "railgun_loader", "railgun_accelerator"],
-	"armor": ["armor", "armor_1x2_wedge", "armor_1x3_wedge", "armo_2x1", "armor", "armor_structure_hybrid_1x1", "armor_structure_hybrid_1x2", "armor_structure_hybrid_1x3", "armor_tri", "armor_wedge"],
+	"armor": ["armor", "armor_1x2_wedge", "armor_1x3_wedge", "armor_2x1", "armor", "armor_structure_hybrid_1x1", "armor_structure_hybrid_1x2", "armor_structure_hybrid_1x3", "armor_tri", "armor_wedge"],
 	"shields": ["shield_gen_large", "shield_gen_small"],
 	"infrastructure": ["airlock", "conveyor", "corridor", "crew_quarters_large", "crew_quarters_med", "crew_quarters_small", "door", "power_storage"],
 	"thrust": ["engine_room", "thruster_boost", "thruster_huge", "thruster_large", "thruster_med", "thruster_small", "thruster_small_2way", "thruster_small_3way", "thruster_rocket_battery", "thruster_rocket_extender", "thruster_rocket_nozzle", ],
