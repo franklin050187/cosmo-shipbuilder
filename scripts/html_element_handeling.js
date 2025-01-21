@@ -55,6 +55,7 @@ const loadB64Button = document.getElementById("load_b64");
 const queryString = window.location.search;
 const urlParams = new URLSearchParams(queryString);
 const b64 = urlParams.get("url");
+let loaded_button_category = undefined
 if (b64) {
 	b64Input.value = b64;
 	get_json();
@@ -101,7 +102,6 @@ function loadParts(category) {
 		<div>Cost: ${spriteData[part.ID].cost*1000}</div>
 		`;
 		button.addEventListener("click", () => {
-			ChangeCursorMode("Place")
 			global_sprites_to_place = [generatePart(part.ID)]
 		});
 		partDiv.appendChild(button);
@@ -136,6 +136,7 @@ function loadResources(category) {
 }
 
 function loadCrewRoles(category) {
+	partsContainer.innerHTML = ""; 
 	for (let role in crew_roles) {
 		const partDiv = document.createElement("div");
 		partDiv.classList.add("part-item");
@@ -210,22 +211,10 @@ function closeHelp() {
 }
 
 function resetPlacementCategories() {
-	// Deselect all category buttons
-	const categoriesContainer = document.querySelector('.categories');
-	categoriesContainer.innerHTML = ''
-
-	// Clear the parts container
-	const partsContainer = document.getElementById('parts-container');
-	partsContainer.innerHTML = '';
-}
-
-function updatePlacementCategories() {
-	resetPlacementCategories()
-    const partsContainer = document.getElementById('parts-container');
+    const partsContainer = document.getElementById('parts-container')
 	const categoriesContainer = document.querySelector('.categories')
+	categoriesContainer.innerHTML = ''
     if (!partsContainer) return;
-
-    partsContainer.innerHTML = '';
 
 	let categories = []
 
@@ -266,7 +255,6 @@ function updatePlacementCategories() {
     });
 
 	const categoryButtons = document.querySelectorAll('.categories .category-btn')
-
 	// Event listeners for category buttons
 	if (["Select", "Place", "Delete", "Supply", "Move"].includes(cursorMode)) {
 		categoryButtons.forEach(btn => {

@@ -3,7 +3,7 @@ window.onload = () => {
 	loadJson(JSON.stringify(startup_ship_data))
 };
 // Load a default category
-updatePlacementCategories()
+resetPlacementCategories()
 preloadSprites()
 // Initialize the canvas
 loadPreviewSpriteImage()

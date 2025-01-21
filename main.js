@@ -95,6 +95,7 @@ function ChangeCursorMode(string) {
 
 function handleCursorModeChange() {
 	clearPreview();
+	resetPlacementCategories()
 	if (cursorMode === "Place") {
 		if (global_sprites_to_place.length === 0 || global_sprites_to_place.includes("cosmoteer.delete")) {
 			global_sprites_to_place = [generatePart("cosmoteer.corridor")]
@@ -115,7 +116,6 @@ function handleCursorModeChange() {
 	if (cursorMode != "Crew") {
 		global_crew_role_to_place = undefined
 	}
-	updatePlacementCategories()
 	updateCanvas()
 }
 

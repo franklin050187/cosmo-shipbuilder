@@ -360,7 +360,7 @@ const spriteData = {
 		tags: ["thruster", "on_off", "flight"],
 		cp_cost: 1,
 		thrust: [0, 0, 0.4, 0],
-		hitboxes: [squareWithLength(1), ],
+		hitboxes: [squareWithLength(1), [[.2, 1],[.8, 1],[.875, 1.45],[.125, 1.45]]],
 	},
 	"cosmoteer.thruster_med": {
 		mass: 2.45,
@@ -370,7 +370,7 @@ const spriteData = {
 		tags: ["thruster", "on_off", "flight"],
 		cp_cost: 2,
 		thrust: [0, 0, 1.2, 0],
-		hitboxes: [rectWithLengths(1,2), ],
+		hitboxes: [rectWithLengths(1,2), [[.2, 2],[.8, 2],[.95, 2.6],[.05, 2.6]]],
 	},
 	"cosmoteer.thruster_large": {
 		mass: 4.99,
@@ -380,7 +380,7 @@ const spriteData = {
 		tags: ["thruster", "on_off", "flight"],
 		cp_cost: 4,
 		thrust: [0, 0, 3.2, 0],
-		hitboxes: [squareWithLength(2), ],
+		hitboxes: [squareWithLength(2), [[.5, 2],[1.5, 2],[1.875, 2.72],[.125, 2.72]]],
 	},
 	"cosmoteer.thruster_boost": {
 		mass: 8.88,
@@ -390,7 +390,7 @@ const spriteData = {
 		tags: ["thruster", "on_off", "flight"],
 		cp_cost: 6,
 		thrust: [0, 0, 3.2, 0],
-		hitboxes: [rectWithLengths(2,3), ],
+		hitboxes: [rectWithLengths(2,3), [[.5, 4],[1.5, 4],[1.875, 4.7],[.125, 4.7]]],
 	},
 	"cosmoteer.fire_extinguisher": {
 		mass: 1,
@@ -407,7 +407,7 @@ const spriteData = {
 		tags: ["thruster", "on_off", "flight"],
 		cp_cost: 8,
 		thrust: [0, 0, 8, 0],
-		hitboxes: [squareWithLength(3), ],
+		hitboxes: [squareWithLength(3), [[2/3, 3],[7/3, 3],[8/3, 4],[1/3, 4]]],
 	},
 	"cosmoteer.control_room_small": {
 		mass: 4,
@@ -433,7 +433,7 @@ const spriteData = {
 		tags: ["thruster", "on_off", "flight"],
 		cp_cost: 2,
 		thrust: [0, 0.4, 0.4, 0],
-		hitboxes: [squareWithLength(1), ],
+		hitboxes: [squareWithLength(1), [[.2, 1],[.8, 1],[.875, 1.45],[.125, 1.45]], [[1, .8],[1, .2],[1.45, .125],[1.45, .875]]],
 	},
 	"cosmoteer.control_room_large": {
 		mass: 16,
@@ -451,7 +451,7 @@ const spriteData = {
 		tags: ["thruster", "on_off", "flight"],
 		cp_cost: 3,
 		thrust: [0, 0.4, 0.4, 0.4],
-		hitboxes: [squareWithLength(1), ],
+		hitboxes: [squareWithLength(1), [[1, .2],[1, .8],[.55, .875],[.55, .125]], [[.2, 1],[.8, 1],[.875, 1.45],[.125, 1.45]], [[1, .8],[1, .2],[1.45, .125],[1.45, .875]]],
 	},
 	"cosmoteer.hyperdrive_small": {
 		mass: 4,
