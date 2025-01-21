@@ -6,7 +6,12 @@ let ship_action_history = []
 let ship_action_history_depth = 0
 const max_history_length = 100
 
-function inverseAction(action) {
+function actionCopy(action) {
+    return {type: action.type, objects: partsCopy(action.objects)}
+}
+
+function inverseAction(action_in) {
+    let action = actionCopy(action_in)
     if (action.type === "add_parts") {
         action.type = "remove_parts"
     } else if (action.type === "remove_parts") {
@@ -27,10 +32,10 @@ function addActionToHistory(type_in, objects_in) {
 function excecuteAction(action) {
     switch (action.type) {
         case ("add_parts"): 
-            place_sprites(action.objects)
+            place_sprites(action.objects, false)
         break
         case ("remove_parts"): 
-            remove_multiple_from_sprites(action.objects)
+            remove_multiple_from_sprites(action.objects, false)
         break
     }
 }

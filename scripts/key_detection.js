@@ -40,6 +40,11 @@ document.addEventListener("keydown", function(event) {
     }
 });
 document.addEventListener("keydown", function(event) {
+    if (event.ctrlKey && event.key === "y"&& canvas_is_focused) {
+        redo()
+    }
+});
+document.addEventListener("keydown", function(event) {
     if (event.ctrlKey && event.key === "x"&& canvas_is_focused) {
         cut()
     }
@@ -256,8 +261,15 @@ function getMultiplier(event) {
 
 function undo() {
     if (ship_action_history_depth <= ship_action_history.length && ship_action_history.length>0) {
-        ship_action_history_depth == ship_action_history_depth - 1
         excecuteAction(inverseAction(getCurrentLastAction()))
+        ship_action_history_depth = Math.min(ship_action_history_depth + 1, ship_action_history.length)
+    }
+}
+
+function redo() {
+    if (ship_action_history_depth <= ship_action_history.length && ship_action_history.length>0) {
+        ship_action_history_depth = Math.max(ship_action_history_depth - 1, 0)
+        excecuteAction(getCurrentLastAction())
     }
 }
 

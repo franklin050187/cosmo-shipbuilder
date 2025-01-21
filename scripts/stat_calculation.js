@@ -417,4 +417,17 @@ function getPartFromLocation(location, parts) {
     return null
 }
 
+function getShipBounds(parts) {
+    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
 
+    for (let part of parts) {
+        for (let [x, y] of getSpriteTileLocations(part)) {
+            if (x < minX) minX = x;
+            if (y < minY) minY = y;
+            if (x > maxX) maxX = x;
+            if (y > maxY) maxY = y;
+        }
+    }
+
+    return { minX, minY, maxX, maxY };
+}

@@ -299,7 +299,6 @@ function handlePlaceArmorShell() {
 function placeArmorShell(thickness) {
 	let points = getAllCornerLocations(sprites)
 	const result = smallestEnclosingCircle(points);
-	console.log('Center:', result.center, 'Radius:', result.radius);
 
 	let r1 = result.radius;
 	let r2 = r1 + thickness;
@@ -311,19 +310,4 @@ function placeArmorShell(thickness) {
 		parts.push(part)
 	}
 	place_sprites(absoluteToRalativePartCoordinates(parts))
-}
-
-function getShipBounds(parts) {
-    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
-
-    for (let part of parts) {
-        for (let [x, y] of getSpriteTileLocations(part)) {
-            if (x < minX) minX = x;
-            if (y < minY) minY = y;
-            if (x > maxX) maxX = x;
-            if (y > maxY) maxY = y;
-        }
-    }
-
-    return { minX, minY, maxX, maxY };
 }

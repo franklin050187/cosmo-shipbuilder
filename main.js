@@ -334,9 +334,9 @@ function square_map(sprite) {
 	}
 }
 
-function place_sprites(sprites_to_place) {//Places the first sprites with absolute coordinates and the ones after with relative ones
+function place_sprites(sprites_to_place, modify_action_history = true) {//Places the first sprites with absolute coordinates and the ones after with relative ones
 	let new_parts = mirroredParts(repositionPartsRalative(sprites_to_place))
-	toggle = true
+	let placed_parts = []
 	if (overlappingParts(new_parts, global_recently_placed).length==0 || !global_left_mousdown_toggle) {
 		for (let sprite of new_parts){
 			const location = sprite.Location;
@@ -352,13 +352,16 @@ function place_sprites(sprites_to_place) {//Places the first sprites with absolu
 					remove_multiple_from_sprites(overlaps)
 				}
 				sprites.push(sprite);
+				placed_parts.push(sprite)
 				global_sprites_to_draw.push(sprite)
-				addActionToHistory("add_parts", [sprite])
 				let prop = generatePropertiesForPart(sprite)
 				global_part_properties.push(...prop)
 			}
 		}
 		global_recently_placed = [...new_parts]
+	}
+	if (modify_action_history && !(placed_parts.length === 0)) {
+		addActionToHistory("add_parts", placed_parts)
 	}
 	updateCanvas()
 }
@@ -394,7 +397,7 @@ function selectParts(parts, unmirrored_parts_in) {
 	handlePropertySelectionChange()
 }
 
-function remove_multiple_from_sprites(sprites_to_remove_in) {
+function remove_multiple_from_sprites(sprites_to_remove_in, modify_action_history = true) {
 	let sprites_to_remove = removeDuplicates(sprites_to_remove_in, isSameSprite)
 	global_sprites_to_draw = removeDuplicates(global_sprites_to_draw, isSameSprite)
 	for (let sprite of sprites_to_remove) {
@@ -402,7 +405,10 @@ function remove_multiple_from_sprites(sprites_to_remove_in) {
 	}
 	removePartsFromKeyList(sprites_to_remove, global_crew_role_sources)
 	updateShipToggleSelection()
-	addActionToHistory("remove_parts", sprites_to_remove)
+	updateCanvas()
+	if (modify_action_history) {
+		addActionToHistory("remove_parts", sprites_to_remove)
+	}
 }
 
 function remove_from_sprites(sprite_to_remove) {
