@@ -16,6 +16,10 @@ function pointDist(vec1, vec2) {
 	return vecLength([vec1[0] - vec2[0], vec1[1] - vec2[1]]);
 }
 
+function crossProduct(o, a, b) {
+    return (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0]);
+}
+
 function InverseLerp(interval, delimiter) {
 	if (interval[0] > delimiter) {
 		return 0;
@@ -146,3 +150,91 @@ function rotatePoly(poly, angle, center = [0, 0]) {
         return [rotatedX + cx, rotatedY + cy];
     });
 }
+
+function getCircleRingTiles(center_in, r1, r2) {
+    const tiles = [];
+    const r1Sq = r1 * r1;
+    const r2Sq = r2 * r2;
+    const center = [center_in[0], center_in[1]] //Shift center to the center of the center part
+
+    // Iterate over a bounding box around the outer radius
+    for (let x = Math.floor(center[0] - r2); x <= Math.ceil(center[0] + r2); x++) {
+        for (let y = Math.floor(center[1] - r2); y <= Math.ceil(center[1] + r2); y++) {
+            // Calculate the distance from the center of the tile
+            const distSq = (x + 0.5 - center[0]) ** 2 + (y + 0.5 - center[1]) ** 2;
+            if (distSq >= r1Sq && distSq <= r2Sq) {
+                tiles.push([x, y]);
+            }
+        }
+    }
+
+    return tiles;
+}
+
+function convexHull(points) {
+    points.sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+
+    let lower = [];
+    for (let p of points) {
+        while (lower.length >= 2 && crossProduct(lower[lower.length - 2], lower[lower.length - 1], p) <= 0) {
+        lower.pop();
+        }
+        lower.push(p);
+    }
+
+    let upper = [];
+    for (let p of points.reverse()) {
+        while (upper.length >= 2 && crossProduct(upper[upper.length - 2], upper[upper.length - 1], p) <= 0) {
+        upper.pop();
+        }
+        upper.push(p);
+    }
+
+    upper.pop();
+    lower.pop();
+
+    return lower.concat(upper);
+}
+
+function welzl(points, boundary = []) {
+    if (points.length === 0 || boundary.length === 3) {
+        if (boundary.length === 0) return { center: [0, 0], radius: 0 };
+        if (boundary.length === 1) return { center: boundary[0], radius: 0 };
+        if (boundary.length === 2) {
+        const center = [(boundary[0][0] + boundary[1][0]) / 2, (boundary[0][1] + boundary[1][1]) / 2];
+        const radius = pointDist(boundary[0], center);
+        return { center, radius };
+        }
+        const [p1, p2, p3] = boundary;
+        const ax = p1[0], ay = p1[1];
+        const bx = p2[0], by = p2[1];
+        const cx = p3[0], cy = p3[1];
+
+        const d = 2 * (ax * (by - cy) + bx * (cy - ay) + cx * (ay - by));
+        const ux = ((ax * ax + ay * ay) * (by - cy) + (bx * bx + by * by) * (cy - ay) + (cx * cx + cy * cy) * (ay - by)) / d;
+        const uy = ((ax * ax + ay * ay) * (cx - bx) + (bx * bx + by * by) * (ax - cx) + (cx * cx + cy * cy) * (bx - ax)) / d;
+        const radius = pointDist([ux, uy], p1);
+        return { center: [ux, uy], radius };
+    }
+
+    const point = points.pop();
+    const circle = welzl(points, boundary);
+
+    if (pointDist(circle.center, point) <= circle.radius) {
+        points.push(point);
+        return circle;
+    }
+
+    boundary.push(point);
+    const result = welzl(points, boundary);
+    boundary.pop();
+    points.push(point);
+
+    return result;
+}
+
+function smallestEnclosingCircle(points) {
+    const hull = convexHull(points);
+    return welzl(hull);
+}
+

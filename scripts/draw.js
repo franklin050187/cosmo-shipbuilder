@@ -585,7 +585,6 @@ function getCanvasCorners(ctx, canvas) {
 function drawGrid() {
     let ctx = grid_canvas.getContext("2d");
     const corners = getCanvasCorners(ctx, grid_canvas);
-    console.log(corners);
 
     const transform = ctx.getTransform();
     const inverse = transform.invertSelf(); // Get the inverse of the transformation matrix

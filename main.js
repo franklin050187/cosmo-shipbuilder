@@ -14,7 +14,7 @@ let global_sprites_to_draw = [] //Saves the sprites that are yet to be drawn
 let global_sprites_to_delete = [] //Saves the sprites that are drawn to which should be deleted
 let global_doors_to_draw = [] //Saves the doors that are yet to be drawn
 let global_doors_to_delete = [] //Saves the doors that are drawn to which should be deleted
-let global_recently_placed = [] //Saves recently palced parts
+let global_recently_placed = [] //Saves recently placed parts
 let global_copied_parts = []
 let global_previous_mirror_mode = "vertical"
 let sprites = []; // To store the sprites
@@ -272,14 +272,26 @@ function sprite_position(part) {
 	return position;
 }
 
-function get_all_locations(sprites) {
+function getAlllocations(parts) {
 	const locations = [];
 
-	for (const sprite of sprites) {
-		getSpriteTileLocations(sprite);
-		Array.prototype.push.apply(locations, sprite.Location);
+	for (const part of parts) {
+		for (const tile of getSpriteTileLocations(part)) {
+			locations.push(tile)
+		}
 	}
 	return locations;
+}
+
+function getAllCornerLocations(parts) {
+	let tiles = getAlllocations(parts)
+
+	for (tile of [...tiles]) {
+		tiles.push([tile[0], tile[1]+1])
+		tiles.push([tile[0]+1, tile[1]])
+		tiles.push([tile[0]+1, tile[1]+1])
+	}
+	return tiles
 }
 
 function preloadSprites() {

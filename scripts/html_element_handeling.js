@@ -18,6 +18,7 @@ const help = document.getElementById("helpButton");
 const apply_property_button = document.getElementById("applyPropertyButton");
 const recalculate_stats_button = document.getElementById("reCalculateButton");
 const reset_camera_button = document.getElementById("restCameraButton");
+const add_shell_button = document.getElementById("addShellButton");
 const mirror_select = document.getElementById("mirrorSelect");
 for (const spriteName of ["none", "vertical", "horizontal", "diagonal1", "diagonal2", "dot"]) {
 	const option = document.createElement("option");
@@ -71,6 +72,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	recalculate_stats_button.addEventListener("click", handleRecalculateStats);
 	generate_ship.addEventListener("click", generateShip);
 	reset_camera_button.addEventListener("click", resetCamera);
+	add_shell_button.addEventListener("click", handlePlaceArmorShell);
 
 	//help.addEventListener("click", displayHelp);
 
@@ -286,4 +288,42 @@ function resetPlacementCategories() {
 
 function handleStatsSelectionChange() {
 	updateShipStats()
+}
+
+function handlePlaceArmorShell() {
+	const userInput = prompt("How many blocks thick should the shell be?:");
+	const thickness = Number(userInput);
+	placeArmorShell(thickness)
+}
+
+function placeArmorShell(thickness) {
+	let points = getAllCornerLocations(sprites)
+	const result = smallestEnclosingCircle(points);
+	console.log('Center:', result.center, 'Radius:', result.radius);
+
+	let r1 = result.radius;
+	let r2 = r1 + thickness;
+	let tiles = getCircleRingTiles(result.center, r1, r2);
+	
+	let parts = []
+	for (let tile of tiles) {
+		let part = generatePart("cosmoteer.armor", tile)
+		parts.push(part)
+	}
+	place_sprites(absoluteToRalativePartCoordinates(parts))
+}
+
+function getShipBounds(parts) {
+    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+
+    for (let part of parts) {
+        for (let [x, y] of getSpriteTileLocations(part)) {
+            if (x < minX) minX = x;
+            if (y < minY) minY = y;
+            if (x > maxX) maxX = x;
+            if (y > maxY) maxY = y;
+        }
+    }
+
+    return { minX, minY, maxX, maxY };
 }
