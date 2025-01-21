@@ -19,17 +19,20 @@ let global_copied_parts = []
 let global_previous_mirror_mode = "vertical"
 let sprites = []; // To store the sprites
 let all_ship_stats = []
+
+// adjust canvas size
 let minX = 0;
 let minY = 0;
 let maxX = 0;
-let maxY = 0; // adjust canvas size
+let maxY = 0; 
+
 let shipdata = {}; // To store the ship data
 let cursorMode = "Place"; // Initial cursor mode
 let global_doors = []; // To store the doors
 let global_resources = []; // To store the resources
 let global_resources_to_place = []
 let global_zoom_factor = 1
-let global_canvases = [canvas, resource_canvas, drawing_canvas, preview_canvas, door_canvas, hitbox_canvas]
+let global_canvases = [canvas, resource_canvas, drawing_canvas, preview_canvas, door_canvas, hitbox_canvas, grid_canvas]
 let global_crew_role_to_place = undefined
 let global_crew_roles = []
 let global_crew_role_sources = []

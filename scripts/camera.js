@@ -8,8 +8,13 @@ function zoom(factor, event) {
 	const previous_zoom_factor = global_zoom_factor;
 	global_zoom_factor += factor;
 
-	const scaleFactor = global_zoom_factor / previous_zoom_factor;
-	//const scaleFactor = 1/(getScalor()[0])+factor
+	// Prevent zooming too far out or too far in by setting bounds
+    global_zoom_factor = Math.max(0.1, Math.min(global_zoom_factor, 10)); // Zoom bounds
+
+    const scaleFactor = global_zoom_factor / previous_zoom_factor;
+
+    // Prevent negative scale
+    if (scaleFactor <= 0) return;
 
 	for (let c of global_canvases) {
 		let ctx = c.getContext("2d");

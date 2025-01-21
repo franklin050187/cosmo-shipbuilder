@@ -8,6 +8,7 @@ preloadSprites()
 // Initialize the canvas
 loadPreviewSpriteImage()
 initializeCanvas()
+redrawEntireCanvas()
 closeHelp()
 
 for (let role in crew_roles) {

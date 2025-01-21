@@ -6,6 +6,7 @@ const resource_canvas = document.getElementById("resourceCanvas");
 const preview_canvas = document.getElementById("previewCanvas");
 const door_canvas = document.getElementById("doorCanvas");
 const hitbox_canvas = document.getElementById("hitboxCanvas");
+const grid_canvas = document.getElementById("gridCanvas"); 
 const ctx = canvas.getContext("2d");
 
 let spritesDrawn = new Set(); // used in draw function
@@ -152,6 +153,7 @@ function redrawEntireCanvas() {
 	for (let c of global_canvases) {
 		clearLayer(c.getContext("2d"))
 	}
+	drawGrid()
 	global_sprites_to_draw.push(...sprites)
 	global_doors_to_draw.push(...global_doors)
 	updateCanvas()
@@ -557,3 +559,62 @@ function convertPolyToCanvas(poly) {
 	return new_poly
 }
 
+function getCanvasCorners(ctx, canvas) {
+    const transform = ctx.getTransform();
+
+    return {
+        topLeft: {
+            x: transform.a * 0 + transform.c * 0 + transform.e,
+            y: transform.b * 0 + transform.d * 0 + transform.f
+        },
+        topRight: {
+            x: transform.a * canvas.width + transform.c * 0 + transform.e,
+            y: transform.b * canvas.width + transform.d * 0 + transform.f
+        },
+        bottomLeft: {
+            x: transform.a * 0 + transform.c * canvas.height + transform.e,
+            y: transform.b * 0 + transform.d * canvas.height + transform.f
+        },
+        bottomRight: {
+            x: transform.a * canvas.width + transform.c * canvas.height + transform.e,
+            y: transform.b * canvas.width + transform.d * canvas.height + transform.f
+        }
+    };
+}
+
+function drawGrid() {
+    let ctx = grid_canvas.getContext("2d");
+    const corners = getCanvasCorners(ctx, grid_canvas);
+    console.log(corners);
+
+    const transform = ctx.getTransform();
+    const inverse = transform.invertSelf(); // Get the inverse of the transformation matrix
+
+    // Use the inverse to get the canvas corners in logical space
+    const topLeft = inverse.transformPoint({ x: 0, y: 0 });
+    const bottomRight = inverse.transformPoint({ x: grid_canvas.width, y: grid_canvas.height });
+
+    // Calculate the min and max logical grid coordinates
+    const minX = Math.floor(topLeft.x / gridSize);
+    const maxX = Math.ceil(bottomRight.x / gridSize);
+    const minY = Math.floor(topLeft.y / gridSize);
+    const maxY = Math.ceil(bottomRight.y / gridSize);
+
+    ctx.beginPath();
+
+    // Draw vertical grid lines
+    for (let x = minX; x <= maxX; x++) {
+        let canvasX = x * gridSize;
+        ctx.moveTo(canvasX, minY * gridSize);
+        ctx.lineTo(canvasX, maxY * gridSize);
+    }
+
+    // Draw horizontal grid lines
+    for (let y = minY; y <= maxY; y++) {
+        let canvasY = y * gridSize;
+        ctx.moveTo(minX * gridSize, canvasY);
+        ctx.lineTo(maxX * gridSize, canvasY);
+    }
+
+    ctx.stroke();
+}
