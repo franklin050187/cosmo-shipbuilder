@@ -99,6 +99,18 @@ document.addEventListener("keydown", function(event) {
     }
 });
 
+//mirror mode
+document.addEventListener("keydown", function(event) {
+    if (event.key === "m" && canvas_is_focused) {
+        event.preventDefault();
+        if (mirror_select.value === "none") {
+            changeMirrorMode(global_previous_mirror_mode)
+        } else {
+            changeMirrorMode("none")
+        }
+    }
+});
+
 //control groups
 for (let i=0;i<10;i++) {
     document.addEventListener("keydown", function(event) {
@@ -256,10 +268,12 @@ function cut() {
     ship_action_history.push(action)
 }
 
-function copy() {}
+function copy() {
+    global_copied_parts = absoluteToRalativePartCoordinates(partsCopy(global_selected_sprites))
+}
 
 function paste() {
-    global_sprites_to_place = absoluteToRalativePartCoordinates(partsCopy(global_selected_sprites))
+    global_sprites_to_place = global_copied_parts
     ChangeCursorMode("Place")
 }
 

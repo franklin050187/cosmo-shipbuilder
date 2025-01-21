@@ -15,6 +15,8 @@ let global_sprites_to_delete = [] //Saves the sprites that are drawn to which sh
 let global_doors_to_draw = [] //Saves the doors that are yet to be drawn
 let global_doors_to_delete = [] //Saves the doors that are drawn to which should be deleted
 let global_recently_placed = [] //Saves recently palced parts
+let global_copied_parts = []
+let global_previous_mirror_mode = "vertical"
 let sprites = []; // To store the sprites
 let all_ship_stats = []
 let minX = 0;
@@ -783,5 +785,11 @@ function removeDuplicates(array, isSame) {
 	return uniqueArray;
 }
 
-
+function changeMirrorMode(mode) {
+	if (mirror_select.value != "none") {
+		global_previous_mirror_mode = mirror_select.value
+	}
+	mirror_select.value = mode
+	handleMirrorSelectionChange()
+}
 

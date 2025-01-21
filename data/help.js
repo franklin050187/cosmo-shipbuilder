@@ -17,6 +17,7 @@ const global_help_message = `<p>
     - ctrl + x to cut <br> 
     - ctrl + v to paste selected parts (without transferring properties) <br> 
     - hold ctr for a bigger step size (when moving camera, mirror line,...)
+    - m to toggle mirror mode
 - Select parts and use the dropdown to select any property enter a new value and hit "apply" to change it (like weapon mode, on/off,...) <br> <br>
 - Use the ship config dropdown to change any general ship values (like setting default attack range to -1000 for autoram) <br> <br>
 </p>`
