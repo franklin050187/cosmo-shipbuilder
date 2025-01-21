@@ -50,6 +50,7 @@ function resetCamera() {
         const ctx = c.getContext("2d")
         ctx.resetTransform()
     }
+	global_zoom_factor = 1
     redrawEntireCanvas()
 }
 
