@@ -18,7 +18,7 @@ let global_recently_placed = [] //Saves recently placed parts
 let global_copied_parts = []
 let global_previous_mirror_mode = "vertical"
 let sprites = []; // To store the sprites
-let all_ship_stats = []
+let all_ship_stats = undefined
 
 // adjust canvas size
 let minX = 0;
@@ -197,7 +197,6 @@ function loadJson(json) {
 
 	global_crew_roles.push(...crew_data)
 
-	updateShipStats()
 	updateNonVisuals()
 	//place_sprites(part_data)
 	global_sprites_to_draw.push(...part_data)

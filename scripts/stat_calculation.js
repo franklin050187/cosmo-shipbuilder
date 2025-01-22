@@ -1,8 +1,7 @@
 //This file is for values that need to be calculated
 
 //A collection of all the ship stats calculated once to avoid dublicate calculations
-function getShipStats(ship) {
-    let stats = {}
+function getShipStats(ship, stats = {}) {
     stats.ship = ship
     stats.parts = ship.parts
     stats.resources = ship.resources
@@ -12,12 +11,6 @@ function getShipStats(ship) {
     stats.dps = shipDps(stats)
     stats.lighnessCoeff = shipLightnessCoeff(stats)
     stats.crew = crewCount(stats)
-    stats.connection_graph = getShipPartConnectionGraph(stats)
-    stats.connection_graph_partition = getConnectedComponents(stats.connection_graph[0],stats.connection_graph[1])
-    stats.walkable_connection_graph = getShipPartWalkableConnectionGraph(stats)
-    stats.walkable_connection_graph_partition = getConnectedComponents(stats.walkable_connection_graph[0], stats.walkable_connection_graph[1])
-    stats.neighbour_map = partNeighbourMap(stats.connection_graph)
-    stats.tag_map = getPartTagMap(stats)
     stats.weight = shipWeight(stats)
     stats.thrust = shipThrustVector(stats)
     stats.acceleration = shipAcceleration(stats, 0)
@@ -25,9 +18,35 @@ function getShipStats(ship) {
     stats.speed = shipMaxSpeed(stats, 0)
     stats.inertia = momentOfInertiaShip(stats)
     stats.hyperdrive_efficiency = getShipHyperdriveEfficiency(stats)
+    stats.connection_graph = getShipPartConnectionGraph(stats)
+    stats.connection_graph_partition = getConnectedComponents(stats.connection_graph[0],stats.connection_graph[1])
+    stats.walkable_connection_graph = getShipPartWalkableConnectionGraph(stats)
+    stats.walkable_connection_graph_partition = getConnectedComponents(stats.walkable_connection_graph[0], stats.walkable_connection_graph[1])
+    stats.neighbour_map = partNeighbourMap(stats.connection_graph)
+    stats.tag_map = getPartTagMap(stats)
     stats.primary_weapon = getPrimaryWeaponID(stats)
     stats.isUl = isUl(stats)
     stats.archetype = shipArchetype(stats)
+    return stats
+} 
+
+function getSmallShipStats(ship, stats = {}) {
+    stats.ship = ship
+    stats.parts = ship.parts
+    stats.resources = ship.resources
+    stats.cost = getShipCost(stats)
+    stats.command_points = getShipCommandPoints(stats, null, null)
+    stats.command_cost = getShipCommandCost(stats)
+    stats.dps = shipDps(stats)
+    stats.lighnessCoeff = shipLightnessCoeff(stats)
+    stats.crew = crewCount(stats)
+    stats.weight = shipWeight(stats)
+    stats.thrust = shipThrustVector(stats)
+    stats.acceleration = shipAcceleration(stats, 0)
+    stats.com = ship_com_location(stats)
+    stats.speed = shipMaxSpeed(stats, 0)
+    stats.inertia = momentOfInertiaShip(stats)
+    stats.hyperdrive_efficiency = getShipHyperdriveEfficiency(stats)
     return stats
 } 
 

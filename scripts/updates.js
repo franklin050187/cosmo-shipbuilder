@@ -20,40 +20,45 @@ function updateShipToggleSelection() {
 }
 
 function updateShipStatsVariable() {
-    all_ship_stats = getShipStats(getShip(sprites, global_doors, global_part_properties, global_resources))
-    return all_ship_stats
+	const currentStats = all_ship_stats || {}
+    all_ship_stats = getShipStats(getShip(sprites, global_doors, global_part_properties, global_resources), currentStats)
+}
+
+function updateShipStatsVariableSmall() {
+	const currentStats = all_ship_stats || {}
+    all_ship_stats = getSmallShipStats(getShip(sprites, global_doors, global_part_properties, global_resources), currentStats)
 }
 
 function updateShipStats() {
     parts = sprites
-    stats = updateShipStatsVariable()
-    warnings = getWarnings(stats)
+    updateShipStatsVariableSmall()
 	ship_stats_label.innerHTML = ''
 	if (stats_select.value === "stats" || stats_select.value === "all") {
-		ship_stats_label.innerHTML += stats.archetype+'<br>'
-		ship_stats_label.innerHTML += 'Weight :' + (stats.weight/1000).toFixed(1).toString() + 't<br>'
-		ship_stats_label.innerHTML += 'Acceleration :' + stats.acceleration[0].toFixed(2).toString() + 'm/s^2<br>'
-		ship_stats_label.innerHTML += 'Max speed :' + stats.speed.toFixed(2).toString() + 'm/s<br>'
-		ship_stats_label.innerHTML += 'Thrust :' + stats.thrust.toString() + 'N<br>'
-		ship_stats_label.innerHTML += 'Cost :' + stats.cost.toFixed(0).toString() + '₡<br>'
-		ship_stats_label.innerHTML += 'DPS :' + stats.dps.toFixed(0).toString() + '<br>'
-		const commandPoints = stats.command_points;
-		const commandCost = stats.command_cost;
+		ship_stats_label.innerHTML += all_ship_stats.archetype+'<br>'
+		ship_stats_label.innerHTML += 'Weight :' + (all_ship_stats.weight/1000).toFixed(1).toString() + 't<br>'
+		ship_stats_label.innerHTML += 'Acceleration :' + all_ship_stats.acceleration[0].toFixed(2).toString() + 'm/s^2<br>'
+		ship_stats_label.innerHTML += 'Max speed :' + all_ship_stats.speed.toFixed(2).toString() + 'm/s<br>'
+		ship_stats_label.innerHTML += 'Thrust :' + all_ship_stats.thrust.toString() + 'N<br>'
+		ship_stats_label.innerHTML += 'Cost :' + all_ship_stats.cost.toFixed(0).toString() + '₡<br>'
+		ship_stats_label.innerHTML += 'DPS :' + all_ship_stats.dps.toFixed(0).toString() + '<br>'
+		const commandPoints = all_ship_stats.command_points;
+		const commandCost = all_ship_stats.command_cost;
 		const commandPointText = `Command Points : ${commandCost}/${commandPoints}`;
 		if (commandCost > commandPoints) {
 			ship_stats_label.innerHTML += `<span style="color: red">${commandPointText}</span><br>`;
 		} else {
 			ship_stats_label.innerHTML += `${commandPointText}<br>`;
 		}
-		ship_stats_label.innerHTML += 'Crew :' + stats.crew.toString() + '웃<br>'
-		ship_stats_label.innerHTML += 'moment of inertia:' + stats.inertia.toFixed(2).toString()+ 'kgm^2<br>'
-		ship_stats_label.innerHTML += 'hyperdrive efficiency:' + (stats.hyperdrive_efficiency*100).toString() + '%<br>'
-		ship_stats_label.innerHTML += 'crew count:' + stats.crew.toString() + '<br>'
+		ship_stats_label.innerHTML += 'Crew :' + all_ship_stats.crew.toString() + '웃<br>'
+		ship_stats_label.innerHTML += 'moment of inertia:' + all_ship_stats.inertia.toFixed(2).toString()+ 'kgm^2<br>'
+		ship_stats_label.innerHTML += 'hyperdrive efficiency:' + (all_ship_stats.hyperdrive_efficiency*100).toString() + '%<br>'
+		ship_stats_label.innerHTML += 'crew count:' + all_ship_stats.crew.toString() + '<br>'
 	}
 	if (stats_select.value === "all") {
 		ship_stats_label.innerHTML += '<br>Warnings:<br>'
 	}
 	if (stats_select.value === "warnings" || stats_select.value === "all") {
+		warnings = getWarnings(all_ship_stats)
 		for (warning of warnings) {
 			ship_stats_label.innerHTML += warning.message
 			ship_stats_label.innerHTML += "<br>"
@@ -67,11 +72,11 @@ function updateShipStats() {
 			let sum = 0
 			for (let part_name of costBreakdownData[cathegory]) {
 				let id = "cosmoteer."+part_name
-				for (let part of getParts(stats.parts, hasIDCondition(id))) {
+				for (let part of getParts(all_ship_stats.parts, hasIDCondition(id))) {
 					sum += spriteData[id].cost
 				}
 			}
-			ship_stats_label.innerHTML += cathegory + ': ' + (sum*1000).toFixed(0).toString() + ' / ' + (sum/stats.cost*100*1000).toFixed(2).toString() + '%<br>'
+			ship_stats_label.innerHTML += cathegory + ': ' + (sum*1000).toFixed(0).toString() + ' / ' + (sum/all_ship_stats.cost*100*1000).toFixed(2).toString() + '%<br>'
 		}
 	}
 }

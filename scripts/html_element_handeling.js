@@ -198,6 +198,7 @@ function handleMirrorSelectionChange() {
 }
 
 function handleRecalculateStats() {
+	updateShipStatsVariable()
 	updateShipStats()
 }
 
@@ -287,7 +288,7 @@ function resetPlacementCategories() {
 }
 
 function handleStatsSelectionChange() {
-	updateShipStats()
+	handleRecalculateStats()
 }
 
 function handlePlaceArmorShell() {
