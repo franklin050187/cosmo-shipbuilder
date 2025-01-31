@@ -27,3 +27,7 @@ function hasRotationCondition(rotation) {
 function isMergingPartCondition() {
 	return part => mergingParts.includes(part.ID)
 }
+
+function isInRadiusToPartCondition(center_part, r) {
+	return part => pointDist(center_part.Location, part.Location)<=r && (!isSameSprite(center_part, part))
+}

@@ -362,6 +362,7 @@ function place_sprites(sprites_to_place, modify_action_history = true) {//Places
 	if (modify_action_history && !(placed_parts.length === 0)) {
 		addActionToHistory("add_parts", placed_parts)
 	}
+	updateShipStats()
 	updateCanvas()
 }
 
@@ -405,6 +406,7 @@ function remove_multiple_from_sprites(sprites_to_remove_in, modify_action_histor
 	removePartsFromKeyList(sprites_to_remove, global_crew_role_sources)
 	updateShipToggleSelection()
 	updateCanvas()
+	updateShipStats()
 	if (modify_action_history) {
 		addActionToHistory("remove_parts", sprites_to_remove)
 	}
@@ -452,6 +454,7 @@ function removeDoors(door1) {
 			}
 		}
 	}
+	updateShipStats()
 	updateCanvas()
 }
 

@@ -157,18 +157,23 @@
         position: relative;
     ">
             <style>
-            #drawingCanvas, #resourceCanvas, #previewCanvas, #doorCanvas, #hitboxCanvas, #gridCanvas  {
-                position: absolute;
-                top: 0;
-                left: 0;
-                pointer-events: none
-            }
-            </style>
-            <style>
-                #spriteCanvas  {
+                #drawingCanvas, #resourceCanvas, #previewCanvas, #doorCanvas, #hitboxCanvas, #gridCanvas {
                     position: absolute;
                     top: 0;
                     left: 0;
+                    pointer-events: none;
+                    z-index: 3; 
+                }
+            </style>
+            <style>
+                #spriteCanvas {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    z-index: 2; 
+                }
+                #gridCanvas {
+                    z-index: 1; 
                 }
             </style>
             <canvas id="spriteCanvas" width="64" height="64"></canvas>
@@ -192,6 +197,7 @@
         </div>
     </div>
     <script src="scripts/math.js"></script>
+    <script src="scripts/hitbox_logic.js"></script>
     <script src="data/data.js"></script>
     <script src="data/help.js"></script>
     <script src="data/crew_roles.js"></script>

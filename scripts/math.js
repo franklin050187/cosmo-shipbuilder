@@ -151,6 +151,7 @@ function rotatePoly(poly, angle, center = [0, 0]) {
     });
 }
 
+
 function getCircleRingTiles(center_in, r1, r2) {
     const tiles = [];
     const r1Sq = r1 * r1;
@@ -238,3 +239,7 @@ function smallestEnclosingCircle(points) {
     return welzl(hull);
 }
 
+function getArc(angle, cardinal_direction) {
+    let toadd = cardinal_direction*Math.PI/2
+    return [3 * Math.PI / 2 - angle * Math.PI / 360 + toadd,3 * Math.PI / 2 + angle * Math.PI / 360 + toadd];
+}

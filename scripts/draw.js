@@ -160,21 +160,36 @@ function redrawEntireCanvas() {
 }
 
 function drawPartIndicators(part) {
-	let loc = partCenter(part)
-	let [x,y] = convertCoordinatesToCanvas(part.Location)
-	let [centerX,centerY] = convertCoordinatesToCanvas(loc)
-
 	const canvas = document.getElementById("drawingCanvas");
 	const ctx = canvas.getContext("2d");
 	ctx.fillStyle = "red";
 	//ctx.fillRect(x, y, 10*getScalor()[0], 10*getScalor()[1]);
 
 	if (part.ID == "cosmoteer.shield_gen_small") {
+		let [centerX,centerY] = canvasCordFromsPartRelativeVector(part, [1,0])
+		radius = convertLengthToCanvas(7.5)
+		let arc = getArc(90, part.Rotation)
 		ctx.fillStyle = "blue";
 		ctx.beginPath();
-		ctx.lineWidth = 3;
-		ctx.arc(centerX, centerY, 400, 4*Math.PI/3, 5*Math.PI/3);
+		ctx.lineWidth = 2;
+		ctx.arc(centerX, centerY, radius, arc[0], arc[1]);
 		ctx.stroke(); 
+	} 
+	else if (part.ID == "cosmoteer.shield_gen_large") {
+		let parts = getParts(sprites, isInRadiusToPartCondition(part, 25))
+		let [centerX,centerY] = canvasCordFromsPartRelativeVector(part, [1.5,1.5])
+		let hitboxes = hitboxListFromParts(parts)
+		let arc = getArc(160, part.Rotation)
+		//let arcs = getVisibleArcs(hitboxes, [loc[0],loc[1]-1.5], 13, (190 * Math.PI) / 180, (-10 * Math.PI) / 180)
+		radius = convertLengthToCanvas(13)
+		ctx.fillStyle = "blue";
+		//for (let arc of arcs) {
+			ctx.beginPath();
+			ctx.lineWidth = 3;
+			ctx.arc(centerX, centerY, radius, arc[0], arc[1]);
+			ctx.stroke(); 
+		//}
+		
 	}
 }
 
@@ -274,6 +289,10 @@ function convertCanvasToCoordinates(canvasX, canvasY) {
 	const result = [canvasPositionX, canvasPositionY]
 
     return result;
+}
+
+function convertLengthToCanvas(length) {
+    return length * gridSize;
 }
 
 function partSprite(part) {
@@ -616,4 +635,41 @@ function drawGrid() {
     }
 
     ctx.stroke();
+}
+
+function rotatePartRelativeVector(vec, part) {
+	const rot = part.Rotation
+    const theta = -Math.PI / 2 * rot;
+    const cosTheta = Math.cos(theta);
+    const sinTheta = Math.sin(theta);
+
+	/*
+    let size = spriteData[part.ID].size
+	let rotation_center = [0,0]
+	if (rot == 1) {
+        rotation_center = [0,size[1]]
+    } else if (rot == 2) {
+        rotation_center = size
+    } else if (rot == 3) {
+		rotation_center = [size[0],0]
+    }
+
+	vec = addVecs(rotation_center, vec)
+    let rotatedVec = [vec[0] * cosTheta - vec[1] * sinTheta, vec[0] * sinTheta + vec[1] * cosTheta];*/
+	let size = spriteData[part.ID].size
+	let rotatedVec = vec
+	if (rot == 1) {
+        rotatedVec = [0,size[1]]
+    } else if (rot == 2) {
+        rotatedVec = [size[0]-rotatedVec[0], size[1]-rotatedVec[1]]
+    } else if (rot == 3) {
+		rotatedVec = [size[0],0]
+    }
+	
+    return rotatedVec
+}
+
+function canvasCordFromsPartRelativeVector(part, vec) {
+	let distance_vector = rotatePartRelativeVector(vec, part)
+	return convertCoordinatesToCanvas([distance_vector[0]+part.Location[0], distance_vector[1]+part.Location[1]])
 }
