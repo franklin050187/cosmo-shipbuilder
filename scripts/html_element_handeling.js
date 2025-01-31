@@ -129,7 +129,7 @@ function loadParts(category) {
 		const button = document.createElement("button");
 		button.classList.add("part-button")
 		let name = part.ID.replace("cosmoteer.", "");
-		let src = "sprites/" + name + ".png"
+		let src = "sprites/parts/" + name + ".png"
 
 		button.innerHTML = `
 		<img src="${src}" alt="${name}">
@@ -154,7 +154,7 @@ function loadResources(category) {
 			const button = document.createElement("button");
 			button.classList.add("part-button")
 			let name = resource;
-			let src = "sprites/" + name + ".png"
+			let src = "sprites/resources/" + name + ".png"
 
 			button.innerHTML = `
 			<img src="${src}" alt="${name}">

@@ -20,7 +20,7 @@ function draw_resources(resources, canvas) {
 		const imageName = resource.Value
 		const img = new Image()
 
-		img.src = `sprites/${imageName}.png`
+		img.src = `sprites/resources/${imageName}.png`
 
 		let [x,y] = convertCoordinatesToCanvas(resource.Key)
 		const rotatedImage = rotate_img(img, 0, false)
@@ -50,7 +50,7 @@ function draw_doors() {
 	for (const door of global_doors_to_draw) {
 		const img = new Image();
 
-		img.src = "sprites/door.png";
+		img.src = "sprites/parts/door.png";
 
 		img.onload = () => {
 			rotation = (door.Orientation + 1) % 2;
@@ -299,7 +299,7 @@ function partSprite(part) {
 	const selectedSprite = part.ID;
 	const imageName = selectedSprite.replace("cosmoteer.", "");
 	let image = new Image();
-	image.src = `sprites/${imageName}.png`;
+	image.src = `sprites/parts/${imageName}.png`;
 
 	image.onload = () => {
 		isPreviewSpriteLoaded = true;
