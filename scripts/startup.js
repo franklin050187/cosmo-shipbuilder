@@ -24,10 +24,10 @@ function initializeCanvas() {
 	maxY = size; 
 	const width = (maxX - minX + 1) * gridSize;
 	const height = (maxY - minY + 1) * gridSize;
-	for (let c of global_canvases) {
-		c.width = width;
-		c.height = height;
-	}
+	document.querySelectorAll("canvas").forEach(canvas => {
+        canvas.width = width;
+        canvas.height = height;
+    })
 	updateCanvas()
 }
 

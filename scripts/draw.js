@@ -637,7 +637,7 @@ function drawGrid() {
     ctx.stroke();
 }
 
-function rotatePartRelativeVector(vec, part) {
+function rotatePartRelativeVector(vec, part) {//Takes a part and a vector with part relative values assuming the part has rotation 0. If part doesnt have rotation 0 the vector will be rotated and translated appropriately 
 	const rot = part.Rotation
     const theta = -Math.PI / 2 * rot;
     const cosTheta = Math.cos(theta);

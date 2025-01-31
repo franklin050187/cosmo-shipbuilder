@@ -6,36 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ship Builder</title>
     <link rel="stylesheet" href="style.css">
-    <style>
-        canvas {
-            border: 1px solid #000;
-        }
-
-        #previewSprite {
-            position: absolute;
-            opacity: 0.7;
-            pointer-events: none;
-            /* Allow interaction with canvas below */
-        }
-    </style>
 </head>
 
 <body>
-    <div style="
-    display: flex;
-    width: 90%;
-    flex-direction: row;
-    align-content: flex-start;
-    justify-content: flex-start;
-    align-items: flex-start;
-">
-        <div style="
-    width: 20%;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: stretch;
-">
+    <div class="main-container" style="display: flex; width: 100%; flex-direction: row; align-content: flex-start; justify-content: flex-start; align-items: flex-start;">
+        <div style=" width: 20%;display: flex; flex-direction: column;justify-content: flex-start;align-items: stretch;">
             <fieldset>
                 <div id="overlay"></div>
                 <div id="helpModal">
@@ -51,6 +26,11 @@
                     <textarea name="b64_input" id="b64_input"></textarea>
                     <button id="load_b64">Load from URL</button>
                     <button id="loadButton">Load JSON</button>
+                    <div id="drop-zone" style="width: 200px; height: 75px; border: 2px dashed #000; display: flex; align-items: center; justify-content: center; flex-direction: column; transition: background 0.2s;">
+                        <p>Non functional picture input</p>
+                        <button id="file-button">Browse</button>
+                        <input type="file" id="file-input" style="display: none;">
+                    </div>
                 </div>
             </fieldset>
 
@@ -150,12 +130,7 @@
                     <button id="post_json">Generate Ship File</button>
                 </div>
         </div>
-        <div style="
-        width: 80%;
-        display: flex;
-        flex-direction: column;
-        position: relative;
-    ">
+        <div style="width: 60%; position: relative; display: flex; flex-direction: column;">
             <style>
                 #drawingCanvas, #resourceCanvas, #previewCanvas, #doorCanvas, #hitboxCanvas, #gridCanvas {
                     position: absolute;
@@ -176,26 +151,27 @@
                     z-index: 1; 
                 }
             </style>
-            <canvas id="spriteCanvas" width="64" height="64"></canvas>
-            <canvas id="resourceCanvas" width="64" height="64"></canvas>
-            <canvas id="drawingCanvas" width="64" height="64"></canvas>
-            <canvas id="previewCanvas" width="64" height="64"></canvas>
-            <canvas id="doorCanvas" width="128" height="128"></canvas>
-            <canvas id="hitboxCanvas" width="128" height="128"></canvas>
-            <canvas id="gridCanvas" width="128" height="128"></canvas>
+            <canvas id="spriteCanvas" width="256" height="256"></canvas>
+            <canvas id="resourceCanvas" width="256" height="256"></canvas>
+            <canvas id="drawingCanvas" width="256" height="256"></canvas>
+            <canvas id="previewCanvas" width="256" height="256"></canvas>
+            <canvas id="doorCanvas" width="256" height="256"></canvas>
+            <canvas id="hitboxCanvas" width="256" height="256"></canvas>
+            <canvas id="gridCanvas" width="256" height="256"></canvas>
         </div>
-        <div class="part-container">
+        <div class="part-container" style="width: 20%; position: relative; display: flex; flex-direction: column;">
+    
             <!-- Categories -->
             <div class="categories">
-              
+            
             </div>
         
             <!-- Parts -->
             <div id="parts-container" class="parts">
-              <!-- Dynamic loading parts here -->
+            <!-- Dynamic loading parts here -->
             </div>
         </div>
-    </div>
+    </div>  
     <script src="scripts/math.js"></script>
     <script src="scripts/hitbox_logic.js"></script>
     <script src="data/data.js"></script>

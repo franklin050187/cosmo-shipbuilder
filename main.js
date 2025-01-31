@@ -66,7 +66,7 @@ function generateShip() {
 	};
 }
 
-function get_json() {
+function get_json() {//Gets the json from a picture with the url in the url text field
 	const b64Input = document.getElementById("b64_input");
 	const encodedB64 = b64Input.value.replace(/-/g, "+").replace(/_/g, "/");
 	const jsonInput = document.getElementById("b64_input");
@@ -79,8 +79,31 @@ function get_json() {
 			loadJson();
 		}
 	};
+}
+
+async function getJsonFromPic(file) {//Gets the json from a picture with the url in the url text field
+	const jsonInput = document.getElementById("b64_input");
+	const xhr = new XMLHttpRequest();
+	const b64input = await fileToBase64(file);
+	console.log(b64input)
+	xhr.open("GET", b64input, true);
+	xhr.onload = () => {
+		if (xhr.status === 200) {
+			jsonInput.value = xhr.responseText;
+			loadJson();
+		}
+	};
 
 	xhr.send();
+}
+
+function fileToBase64(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result.split(',')[1]); // Removes the data URL prefix
+        reader.onerror = error => reject(error);
+    });
 }
 
 function ChangeCursorMode(string) {

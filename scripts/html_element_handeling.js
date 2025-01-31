@@ -62,6 +62,39 @@ if (b64) {
 	get_json();
 }
 
+const picture_drop_zone = document.getElementById("drop-zone");
+const picture_input = document.getElementById("file-input");
+const picture_browse_button = document.getElementById("file-button");
+
+function handleFileUpload(files) {
+    if (files.length > 0) {
+        console.log("Files selected:", files);
+        getJsonFromPic(files[0]); 
+    }
+}
+
+// Drag & Drop Functionality
+picture_drop_zone.addEventListener("dragover", (event) => {
+    event.preventDefault(); 
+    picture_drop_zone.style.background = "#f0f0f0"; 
+});
+
+picture_drop_zone.addEventListener("dragleave", () => {
+    picture_drop_zone.style.background = "white"; 
+});
+
+picture_drop_zone.addEventListener("drop", (event) => {
+    event.preventDefault();
+    picture_drop_zone.style.background = "white";
+    handleFileUpload(event.dataTransfer.files);
+});
+
+picture_browse_button.addEventListener("click", () => picture_input.click());
+
+picture_input.addEventListener("change", (event) => {
+    handleFileUpload(event.target.files);
+});
+
 //ensures these are loaded after the corresponding functions in main.js
 document.addEventListener("DOMContentLoaded", () => {
 	export_json_button.addEventListener("click", export_json);

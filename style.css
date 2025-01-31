@@ -1,4 +1,20 @@
 /*trash mostly written by ai. Idk what most of this does tbh*/
+canvas {
+  border: 1px solid #000;
+}
+
+.main-container {
+  display: grid;
+  grid-template-columns: 30% 40% 30%;
+}
+
+#previewSprite {
+  position: absolute;
+  opacity: 0.7;
+  pointer-events: none;
+  /* Allow interaction with canvas below */
+}
+/*
 body {
     font-family: Arial, sans-serif;
     background-color: white;
@@ -19,7 +35,7 @@ body {
   display: flex;
   flex-direction: column;
   position: relative;
-}
+}*/
 
 .part-container {
   flex-shrink: 0; 
@@ -74,9 +90,9 @@ body {
     object-position: top;
     margin-bottom: 10px; 
 }
-
+/*
 .helpModal {
-  display: none; /* Hidden by default */
+  display: none; 
   position: fixed;
   top: 50%;
   left: 50%;
@@ -87,7 +103,7 @@ body {
   z-index: 1000;
 }
 .overlay {
-  display: none; /* Hidden by default */
+  display: none; 
   position: fixed;
   top: 0;
   left: 0;
@@ -96,3 +112,4 @@ body {
   background: rgba(0, 0, 0, 0.5);
   z-index: 999;
 }
+*/
