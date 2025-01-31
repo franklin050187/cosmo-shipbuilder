@@ -643,29 +643,15 @@ function rotatePartRelativeVector(vec, part) {
     const cosTheta = Math.cos(theta);
     const sinTheta = Math.sin(theta);
 
-	/*
-    let size = spriteData[part.ID].size
-	let rotation_center = [0,0]
-	if (rot == 1) {
-        rotation_center = [0,size[1]]
-    } else if (rot == 2) {
-        rotation_center = size
-    } else if (rot == 3) {
-		rotation_center = [size[0],0]
-    }
-
-	vec = addVecs(rotation_center, vec)
-    let rotatedVec = [vec[0] * cosTheta - vec[1] * sinTheta, vec[0] * sinTheta + vec[1] * cosTheta];*/
+    let rotatedVec = [vec[0] * cosTheta - vec[1] * sinTheta, vec[0] * sinTheta + vec[1] * cosTheta];
 	let size = spriteData[part.ID].size
-	let rotatedVec = vec
 	if (rot == 1) {
-        rotatedVec = [0,size[1]]
+        rotatedVec = [size[0]+rotatedVec[0],size[0]+rotatedVec[1]]
     } else if (rot == 2) {
-        rotatedVec = [size[0]-rotatedVec[0], size[1]-rotatedVec[1]]
+        rotatedVec = [size[0]+rotatedVec[0], size[1]+rotatedVec[1]]
     } else if (rot == 3) {
-		rotatedVec = [size[0],0]
+		rotatedVec = [rotatedVec[0]+size[1]-size[0],rotatedVec[1]]
     }
-	
     return rotatedVec
 }
 
