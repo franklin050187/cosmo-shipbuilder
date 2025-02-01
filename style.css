@@ -1,11 +1,5 @@
-/*trash mostly written by ai. Idk what most of this does tbh*/
 canvas {
   border: 1px solid #000;
-}
-
-.main-container {
-  display: grid;
-  grid-template-columns: 30% 40% 30%;
 }
 
 #previewSprite {
@@ -14,28 +8,6 @@ canvas {
   pointer-events: none;
   /* Allow interaction with canvas below */
 }
-/*
-body {
-    font-family: Arial, sans-serif;
-    background-color: white;
-    color: #111;
-    margin: 0;
-  }
-  
-  .main-container {
-    display: flex;
-    width: 90%;
-    flex-direction: row;
-    justify-content: space-between; 
-    align-items: flex-start;
-}
-
-.canvas-container {
-  flex-grow: 1; 
-  display: flex;
-  flex-direction: column;
-  position: relative;
-}*/
 
 .part-container {
   flex-shrink: 0; 
@@ -46,70 +18,37 @@ body {
   margin-left: 10px;
 }
   
-  .categories {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-  }
-  
-  .category-btn {
-    background-color: white;
-    border: 1px solid #111;
-    padding: 10px 20px;
-    color: #222;
-    cursor: pointer;
-    border-radius: 5px;
-  }
-  
-  .category-btn:hover {
-    background-color: #555;
-  }
-  
-  .parts {
-    display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
-    justify-content: flex-end;
-    margin-top: 20px;
-  }
-  
-  .part-item {
-    flex: 1 1 calc(20% - 20px); 
-    max-width: calc(20% - 20px); 
-    text-align: center;
-    background-color: white;
-    border: 1px solid #111;
-    padding: 10px;
-    border-radius: 5px;
-  }
-  
-  .part-item img {
-    width: 90px;        
-    height: 120px;       
-    object-fit: cover;  
-    object-position: top;
-    margin-bottom: 10px; 
+.category-btn {
+  background-color: white;
+  border: 1px solid #111;
+  padding: 10px 20px;
+  color: #222;
+  cursor: pointer;
+  border-radius: 5px;
 }
-/*
-.helpModal {
-  display: none; 
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: white;
-  padding: 20px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  z-index: 1000;
+
+.category-btn:hover {
+  background-color: #555;
 }
-.overlay {
-  display: none; 
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 999;
+
+.parts {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+  margin-top: 10px;
 }
-*/
+
+.part-item {
+  text-align: center;
+  background-color: white;
+  border: 1px solid #111;
+  border-radius: 5px;
+}
+
+.part-item img {
+  width: 60px;        
+  height: 90px;       
+  object-fit: cover;  
+  object-position: top;
+  margin-bottom: 10px; 
+}

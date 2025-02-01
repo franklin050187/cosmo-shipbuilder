@@ -154,25 +154,32 @@ function redrawEntireCanvas() {
 		clearLayer(c.getContext("2d"))
 	}
 	drawGrid()
+	drawBuildingGridBorders()
 	global_sprites_to_draw.push(...sprites)
 	global_doors_to_draw.push(...global_doors)
 	updateCanvas()
 }
 
+function drawBuildingGridBorders() {
+	let ctx = grid_canvas.getContext("2d")
+	ctx.fillStyle = "red"
+	ctx.lineWidth = 6
+	drawPoly(grid_canvas, [convertCoordinatesToCanvas([60,60]), convertCoordinatesToCanvas([60,-60]), convertCoordinatesToCanvas([-60,-60]), convertCoordinatesToCanvas([-60,60])])
+}
+
 function drawPartIndicators(part) {
-	const canvas = document.getElementById("drawingCanvas");
-	const ctx = canvas.getContext("2d");
+	const canvas = document.getElementById("drawingCanvas")
+	const ctx = canvas.getContext("2d")
 	ctx.fillStyle = "red";
-	//ctx.fillRect(x, y, 10*getScalor()[0], 10*getScalor()[1]);
 
 	if (part.ID == "cosmoteer.shield_gen_small") {
 		let [centerX,centerY] = canvasCordFromsPartRelativeVector(part, [1,0])
 		radius = convertLengthToCanvas(7.5)
 		let arc = getArc(90, part.Rotation)
-		ctx.fillStyle = "blue";
-		ctx.beginPath();
-		ctx.lineWidth = 2;
-		ctx.arc(centerX, centerY, radius, arc[0], arc[1]);
+		ctx.fillStyle = "blue"
+		ctx.beginPath()
+		ctx.lineWidth = 2
+		ctx.arc(centerX, centerY, radius, arc[0], arc[1])
 		ctx.stroke(); 
 	} 
 	else if (part.ID == "cosmoteer.shield_gen_large") {
@@ -182,12 +189,12 @@ function drawPartIndicators(part) {
 		let arc = getArc(160, part.Rotation)
 		//let arcs = getVisibleArcs(hitboxes, [loc[0],loc[1]-1.5], 13, (190 * Math.PI) / 180, (-10 * Math.PI) / 180)
 		radius = convertLengthToCanvas(13)
-		ctx.fillStyle = "blue";
+		ctx.fillStyle = "blue"
 		//for (let arc of arcs) {
-			ctx.beginPath();
-			ctx.lineWidth = 3;
-			ctx.arc(centerX, centerY, radius, arc[0], arc[1]);
-			ctx.stroke(); 
+			ctx.beginPath()
+			ctx.lineWidth = 3
+			ctx.arc(centerX, centerY, radius, arc[0], arc[1])
+			ctx.stroke()
 		//}
 		
 	}
@@ -619,6 +626,7 @@ function drawGrid() {
     const maxY = Math.ceil(bottomRight.y / gridSize);
 
     ctx.beginPath();
+	ctx.lineWidth = 1
 
     // Draw vertical grid lines
     for (let x = minX; x <= maxX; x++) {
