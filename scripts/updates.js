@@ -86,32 +86,8 @@ function updateCoordinates(canvasPositionX, canvasPositionY) {
 }
 
 function updateSpriteSelection() {
-	const old_toggles = [];
-	include_toggle = true;
-
-	property_select.innerHTML = ""; //Update Selection
-
-	for (sprite of global_selected_sprites) {
-		for (const toggle of getPartData(sprite)) {
-			for (const old_toggle of old_toggles) {
-				if (isSameToggleType(old_toggle, toggle)) {
-					include_toggle = false;
-				}
-			}
-			if (include_toggle) {
-				const option = document.createElement("option");
-				const toggle_name = toggle.Key[1];
-
-				option.value = JSON.stringify(toggle);
-				option.textContent = toggle_name;
-				property_select.appendChild(option);
-
-				old_toggles.push(toggle);
-			} else {
-				include_toggle = true;
-			}
-		}
-	}
+	include_toggle = true
+	loadToggles(global_selected_sprites)
 }
 
 function deleteNonExistingproperties() {

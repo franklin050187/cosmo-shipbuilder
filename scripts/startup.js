@@ -25,7 +25,6 @@ function initializeCanvas() {
 	const sizeFromWidth = (containerWidth / gridSize - 1) / 2;
 	const sizeFromHeight = (containerHeight / gridSize - 1) / 2;
 	let size = [sizeFromWidth, sizeFromHeight];
-	console.log(size)
   
 	let minX = -size[0], minY = -size[1], maxX = size[0], maxY = size[1]
 	const width = (maxX - minX + 1) * gridSize;

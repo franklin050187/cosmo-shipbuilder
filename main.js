@@ -85,7 +85,6 @@ async function getJsonFromPic(file) {//Gets the json from a picture with the url
 	const jsonInput = document.getElementById("b64_input");
 	const xhr = new XMLHttpRequest();
 	const b64input = await fileToBase64(file);
-	console.log(b64input)
 	xhr.open("GET", b64input, true);
 	xhr.onload = () => {
 		if (xhr.status === 200) {

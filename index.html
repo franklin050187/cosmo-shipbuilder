@@ -71,13 +71,13 @@
 
             <fieldset>
                 <legend>Parts</legend>
-                <div>
-                    <label id="selected_parts">Selected a property:</label>
-                    <select id="propertySelect"></select>
-                </div>
-                <div>
-                    <textarea id="propertyEdit"></textarea>
-                    <button id="applyPropertyButton">Apply</button>
+                <div id ="toggles">
+                    <div id ="toggle-selector-outside">
+
+                    </div>
+                    <div id ="toggle-selector-inside">
+
+                    </div>
                 </div>
             </fieldset>
 
@@ -129,6 +129,7 @@
                     <a href="" id="ship_link" style="display: none">Generated Ship, click here</a>
                     <button id="post_json">Generate Ship File</button>
                 </div>
+            </fieldset>
         </div>
         <div class="canvas-container" style="width: 70%; position: relative; display: flex; flex-direction: column;">
             <style>
@@ -160,13 +161,10 @@
             <canvas id="gridCanvas" width="256" height="256"></canvas>
         </div>
         <div class="part-container" style="width: 15%; position: relative; display: flex; flex-direction: column;">
-    
-            <!-- Categories -->
             <div class="categories">
-            
+            <!-- Dynamic loading categories here -->
             </div>
-        
-            <!-- Parts -->
+
             <div id="parts-container" class="parts">
             <!-- Dynamic loading parts here -->
             </div>

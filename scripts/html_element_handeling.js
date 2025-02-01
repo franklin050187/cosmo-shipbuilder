@@ -7,15 +7,17 @@ const export_json_button = document.getElementById("exportButton");
 const partsContainer = document.getElementById("parts-container");
 const categoryButtons = document.querySelectorAll(".category-btn");
 
+const togglesContainer = document.getElementById("toggles");
+const togglesContainerInner = document.getElementById("toggle-selector-inside");
+const togglesContainerOuter = document.getElementById("toggle-selector-outside");
+
 const shiplink = document.getElementById("ship_link");
 const generate_ship = document.getElementById("post_json");
 
 const spriteNames = Object.keys(spriteData).sort();
-const property_select = document.getElementById("propertySelect");
 const stats_select = document.getElementById("statsSelect");
 const property_edit = document.getElementById("propertyEdit");
 const help = document.getElementById("helpButton");
-const apply_property_button = document.getElementById("applyPropertyButton");
 const recalculate_stats_button = document.getElementById("reCalculateButton");
 const reset_camera_button = document.getElementById("restCameraButton");
 const add_shell_button = document.getElementById("addShellButton");
@@ -99,7 +101,6 @@ picture_input.addEventListener("change", (event) => {
 document.addEventListener("DOMContentLoaded", () => {
 	export_json_button.addEventListener("click", export_json);
 	load_json_button.addEventListener("click", loadJson);
-	apply_property_button.addEventListener("click", applyProperty);
 	loadB64Button.addEventListener("click", get_json);
 	apply_ship_property_button.addEventListener("click", applyShipProperty);
 	recalculate_stats_button.addEventListener("click", handleRecalculateStats);
@@ -113,7 +114,6 @@ document.addEventListener("DOMContentLoaded", () => {
 		radio.addEventListener("click", handleCursorMode);
 	}
 
-	property_select.addEventListener("change", handlePropertySelectionChange);
 	stats_select.addEventListener("change", handleStatsSelectionChange);
 	ship_property_select.addEventListener("change", handleShipPropertySelectionChange);
 	mirror_select.addEventListener("change", handleMirrorSelectionChange);	
@@ -138,6 +138,7 @@ function loadParts(category) {
 		`;
 		button.addEventListener("click", () => {
 			global_sprites_to_place = [generatePart(part.ID)]
+			ChangeCursorMode("Place")
 		});
 		partDiv.appendChild(button);
     	partsContainer.appendChild(partDiv);
@@ -163,6 +164,7 @@ function loadResources(category) {
 			`;
 			button.addEventListener("click", () => {
 				global_resources_to_place = [generateResource(name)]
+				ChangeCursorMode("Resource")
 			});
 			partDiv.appendChild(button);
 			partsContainer.appendChild(partDiv);
@@ -187,9 +189,69 @@ function loadCrewRoles(category) {
 		`;
 		button.addEventListener("click", () => {
 			global_crew_role_to_place = crew_roles[role]
+			ChangeCursorMode("Crew")
 		});
 		partDiv.appendChild(button);
 		partsContainer.appendChild(partDiv);
+	}
+}
+
+function loadToggles(parts) {
+	let toggles = []
+	include_toggle = true
+
+	togglesContainerInner.innerHTML = ""
+	togglesContainerOuter.innerHTML = ""
+
+	let all_toggles = getPartData(parts)
+
+	for (const toggle of all_toggles) {
+		for (const old_toggle of toggles) {
+			if (isSameToggleType(old_toggle, toggle)) {
+				include_toggle = false
+			}
+		}
+		if (include_toggle) {
+			toggles.push(toggle)
+		} else {
+			include_toggle = true
+		}
+	}
+	
+	for (let toggle of toggles) {
+		togglesContainerOuter.classList.add("part-toggle")
+		const button = document.createElement("button")
+		button.classList.add("part-button")
+
+		let name = toggle.Key[1]
+		let value = toggle.Value
+		let options = toggleData[name].option
+		const optionMap = Object.fromEntries(options.map(([name, key]) => [key, name]));
+		const getOption = key => optionMap[key] || null;
+		let pic_name = getOption(value)
+
+		button.innerHTML = `<img src="sprites/toggles/${pic_name}.png" alt="${name}">`
+
+		button.addEventListener("click", () => {
+			togglesContainerInner.innerHTML = ""
+			for (let i=0; i<options.length; i++) {
+				let option_name = options[i][0]
+				togglesContainerInner.classList.add("part-toggle")
+				const button = document.createElement("button")
+				button.classList.add("part-button")
+				button.innerHTML = `<img src="sprites/toggles/${option_name}.png" alt="${name}">`
+				button.addEventListener("click", () => {
+					for (let toggle2 of all_toggles) {
+						if (toggle2.Key[1] === name) {
+							toggle2.Value = options[i][1]
+						}
+					}
+					loadToggles(global_selected_sprites)
+				})
+				togglesContainerInner.appendChild(button)
+			}
+		})
+		togglesContainerOuter.appendChild(button)
 	}
 }
 

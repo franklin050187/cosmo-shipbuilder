@@ -142,8 +142,6 @@ function getVisibleArcs(polygons, center, radius, startAngle, endAngle) {
         }
     });
     const merged = mergeIntervals(blocked);
-    console.log(blocked)
-    console.log(merged)
     
     const visible = subtractIntervals(startAngle, endAngle, merged);
     return visible.map(arc => [arc.start, arc.end]);

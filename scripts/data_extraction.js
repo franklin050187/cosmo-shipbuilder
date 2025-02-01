@@ -1,11 +1,13 @@
 //This file is for functions that extract some kind of information.
 
-function getPartData(part) {
+function getPartData(parts) {
 	data = [];
-	for (const entry of global_part_properties) {
-		const key = entry.Key || {};
-		if (part.Location[0] === key[0].Location[0] && part.Location[1] === key[0].Location[1]) {
-			data.push(entry);
+	for (let part of parts) {
+		for (const entry of global_part_properties) {
+			const key = entry.Key || {};
+			if (isSameSprite(part, key[0])) {
+				data.push(entry);
+			}
 		}
 	}
 	return data;
@@ -30,15 +32,6 @@ function getShipDataMap() {
 	return filtered_ship_data;
 }
 
-function getPartToggles(part) {
-	toggles = [];
-	for (toggle of global_part_properties) {
-		if (toggle.Key[0].ID === part.ID) {
-			toggles.push(toggle);
-		}
-	}
-	return toggles;
-}
 
 function getParts(parts, condition) {
     parts_out = []
@@ -52,7 +45,7 @@ function getParts(parts, condition) {
 
 function getPartDataMap(part) {
 	const part_data = new Map();
-	const raw_data = getPartData(part);
+	const raw_data = getPartData([part]);
 
 	for (const entry of raw_data) {
 		const key = entry.Key || {};
