@@ -68,3 +68,20 @@ canvas {
   margin-bottom: 10px; 
 }
 
+.tab-bar {
+  display: flex;
+  padding: 5px;
+  z-index: 10;
+}
+
+.tab {
+  padding: 10px 15px;
+  border: 2px solid #ccc;
+  background-color: #ddd;
+  cursor: pointer;
+  margin-right: 5px;
+}
+
+.tab.active {
+  background-color: #fff;
+}

@@ -8,7 +8,6 @@ preloadSprites()
 // Initialize the canvas
 loadPreviewSpriteImage()
 initializeCanvas()
-redrawEntireCanvas()
 closeHelp()
 
 for (let role in crew_roles) {
@@ -35,24 +34,6 @@ function initializeCanvas() {
 	});
 	redrawEntireCanvas();
 }
-
-/*
-function initializeCanvas() {
-	// Adjust canvas size
-	let size = 16
-	minX = -size;
-	minY = -size;
-	maxX = size;
-	maxY = size; 
-	const width = (maxX - minX + 1) * gridSize;
-	const height = (maxY - minY + 1) * gridSize;
-	document.querySelectorAll("canvas").forEach(canvas => {
-        canvas.width = width;
-        canvas.height = height;
-    })
-	updateCanvas()
-}
-*/
 
 window.addEventListener('resize', initializeCanvas)
 

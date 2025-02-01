@@ -119,6 +119,32 @@ document.addEventListener("DOMContentLoaded", () => {
 	mirror_select.addEventListener("change", handleMirrorSelectionChange);	
 });
 
+//The tab bar above the canvas
+const canvasContainer = document.getElementById('canvas-container');
+const canvasAltContainer = document.getElementById('canvas-alt-container');
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+   	selectTab(tab)
+  });
+});
+function selectTab(tab) {
+	document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+
+    if (tab.textContent.trim() === 'Canvas') {
+		canvasContainer.style.display = 'block';
+		canvasAltContainer.style.display = 'none';
+    } else if (tab.textContent.trim() === 'Analysis') {
+		canvasContainer.style.display = 'none';
+		canvasAltContainer.style.display = 'block';
+		canvasAltContainer.innerHTML = '<div class="canvas-alt-container">Not implemented yet</div>';
+    } else if (tab.textContent.trim() === 'Modules') {
+		canvasContainer.style.display = 'none';
+		canvasAltContainer.style.display = 'block';
+		canvasAltContainer.innerHTML = '<div class="canvas-alt-container">Also not implemented yet :(</div>';
+	} 
+}
+
 // Function to load parts based on category
 function loadParts(category) {
 	partsContainer.innerHTML = ""; 
@@ -138,7 +164,6 @@ function loadParts(category) {
 		`;
 		button.addEventListener("click", () => {
 			global_sprites_to_place = [generatePart(part.ID)]
-			ChangeCursorMode("Place")
 		});
 		partDiv.appendChild(button);
     	partsContainer.appendChild(partDiv);
@@ -164,7 +189,6 @@ function loadResources(category) {
 			`;
 			button.addEventListener("click", () => {
 				global_resources_to_place = [generateResource(name)]
-				ChangeCursorMode("Resource")
 			});
 			partDiv.appendChild(button);
 			partsContainer.appendChild(partDiv);
@@ -189,7 +213,6 @@ function loadCrewRoles(category) {
 		`;
 		button.addEventListener("click", () => {
 			global_crew_role_to_place = crew_roles[role]
-			ChangeCursorMode("Crew")
 		});
 		partDiv.appendChild(button);
 		partsContainer.appendChild(partDiv);

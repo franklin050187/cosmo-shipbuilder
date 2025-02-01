@@ -70,7 +70,7 @@
             </fieldset>
 
             <fieldset>
-                <legend>Parts</legend>
+                <legend>Toggles</legend>
                 <div id ="toggles">
                     <div id ="toggle-selector-outside">
 
@@ -152,13 +152,25 @@
                     z-index: 1; 
                 }
             </style>
-            <canvas id="spriteCanvas" width="256" height="256"></canvas>
-            <canvas id="resourceCanvas" width="256" height="256"></canvas>
-            <canvas id="drawingCanvas" width="256" height="256"></canvas>
-            <canvas id="previewCanvas" width="256" height="256"></canvas>
-            <canvas id="doorCanvas" width="256" height="256"></canvas>
-            <canvas id="hitboxCanvas" width="256" height="256"></canvas>
-            <canvas id="gridCanvas" width="256" height="256"></canvas>
+            <div class="tab-bar">
+                <div class="tab active">Canvas</div>
+                <div class="tab">Analysis</div>
+                <div class="tab">Modules</div>
+            </div>
+            <div class="canvas-wrapper" style="position: relative; flex: 1;">
+                <div id="canvas-container">
+                  <canvas id="spriteCanvas" width="256" height="256"></canvas>
+                  <canvas id="resourceCanvas" width="256" height="256"></canvas>
+                  <canvas id="drawingCanvas" width="256" height="256"></canvas>
+                  <canvas id="previewCanvas" width="256" height="256"></canvas>
+                  <canvas id="doorCanvas" width="256" height="256"></canvas>
+                  <canvas id="hitboxCanvas" width="256" height="256"></canvas>
+                  <canvas id="gridCanvas" width="256" height="256"></canvas>
+                </div>
+                <div id="canvas-alt-container" style="display: none;">
+
+                </div>
+            </div>
         </div>
         <div class="part-container" style="width: 15%; position: relative; display: flex; flex-direction: column;">
             <div class="categories">
