@@ -311,6 +311,7 @@ function endSelectionBox(pos, event) {
     }
     global_selection_box_start = []
     updateCanvas()
+    updateSpriteSelection()
 }
 
 function handleCanvasMouseMove(event) {
