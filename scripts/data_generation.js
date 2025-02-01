@@ -24,11 +24,21 @@ function generatePropertiesForPart(part) {
     if (spriteData[part.ID].tags.includes("on_off")) {
         properties.push({"Key": [{"FlipX": part.FlipX, "ID": part.ID, "Location": [...part.Location], "Rotation": part.Rotation}, "on_off"], "Value": 1})
     }
+    if (spriteData[part.ID].tags.includes("light")) {
+        properties.push({"Key": [{"FlipX": part.FlipX, "ID": part.ID, "Location": [...part.Location], "Rotation": part.Rotation}, "light_strength"], "Value": 0})
+    }
+    if (spriteData[part.ID].tags.includes("alternating_fire")) {
+        properties.push({"Key": [{"FlipX": part.FlipX, "ID": part.ID, "Location": [...part.Location], "Rotation": part.Rotation}, "fire_alternating"], "Value": 0})
+    }
     if (spriteData[part.ID].tags.includes("weapon") || spriteData[part.ID].tags.includes("weapon_like")) {
         properties.push({"Key": [{"FlipX": part.FlipX, "ID": part.ID, "Location": [...part.Location], "Rotation": part.Rotation}, "fire_mode"], "Value": 0})
     }
     if (part.ID === "cosmoteer.missile_launcher") {
         properties.push({"Key": [{"FlipX": false, "ID": "cosmoteer.missile_launcher", "Location": [...part.Location], "Rotation": part.Rotation}, "missile_type"], "Value": 0})
+    } else if (part.ID === "cosmoteer.engine_room") {
+        properties.push({"Key": [{"FlipX": false, "ID": "cosmoteer.engine_room", "Location": [...part.Location], "Rotation": part.Rotation}, "distribute_power"], "Value": 1})
+    } else  if (part.ID === "cosmoteer.tractor_beam_emitter") {
+        properties.push({"Key": [{"FlipX": false, "ID": "cosmoteer.tractor_beam_emitter", "Location": [...part.Location], "Rotation": part.Rotation}, "tractor_mode"], "Value": 0})
     }
     if (spriteData[part.ID].tags.includes("fire_pref")) {
         properties.push({"Key": [{"FlipX": false, "ID": part.ID, "Location": [...part.Location], "Rotation": part.Rotation}, "fire_pref"], "Value": 0})

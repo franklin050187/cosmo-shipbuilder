@@ -26,6 +26,8 @@ hyperdrive: hyperdrives (obviously lol)
 sprite_size: how big the sprite is
 size: how big the base is (without turrets and such)
 real_size: Used if the sprite is bigger than the size but the hitbox isnt. This is to seperate drawing in the right position and checking for overlaps.
+alternating_fire: Weapon has a alternating fire mode. Used to find if the aprt needs the toggle.
+light: Is a light source. Used to find out if a part needs the light strength toggle.
 */ 
 
 const spriteData = {
@@ -79,7 +81,7 @@ const spriteData = {
 		dps: 1778,
 		burst_damage: 1000,
 		cost: 6,
-		tags: ["weapon", "on_off", "energy weapon"],
+		tags: ["weapon", "on_off", "energy weapon", "alternating_fire"],
 		cp_cost: 4,
 		hitboxes: [rectWithLengths(2, 3), circle([1, -1], 0.75)],
 	},
@@ -197,7 +199,7 @@ const spriteData = {
 		dps: 6000,
 		burst_damage: 7500,
 		cost: 20,
-		tags: ["weapon", "on_off", "projectile weapon"],
+		tags: ["weapon", "on_off", "projectile weapon", "alternating_fire"],
 		cp_cost: 8,
 		hitboxes: [rectWithLengths(4,5), circle([2, 122/64], 1.5)],
 	},
@@ -208,7 +210,7 @@ const spriteData = {
 		tags: ["utilities"],
 		hitboxes: [squareWithLength(1)],
 	},
-	"cosmoteer.roof_light": { mass: 1, size: [1, 1], cost: 0.2, tags: ["on_off", "utilities"], hitboxes: [squareWithLength(1)] },
+	"cosmoteer.roof_light": { mass: 1, size: [1, 1], cost: 0.2, tags: ["on_off", "utilities", "light"], hitboxes: [squareWithLength(1)] },
 	"cosmoteer.missile_launcher": {
 		mass: 8,
 		size: [2, 3],
@@ -224,7 +226,7 @@ const spriteData = {
 		mass: 1,
 		size: [1, 1],
 		cost: 0.3,
-		tags: ["on_off", "utilities"],
+		tags: ["on_off", "utilities", "light"],
 		hitboxes: [squareWithLength(1)],
 	},
 	"cosmoteer.railgun_loader": {
@@ -794,13 +796,24 @@ const toggleData = {
 		option: [["toggle_fire_hold", -1], ["toggle_fire_at_target", 0], ["toggle_fire_at_will", 1], ["toggle_fire_auto", 2]],
 	},
 	"missile_type": {
-		option: [["missile_type_he", 0], ["missile_type_nuke", 2], ["missile_type_emp", 1], ["missile_type_mine", 3]]
+		option: [["missile_type_he", 0], ["missile_type_emp", 1], ["missile_type_nuke", 2], ["missile_type_mine", 3]]
 	},
 	"fire_pref": {
-		option: [["fire_pref_attack", 0], ["fire_pref_both", 2], ["fire_pref_defend", 1]]
+		option: [["fire_pref_attack", 0], ["fire_pref_defend", 1], ["fire_pref_both", 2]]
+	},
+	"fire_alternating": {
+		option: [["toggle_alternating_off", 0], ["toggle_alternating_on", 1]]
+	},
+	"tractor_mode": {
+		option: [["tractor_beam_auto", 0], ["tractor_beam_pull", 1], ["tractor_beam_push", 2]]
+	},
+	"light_strength": {
+		option: [["toggle_lights_low", 0], ["toggle_lights_med", 1], ["toggle_lights_high", 2]]
+	},
+	"distribute_power": {
+		option: [["toggle_power_distribution_off", 0], ["toggle_power_distribution_on", 1]]
 	},
 }
-
 const multiple_turrets = [
 	"cosmoteer.thruster_small_2way",
 	"cosmoteer.thruster_small_3way",
