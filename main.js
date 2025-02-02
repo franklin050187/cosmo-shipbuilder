@@ -838,3 +838,17 @@ function changeMirrorMode(mode) {
 	handleMirrorSelectionChange()
 }
 
+function rotateParts(parts, rotation) {
+	for (let part of parts) {
+		const theta = Math.PI / 2 * rotation
+		const cosTheta = Math.cos(theta)
+		const sinTheta = Math.sin(theta)
+
+		part.Rotation = (part.Rotation+rotation)%4
+		let size = spriteData[part.ID].size
+		let pos = part.Location
+		let rotatedVec = [pos[0] * cosTheta - pos[1] * sinTheta, pos[0] * sinTheta + pos[1] * cosTheta]
+		part.Location = rotatedVec
+	}
+}
+

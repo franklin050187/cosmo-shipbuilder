@@ -435,9 +435,7 @@ function handleRightClick(event) {
 	event.preventDefault();
 	let pos = mousePos(event)
 	if (cursorMode === "Place" || cursorMode === "Move") {
-		for (part of global_sprites_to_place) {
-			part.Rotation = (part.Rotation + 1) % 4
-		}
+        rotateParts(global_sprites_to_place, 1)
 		handleCanvasMouseMove(event); 
 	} else if (cursorMode === "Delete") {
         doIfCursorOverDoor(event, (part) => {
