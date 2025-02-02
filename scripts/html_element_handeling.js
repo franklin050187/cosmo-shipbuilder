@@ -288,12 +288,6 @@ function handleCursorMode() {
 	}
 }
 
-function handlePropertySelectionChange() {
-	if (property_select.value) {
-		property_edit.value = JSON.parse(property_select.value).Value;
-	}
-}
-
 function handleShipPropertySelectionChange() {
 	ship_property_edit.value = ship_property_select.value;
 }

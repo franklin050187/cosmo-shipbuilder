@@ -12,6 +12,10 @@ function addVecs(vec1, vec2) {
     return vec1.map((v, i) => v + vec2[i]);
 }
 
+function scaleVec(vec, r) {
+    return [vec[0]*r, vec[1]*r]
+}
+
 function pointDist(vec1, vec2) {
 	return vecLength([vec1[0] - vec2[0], vec1[1] - vec2[1]]);
 }

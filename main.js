@@ -143,6 +143,10 @@ function handleCursorModeChange() {
 	if (cursorMode != "Crew") {
 		global_crew_role_to_place = undefined
 	}
+	if (cursorMode != "Select") {
+		global_selected_sprites = []
+		selectParts([])
+	}
 	updateCanvas()
 }
 
@@ -416,7 +420,6 @@ function selectParts(parts, unmirrored_parts_in) {
 	
 	updateCanvas()
 	updateSpriteSelection();
-	handlePropertySelectionChange()
 }
 
 function remove_multiple_from_sprites(sprites_to_remove_in, modify_action_history = true) {

@@ -6,6 +6,8 @@ let lastClickTime = 0;
 let global_left_mousdown_toggle = false
 let global_right_mousdown_toggle = false
 let canvas_is_focused = false
+let global_wasd_keys_down = {"w": false, "a": false, "s": false, "d":false}
+const global_translation_amount = 20
 
 //Mirror center shifts
 document.addEventListener("keydown", function(event) {
@@ -158,7 +160,6 @@ document.addEventListener("DOMContentLoaded", () => {
       });
 
     //translation of camera
-    let global_translation_amount = 20
     canvas.addEventListener('mousedown', (event) => {
         if (event.button === 1) {
             event.preventDefault();
@@ -168,27 +169,16 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
     document.addEventListener("keydown", function(event) {
-        if (event.key === "w" && canvas_is_focused) {
+        if ((event.key === "w" || event.key === "a" || event.key === "s" || event.key === "d") && canvas_is_focused && !global_wasd_keys_down[event.key]) {
             event.preventDefault()
-            translateCanvas([0,global_translation_amount/canvas.getContext("2d").getTransform().a*getMultiplier(event)], true)
+            global_wasd_keys_down[event.key] = true
+            wasdCanvasMove(event)
         }
     });
-    document.addEventListener("keydown", function(event) {
-        if (event.key === "s" && canvas_is_focused) {
+    document.addEventListener("keyup", function(event) {
+        if (event.key === "w" || event.key === "a" || event.key === "s" || event.key === "d") {
             event.preventDefault()
-            translateCanvas([0,-global_translation_amount/canvas.getContext("2d").getTransform().a*getMultiplier(event)], true)
-        }
-    });
-    document.addEventListener("keydown", function(event) {
-        if (event.key === "a" && canvas_is_focused) {
-            event.preventDefault()
-            translateCanvas([global_translation_amount/canvas.getContext("2d").getTransform().a*getMultiplier(event),0], true)
-        }
-    });
-    document.addEventListener("keydown", function(event) {
-        if (event.key === "d" && canvas_is_focused) {
-            event.preventDefault()
-            translateCanvas([-global_translation_amount/canvas.getContext("2d").getTransform().a*getMultiplier(event),0], true)
+            global_wasd_keys_down[event.key] = false
         }
     });
 
@@ -461,4 +451,23 @@ function handleRightClick(event) {
 	}
 }
 
+function wasdCanvasMove(event) {
+    let vec = [0,0]
+    let key = event.key
+    if (key === "w") {
+        vec[1] = 1
+    } else if (key === "a") {
+        vec[0] = 1
+    } else if (key === "s") {
+        vec[1] = -1
+    } else if (key === "d") {
+        vec[0] = -1
+    }
+    const amount = global_translation_amount/canvas.getContext("2d").getTransform().a*getMultiplier(event)
+    console.log(global_wasd_keys_down)
+    if (global_wasd_keys_down[key]) {
+        translateCanvas(scaleVec(vec, amount), true)
+        requestAnimationFrame(() => wasdCanvasMove(event))
+    }
+}
 
