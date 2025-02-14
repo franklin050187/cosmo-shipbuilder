@@ -464,7 +464,6 @@ function wasdCanvasMove(event) {
         vec[0] = -1
     }
     const amount = global_translation_amount/canvas.getContext("2d").getTransform().a*getMultiplier(event)
-    console.log(global_wasd_keys_down)
     if (global_wasd_keys_down[key]) {
         translateCanvas(scaleVec(vec, amount), true)
         requestAnimationFrame(() => wasdCanvasMove(event))

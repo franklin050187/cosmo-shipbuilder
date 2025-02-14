@@ -247,3 +247,14 @@ function getArc(angle, cardinal_direction) {
     let toadd = cardinal_direction*Math.PI/2
     return [3 * Math.PI / 2 - angle * Math.PI / 360 + toadd,3 * Math.PI / 2 + angle * Math.PI / 360 + toadd];
 }
+
+function tilesConvexBox(tiles) {
+    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+    for (const [x, y] of tiles) {
+        minX = Math.min(minX, x);
+        minY = Math.min(minY, y);
+        maxX = Math.max(maxX, x);
+        maxY = Math.max(maxY, y);
+    }
+    return [[minX, minY], [maxX+1, maxY+1]];
+}

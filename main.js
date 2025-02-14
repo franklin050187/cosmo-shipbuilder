@@ -224,7 +224,6 @@ function loadJson(json) {
 	global_crew_roles.push(...crew_data)
 
 	updateNonVisuals()
-	//place_sprites(part_data)
 	global_sprites_to_draw.push(...part_data)
 	updateCanvas()
 }
