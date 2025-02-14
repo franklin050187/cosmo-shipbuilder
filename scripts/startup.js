@@ -2,12 +2,12 @@
 window.onload = () => {
 	loadPreviewSpriteImage()
 	preloadSprites()
+	initializeCanvas()
 	loadJson(JSON.stringify(startup_ship_data))
 };
 // Load a default category
 resetPlacementCategories()
 // Initialize the canvas
-initializeCanvas()
 closeHelp()
 
 for (let role in crew_roles) {
