@@ -1,10 +1,10 @@
 //Happens after the window loaded to prevent drawing on a non existent canvas
 window.onload = () => {
+	preloadSprites()
 	loadJson(JSON.stringify(startup_ship_data))
 };
 // Load a default category
 resetPlacementCategories()
-preloadSprites()
 // Initialize the canvas
 loadPreviewSpriteImage()
 initializeCanvas()
