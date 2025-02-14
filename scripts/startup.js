@@ -41,7 +41,7 @@ window.addEventListener('resize', initializeCanvas)
 function loadPreviewSpriteImage() {
 	const selectedSprite = global_sprites_to_place[0].ID;
 	const imageName = selectedSprite.replace("cosmoteer.", "");
-	previewSpriteImage.src = `sprites/parts/${imageName}.png`;
+	previewSpriteImage.src = `./sprites/parts/${imageName}.png`;
 	console.log(previewSpriteImage)
 
 	previewSpriteImage.onload = () => {

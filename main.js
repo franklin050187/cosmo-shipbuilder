@@ -323,19 +323,19 @@ function preloadSprites() {
 	for (const spriteID of Object.keys(spriteData)) {
 		const imageName = spriteID.replace("cosmoteer.", "");
 		const img = new Image();
-		img.src = `sprites/parts/${imageName}.png`;
+		img.src = `./sprites/parts/${imageName}.png`;
 		spriteCache[imageName] = img; // Store the image in the cache
 	}
 
 	// Preload specific images for different missile types
 	spriteCache.nuke_launcher = new Image();
-	spriteCache.nuke_launcher.src = "sprites/parts/nuke_launcher.png";
+	spriteCache.nuke_launcher.src = "./sprites/parts/nuke_launcher.png";
 
 	spriteCache.emp_launcher = new Image();
-	spriteCache.emp_launcher.src = "sprites/parts/emp_launcher.png";
+	spriteCache.emp_launcher.src = "./sprites/parts/emp_launcher.png";
 
 	spriteCache.mine_launcher = new Image();
-	spriteCache.mine_launcher.src = "sprites/parts/mine_launcher.png";
+	spriteCache.mine_launcher.src = "./sprites/parts/mine_launcher.png";
 }
 
 function square_map(sprite) {

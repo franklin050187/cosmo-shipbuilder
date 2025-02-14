@@ -50,7 +50,7 @@ function draw_doors() {
 	for (const door of global_doors_to_draw) {
 		const img = new Image();
 
-		img.src = "sprites/parts/door.png";
+		img.src = "./sprites/parts/door.png";
 
 		img.onload = () => {
 			rotation = (door.Orientation + 1) % 2;
@@ -307,7 +307,7 @@ function partSprite(part) {
 	const selectedSprite = part.ID;
 	const imageName = selectedSprite.replace("cosmoteer.", "");
 	let image = new Image();
-	image.src = `sprites/parts/${imageName}.png`;
+	image.src = `./sprites/parts/${imageName}.png`;
 
 	image.onload = () => {
 		isPreviewSpriteLoaded = true;
