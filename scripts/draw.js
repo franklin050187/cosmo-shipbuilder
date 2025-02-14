@@ -376,6 +376,8 @@ function drawPreview(inputparts, inputresources) {
 	clearLayer(ctx);
 	ctx.globalAlpha = 0.5;
 
+	console.log(parts)
+
 	for (let part of parts) {
 		let x, y, pos;
 		if (part.ID !== "cosmoteer.door" || part.Rotation%2==0) {
