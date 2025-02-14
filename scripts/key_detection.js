@@ -148,6 +148,7 @@ document.addEventListener("keydown", function(event) {
 });
 
 //Stuff that requires the canvas so is loaded after it
+
 document.addEventListener("DOMContentLoaded", () => {
     //Track if canvas is focused
     canvas.addEventListener("mouseenter", () => {

@@ -107,7 +107,8 @@ function updateCanvas() {
 		} else {
 			img = spriteCache[imageName];
 		}
-
+		console.log(spriteCache)
+		console.log(img)
 		if (img) {
 			const [x, y] = convertCoordinatesToCanvas(sprite_position(sprite));
 			const rotatedImage = rotate_img(img, sprite.Rotation, sprite.FlipX);
