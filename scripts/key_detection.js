@@ -326,8 +326,6 @@ function handleCanvasMouseMove(event) {
 		drawDeletePreview(event)
 		return;
 	}
-    console.log(cursorMode)
-    console.log(isPreviewSpriteLoaded)
 	if (cursorMode === "Place") {
 		if (!isPreviewSpriteLoaded) return;
 		global_sprites_to_place[0].Location = [canvasPositionX, canvasPositionY]
