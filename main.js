@@ -92,8 +92,10 @@ async function getJsonFromPic(file) {//Gets the json from a picture with the url
 		if (xhr.status === 200) {
 			jsonInput.value = xhr.responseText;
 			loadJson();
+			console.log("ship loaded")
+		} else {
+			console.log("ship not loaded")
 		}
-		console.log("ship loaded")
 	};
 
 	xhr.send();
