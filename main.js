@@ -93,6 +93,7 @@ async function getJsonFromPic(file) {//Gets the json from a picture with the url
 			jsonInput.value = xhr.responseText;
 			loadJson();
 		}
+		console.log("ship loaded")
 	};
 
 	xhr.send();
