@@ -1,3 +1,5 @@
+//Deployment on a different site requires modifications off the preloadSprites function
+
 const gridSize = 32; // Size of each grid cell
 let isPreviewSpriteLoaded = false; // init sprite preview
 const gridMap = {}; // To store the grid map
@@ -325,7 +327,7 @@ function preloadSprites() {
     : "";
 
 	for (const spriteID of Object.keys(spriteData)) {
-		const imageName = spriteID.replace("cosmoteer.", "");
+		const imageName = encodeURIComponent(spriteID.replace("cosmoteer.", ""))
 		const img = new Image();
 		img.src = `${basePath}sprites/parts/${imageName}.png`;
 		spriteCache[imageName] = img; // Store the image in the cache
