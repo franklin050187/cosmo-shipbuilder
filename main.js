@@ -320,10 +320,14 @@ function getAllCornerLocations(parts) {
 
 function preloadSprites() {
 	// Iterate over the keys (IDs) in the spriteData object
+	const basePath = window.location.hostname.includes("github.io") 
+    ? `${window.location.origin}${window.location.pathname}` 
+    : ".";
+
 	for (const spriteID of Object.keys(spriteData)) {
 		const imageName = spriteID.replace("cosmoteer.", "");
 		const img = new Image();
-		img.src = `./sprites/parts/${imageName}.png`;
+		img.src = `${basePath}/sprites/parts/${imageName}.png`;
 		spriteCache[imageName] = img; // Store the image in the cache
 		img.onload = () => {
 			console.log(`${imageName} loaded successfully!`);
