@@ -83,22 +83,27 @@ function get_json() {//Gets the json from a picture with the url in the url text
 	};
 }
 
-async function getJsonFromPic(file) {//Gets the json from a picture with the url in the url text field
-	const jsonInput = document.getElementById("b64_input");
-	const xhr = new XMLHttpRequest();
-	const b64input = await fileToBase64(file);
-	xhr.open("GET", b64input, true);
-	xhr.onload = () => {
-		if (xhr.status === 200) {
-			jsonInput.value = xhr.responseText;
-			loadJson();
-			console.log("ship loaded")
-		} else {
-			console.log(xhr.responseText)
-		}
-	};
+async function getJsonFromPic(file) {
+    const jsonInput = document.getElementById("b64_input");
+    const xhr = new XMLHttpRequest();
+    const b64input = await fileToBase64(file);
+	const url = `https://cosmo-api-git-docker-franklin050187s-projects.vercel.app/edit?url=${b64input}`;
 
-	xhr.send();
+    xhr.open("POST", url, true);
+    xhr.setRequestHeader("Content-Type", "application/json");
+
+    xhr.onload = () => {
+        console.log("new2");
+        if (xhr.status === 200) {
+            jsonInput.value = xhr.responseText;
+            loadJson();
+            console.log("ship loaded");
+        } else {
+            console.log(xhr.responseText);
+        }
+    };
+
+    xhr.send();
 }
 
 function fileToBase64(file) {
