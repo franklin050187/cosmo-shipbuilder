@@ -127,6 +127,7 @@ document.querySelectorAll('.tab').forEach(tab => {
    	selectTab(tab)
   });
 });
+
 function selectTab(tab) {
 	document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
     tab.classList.add('active');

@@ -329,6 +329,7 @@ function preloadSprites() {
 		const img = new Image();
 		img.src = `${basePath}/sprites/parts/${imageName}.png`;
 		spriteCache[imageName] = img; // Store the image in the cache
+		console.log(img.src);
 		img.onload = () => {
 			console.log(`${imageName} loaded successfully!`);
 		};
