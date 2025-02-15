@@ -36,7 +36,7 @@ function draw_resources(resources, canvas) {
 	}
 }
 
-function draw_doors() {
+function update_doors() {
 	let ctx = door_canvas.getContext("2d")
 	for (const door of global_doors_to_delete) {
 		let pos = door.Cell
@@ -70,6 +70,31 @@ function draw_doors() {
 		};
 	}
 	global_doors_to_draw = []
+}
+
+function drawDoors(doors) {
+	for (const door of doors) {
+		const img = new Image();
+
+		img.src = "./sprites/parts/door.png";
+
+		img.onload = () => {
+			rotation = (door.Orientation + 1) % 2;
+			const location = sprite_position(door);
+			x = location[0];
+			y = location[1];
+			const angle = rotation;
+
+			const rotatedImage = rotate_img(img, angle, false);
+			ctx.drawImage(
+				rotatedImage,
+				(x - minX) * gridSize + 1,
+				(y - minY) * gridSize + 1,
+				rotatedImage.width*gridSize/64 - 2,
+				rotatedImage.height*gridSize/64 - 2,
+			);
+		};
+	}
 }
 
 function updateCanvas() {
@@ -144,7 +169,7 @@ function updateCanvas() {
 		clearLayer(hitbox_canvas.getContext("2d"))
 	}
 	drawMirrorAxis()
-	draw_doors();
+	update_doors();
 	clearLayer(resource_canvas.getContext("2d"))
 	draw_resources(global_resources, resource_canvas);
 }
