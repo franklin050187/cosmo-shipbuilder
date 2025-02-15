@@ -43,7 +43,6 @@ function loadPreviewSpriteImage() {
 	previewSpriteImage.src = `./sprites/parts/${imageName}.png?`;
 
 	previewSpriteImage.onload = () => {
-		console.log("loaded")
 		isPreviewSpriteLoaded = true;
 	};
 }
