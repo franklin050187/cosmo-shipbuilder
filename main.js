@@ -325,6 +325,9 @@ function preloadSprites() {
 		const img = new Image();
 		img.src = `./sprites/parts/${imageName}.png`;
 		spriteCache[imageName] = img; // Store the image in the cache
+		img.onload = () => {
+			console.log(`${imageName} loaded successfully!`);
+		};
 	}
 
 	// Preload specific images for different missile types
