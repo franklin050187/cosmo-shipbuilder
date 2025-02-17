@@ -32,6 +32,7 @@ function getAllCornerLocations(parts) {
 function place_sprites(sprites_to_place, modify_action_history = true) {//Places the first sprites with absolute coordinates and the ones after with relative ones
 	let new_parts = mirroredParts(repositionPartsRelative(sprites_to_place))
 	let placed_parts = []
+	console.log(global_properties_to_apply)
 	if (overlappingParts(new_parts, global_recently_placed).length==0 || !global_left_mousdown_toggle) {
 		for (let sprite of new_parts){
 			const location = sprite.Location;
@@ -53,6 +54,7 @@ function place_sprites(sprites_to_place, modify_action_history = true) {//Places
 				global_part_properties.push(...prop)
 			}
 		}
+		global_part_properties.push(...repositionPropertiesAbsolute(global_properties_to_apply, sprites_to_place[0].Location))
 		global_recently_placed = [...new_parts]
 	}
 	if (modify_action_history && !(placed_parts.length === 0)) {
@@ -224,6 +226,33 @@ function repositionPartsAbsolute(parts) { //Uses the first part as reference and
 		new_parts.push(new_part)
 	}
 	return new_parts
+}
+
+
+function repositionPropertiesRelative(properties, pos) { //Uses the first part as reference and places all following parts interpreting thir location as being ralative to the first parts location
+	let new_properties = []
+	for (let property of properties){
+		let new_property = propertyCopy(property)
+
+		new_property.Key[0].Location[0] = pos[0]+new_property.Key[0].Location[0]
+		new_property.Key[0].Location[1] = pos[1]+new_property.Key[0].Location[1]
+		
+		new_properties.push(new_property)
+	}
+	return new_properties
+}
+
+function repositionPropertiesAbsolute(properties, pos) { //Uses the first part as reference and places all following parts interpreting thir location as being ralative to the first parts location
+	let new_properties = []
+	for (let property of properties){
+		let new_property = propertyCopy(property)
+
+		new_property.Key[0].Location[0] = pos[0]-new_property.Key[0].Location[0]
+		new_property.Key[0].Location[1] = pos[1]-new_property.Key[0].Location[1]
+		
+		new_properties.push(new_property)
+	}
+	return new_properties
 }
 
 function mirroredParts(parts, also_adds_base_parts = true) {//This code is a fucking mess (but Im not gonna clean it up)

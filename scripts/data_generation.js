@@ -19,6 +19,18 @@ function partsCopy(parts) {
     return list
 }
 
+function propertyCopy(property) {
+    return {"Key": [{"FlipX": property.Key[0].FlipX, "ID": property.Key[0].ID, "Location": [...property.Key[0].Location], "Rotation": property.Key[0].Rotation}, property.Key[1]], "Value": property.Value}
+}
+
+function propertiesCopy(properties) {
+    let list = []
+    for (let property of properties) {
+        list.push(propertyCopy(property))
+    }
+    return list
+}
+
 function generatePropertiesForPart(part) {
     properties = []
     if (spriteData[part.ID].tags.includes("on_off")) {

@@ -100,8 +100,6 @@ picture_input.addEventListener("change", (event) => {
 //ensures these are loaded after the corresponding functions in main.js
 document.addEventListener("DOMContentLoaded", () => {
 	export_json_button.addEventListener("click", export_json);
-	load_json_button.addEventListener("click", loadJson);
-	loadB64Button.addEventListener("click", get_json);
 	apply_ship_property_button.addEventListener("click", applyShipProperty);
 	recalculate_stats_button.addEventListener("click", handleRecalculateStats);
 	generate_ship.addEventListener("click", generateShip);
@@ -166,7 +164,6 @@ function loadParts(category) {
 		<div>Cost: ${spriteData[part.ID].cost*1000}</div>
 		`;
 		button.addEventListener("click", () => {
-			console.log("fas")
 			switchPartsToPlace([generatePart(part.ID)])
 		});
 		partDiv.appendChild(button);
@@ -426,5 +423,5 @@ function placeArmorShell(thickness) {
 		let part = generatePart("cosmoteer.armor", tile)
 		parts.push(part)
 	}
-	place_sprites(repositionPartsRelative(parts))
+	place_sprites(repositionPartsAbsolute(parts))
 }

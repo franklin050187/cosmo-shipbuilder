@@ -23,11 +23,8 @@
             <fieldset>
                 <legend>Load a ship</legend>
                 <div>
-                    <textarea name="b64_input" id="b64_input"></textarea>
-                    <button id="load_b64">Load from URL</button>
-                    <button id="loadButton">Load JSON</button>
                     <div id="drop-zone" style="width: 200px; height: 75px; border: 2px dashed #000; display: flex; align-items: center; justify-content: center; flex-direction: column; transition: background 0.2s;">
-                        <p>Non functional picture input</p>
+                        <p>Drop your .ship.png file here!</p>
                         <button id="file-button">Browse</button>
                         <input type="file" id="file-input" style="display: none;">
                     </div>
@@ -209,7 +206,7 @@
     <script src="scripts/camera.js"></script>
     <script src="scripts/part_properties.js"></script>
     <script src="scripts/data_generation.js"></script>
-    <script src="generateJson.js"></script>
+    <script src="scripts/generateJson.js"></script>
     <script src="scripts/html_element_handeling.js" defer></script>
     <script src="scripts/ship_manip.js" defer></script>
     <script src="main.js" defer></script>

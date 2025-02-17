@@ -27,25 +27,24 @@ function generateShip() {
 }
 
 function get_json() {//Gets the json from a picture with the url in the url text field
-	const b64Input = document.getElementById("b64_input");
-	const encodedB64 = b64Input.value.replace(/-/g, "+").replace(/_/g, "/");
-	const jsonInput = document.getElementById("b64_input");
-	const xhr = new XMLHttpRequest();
-	const url = `https://cosmo-api-git-docker-franklin050187s-projects.vercel.app/edit?url=${encodedB64}`;
-	xhr.open("GET", url, true);
+	const b64Input = document.getElementById("b64_input")
+	const encodedB64 = b64Input.value.replace(/-/g, "+").replace(/_/g, "/")
+	const jsonInput = document.getElementById("b64_input")
+	const xhr = new XMLHttpRequest()
+	const url = `https://cosmo-api-git-docker-franklin050187s-projects.vercel.app/edit?url=${encodedB64}`
+	xhr.open("GET", url, true)
 	xhr.onload = () => {
 		if (xhr.status === 200) {
-			jsonInput.value = xhr.responseText;
-			loadJson();
+			jsonInput.value = xhr.responseText
+			loadJson()
 		}
 	};
 }
 
 async function getJsonFromPic(file) {
-	const arrayBuffer = await file.arrayBuffer();
-	const shipData = await parseShipFile(file);
-
+	const shipData = await parseShip(file)
 	console.log(shipData)
+	loadJson(JSON.stringify(shipData))
 }
 
 function fileToBase64(file) {
@@ -177,7 +176,7 @@ function loadJson(json) {
 
 	updateNonVisuals()
 	global_sprites_to_draw.push(...part_data)
-	updateCanvas()
+	redrawEntireCanvas()
 }
 
 function preloadSprites() {
