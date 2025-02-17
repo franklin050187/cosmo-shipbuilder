@@ -5,6 +5,7 @@ let isPreviewSpriteLoaded = false; // init sprite preview
 const gridMap = {}; // To store the grid map
 let sprite_delete_mode = []; // To store the sprite delete mode
 let global_sprites_to_place = [generatePart("cosmoteer.corridor")]; // To store the sprites to place
+let global_properties_to_apply = []
 let global_selected_sprites = []
 let global_unmirrored_selected_sprites = []
 let global_toggles_to_add = []
@@ -21,6 +22,7 @@ let global_log = {0:"", 1:"", 2:""}
 
 let global_copied_parts = []
 let global_copied_doors = []
+let global_copied_properties = []
 
 let global_previous_mirror_mode = "vertical"
 let sprites = []; // To store the sprites
@@ -123,14 +125,14 @@ function handleCursorModeChange() {
 	resetPlacementCategories()
 	if (cursorMode === "Place") {
 		if (global_sprites_to_place.length === 0 || global_sprites_to_place.includes("cosmoteer.delete")) {
-			global_sprites_to_place = [generatePart("cosmoteer.corridor")]
+			switchPartsToPlace([generatePart("cosmoteer.corridor")])
 		}
 	} else if (cursorMode === "Delete") {
-		global_sprites_to_place = []
+		switchPartsToPlace([])
 	} else if (cursorMode === "Move") {
-		global_sprites_to_place = [];
+		switchPartsToPlace([])
 	} else if (cursorMode === "Resource") {
-		global_sprites_to_place = []
+		switchPartsToPlace([])
 		global_resources_to_place = [generateResource("bullet")];
 	} else if (cursorMode === "Crew") {
 		global_crew_role_to_place = crew_roles["Supply"]

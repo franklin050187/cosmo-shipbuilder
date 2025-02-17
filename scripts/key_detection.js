@@ -277,11 +277,12 @@ function copy() {
     log("parts copied")
     let copied_parts = partsCopy(global_selected_sprites) //the selected parts
     global_copied_parts = repositionPartsAbsolute([...copied_parts, ...generateDoorsAsParts(getDoorsOfParts(copied_parts))]) //The doors (which are attached to the selected parts) get converted into parts and get appended to the coppied parts
-    console.log(global_copied_parts)
+    let global_copied_properties = getPartData(copied_parts)
 }
 
 function paste() {
-    global_sprites_to_place = global_copied_parts
+    switchPartsToPlace(global_copied_parts)
+    global_properties_to_apply = global_copied_properties
     ChangeCursorMode("Place")
 }
 
@@ -383,13 +384,13 @@ function handleSingleCanvasClick(event) {
         const pos = mousePos(event);
         if (global_sprites_to_place.length === 0) {
             doIfCursorOverPart(event, (part) => {
-                global_sprites_to_place = [partCopy(part)]
+                switchPartsToPlace([partCopy(part)])
                 remove_multiple_from_sprites(mirroredParts([part]))
             })
         } else {
             place_sprites(global_sprites_to_place);
             clearPreview()
-            global_sprites_to_place = []
+            switchPartsToPlace([])
         }
     }
     // select sprite

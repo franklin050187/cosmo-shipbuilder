@@ -1,8 +1,8 @@
 function applyShipProperty() {
 	const new_value = ship_property_edit.value;
-	const toggle =
-		ship_property_select.options[ship_property_select.selectedIndex].text;
+	const toggle = ship_property_select.options[ship_property_select.selectedIndex].text;
 	shipdata[toggle] = new_value;
+	log("Updated ship property")
 	updateShipToggleSelection();
 	updateCanvas();
 }
@@ -422,4 +422,9 @@ function deleteIllegalDoors() {
         return newList
     }, [])
 	console.log(...global_doors)
+}
+
+function switchPartsToPlace(parts) {
+	global_properties_to_apply = []
+	global_sprites_to_place = parts
 }

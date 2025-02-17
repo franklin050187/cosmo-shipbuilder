@@ -1,12 +1,12 @@
 //This file is for functions that extract some kind of information.
 
 function getPartData(parts) {
-	data = [];
+	data = []
 	for (let part of parts) {
 		for (const entry of global_part_properties) {
 			const key = entry.Key || {};
 			if (isSameSprite(part, key[0])) {
-				data.push(entry);
+				data.push(entry)
 			}
 		}
 	}
@@ -14,24 +14,17 @@ function getPartData(parts) {
 }
 
 function getShipDataMap() {
-	const filtered_ship_data = new Map();
+	const filtered_ship_data = new Map()
 
-	filtered_ship_data.set("Author", shipdata.Author);
-	filtered_ship_data.set("FlightDirection", shipdata.FlightDirection);
-	filtered_ship_data.set("Name", shipdata.Name);
-	filtered_ship_data.set(
-		"DefaultAttackFollowAngle",
-		shipdata.DefaultAttackFollowAngle,
-	);
-	filtered_ship_data.set("DefaultAttackRadius", shipdata.DefaultAttackRadius);
-	filtered_ship_data.set(
-		"DefaultAttackRotation",
-		shipdata.DefaultAttackRotation,
-	);
+	filtered_ship_data.set("Author", shipdata.Author)
+	filtered_ship_data.set("FlightDirection", shipdata.FlightDirection)
+	filtered_ship_data.set("Name", shipdata.Name)
+	filtered_ship_data.set("DefaultAttackFollowAngle",shipdata.DefaultAttackFollowAngle)
+	filtered_ship_data.set("DefaultAttackRadius", shipdata.DefaultAttackRadius)
+	filtered_ship_data.set("DefaultAttackRotation",shipdata.DefaultAttackRotation)
 
 	return filtered_ship_data;
 }
-
 
 function getParts(parts, condition) {
     parts_out = []

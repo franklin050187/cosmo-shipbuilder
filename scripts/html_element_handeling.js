@@ -166,7 +166,8 @@ function loadParts(category) {
 		<div>Cost: ${spriteData[part.ID].cost*1000}</div>
 		`;
 		button.addEventListener("click", () => {
-			global_sprites_to_place = [generatePart(part.ID)]
+			console.log("fas")
+			switchPartsToPlace([generatePart(part.ID)])
 		});
 		partDiv.appendChild(button);
     	partsContainer.appendChild(partDiv);
