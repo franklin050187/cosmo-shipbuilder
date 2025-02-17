@@ -58,7 +58,6 @@ var UPNG = (function() {
 		var ctype = out.ctype, depth = out.depth;
 		var rs = _bin.readUshort;
 		
-		//console.log(ctype, depth);
 		var time = Date.now();
 
 		if     (ctype==6) { // RGB + alpha
@@ -81,7 +80,6 @@ var UPNG = (function() {
 		}
 		else if(ctype==3) {	// palette
 			var p=out.tabs["PLTE"], ap=out.tabs["tRNS"], tl=ap?ap.length:0;
-			//console.log(p, ap);
 			if(depth==1) for(var y=0; y<h; y++) {  var s0 = y*bpl, t0 = y*w;
 				for(var i=0; i<w; i++) { var qi=(t0+i)<<2, j=((data[s0+(i>>3)]>>(7-((i&7)<<0)))& 1), cj=3*j;  bf[qi]=p[cj];  bf[qi+1]=p[cj+1];  bf[qi+2]=p[cj+2];  bf[qi+3]=(j<tl)?ap[j]:255;  }
 			}
@@ -108,7 +106,6 @@ var UPNG = (function() {
 				else if(depth==16) for(var x=0; x<w; x++) {  var gr=data[off+(x<<1)], al=(rs(data,off+(x<<1))==tr)?0:255;  bf32[to+x]=(al<<24)|(gr<<16)|(gr<<8)|gr;  }
 			}
 		}
-		//console.log(Date.now()-time);
 		return bf;
 	}
 
@@ -128,7 +125,6 @@ var UPNG = (function() {
 		{
 			var len  = bin.readUint(data, offset);  offset += 4;
 			var type = bin.readASCII(data, offset, 4);  offset += 4;
-			//console.log(type,len);
 			
 			if     (type=="IHDR")  {  _IHDR(data, offset, out);  }
 			else if(type=="iCCP")  {
@@ -156,7 +152,6 @@ var UPNG = (function() {
 				var rct = {x:rUi(data, offset+12),y:rUi(data, offset+16),width:rUi(data, offset+4),height:rUi(data, offset+8)};
 				var del = rUs(data, offset+22);  del = rUs(data, offset+20) / (del==0?100:del);
 				var frm = {rect:rct, delay:Math.round(del*1000), dispose:data[offset+24], blend:data[offset+25]};
-				//console.log(frm);
 				out.frames.push(frm);
 			}
 			else if(type=="fdAT") {
@@ -211,7 +206,6 @@ var UPNG = (function() {
 				if     (out.ctype==3) out.tabs[type] = bin.readBytes(data, offset, len);
 				else if(out.ctype==0) out.tabs[type] = rUs(data, offset);
 				else if(out.ctype==2) out.tabs[type] = [ rUs(data,offset),rUs(data,offset+2),rUs(data,offset+4) ];
-				//else console.log("tRNS for unsupported color type",out.ctype, len);
 			}
 			else if(type=="gAMA") out.tabs[type] = bin.readUint(data, offset)/100000;
 			else if(type=="sRGB") out.tabs[type] = data[offset];
@@ -224,7 +218,6 @@ var UPNG = (function() {
 			else if(type=="IEND") {
 				break;
 			}
-			//else {  console.log("unknown chunk type", type, len);  out.tabs[type]=data.slice(offset,offset+len);  }
 			offset += len;
 			var crc = bin.readUint(data, offset);  offset += 4;
 		}
@@ -242,13 +235,10 @@ var UPNG = (function() {
 		var bpp = _getBPP(out), bpl = Math.ceil(w*bpp/8), buff = new Uint8Array((bpl+1+out.interlace)*h);
 		if(out.tabs["CgBI"]) dd = inflateRaw(dd,buff);
 		else                 dd = _inflate(dd,buff);
-		//console.log(dd.length, buff.length);
-		//console.log(Date.now()-time);
 
 		var time=Date.now();
 		if     (out.interlace==0) dd = _filterZero(dd, out, 0, w, h);
 		else if(out.interlace==1) dd = _readInterlace(dd, out);
-		//console.log(Date.now()-time);
 		return dd;
 	}
 
@@ -720,11 +710,8 @@ if(G>r)r=G;i++}while(i<y){A[i<<1]=0;A[(i<<1)+1]=0;i++}return r}return v}();
 		}
 		var gotAlpha = (alphaAnd!=255);
 		
-		//console.log("alpha check", Date.now()-time);  time = Date.now();
-		
 		//var brute = gotAlpha && forGIF;		// brute : frames can only be copied, not "blended"
 		var frms = framize(bufs, w, h, onlyBlend, evenCrd, forbidPrev);
-		//console.log("framize", Date.now()-time);  time = Date.now();
 		
 		var cmap={}, plte=[], inds=[]; 
 		
@@ -740,14 +727,11 @@ if(G>r)r=G;i++}while(i<y){A[i<<1]=0;A[(i<<1)+1]=0;i++}return r}return v}();
 				var frm=frms[i], bln=frm.img.length, ind = new Uint8Array(qres.inds.buffer, cof>>2, bln>>2);  inds.push(ind);
 				var bb = new Uint8Array(qres.abuf,cof,bln);
 				
-				//console.log(frm.img, frm.width, frm.height);
 				//var time = Date.now();
 				if(dith) dither(frm.img, frm.rect.width, frm.rect.height, plte, bb, ind);
-				//console.log(Date.now()-time);
 				frm.img.set(bb);  cof+=bln;  
 			}
 			
-			//console.log("quantize", Date.now()-time);  time = Date.now();
 		}
 		else {
 			// what if ps==0, but there are <=256 colors?  we still need to detect, if the palette could be used
@@ -765,10 +749,9 @@ if(G>r)r=G;i++}while(i<y){A[i<<1]=0;A[(i<<1)+1]=0;i++}return r}return v}();
 					}
 				}
 			}
-			//console.log("make palette", Date.now()-time);  time = Date.now();
 		}
 		
-		var cc=plte.length; //console.log("colors:",cc);
+		var cc=plte.length; 
 		if(cc<=256 && forbidPlte==false) {
 			if(cc<= 2) depth=1;  else if(cc<= 4) depth=2;  else if(cc<=16) depth=4;  else depth=8;
 			depth =  Math.max(depth, minBits);
@@ -798,7 +781,6 @@ if(G>r)r=G;i++}while(i<y){A[i<<1]=0;A[(i<<1)+1]=0;i++}return r}return v}();
 			}
 			frm.img=cimg;  frm.bpl=bpl;  frm.bpp=bpp;
 		}
-		//console.log("colors => palette indices", Date.now()-time);  time = Date.now();
 		
 		return {ctype:ctype, depth:depth, plte:plte, frames:frms  };
 	}
@@ -874,9 +856,7 @@ if(G>r)r=G;i++}while(i<y){A[i<<1]=0;A[(i<<1)+1]=0;i++}return r}return v}();
 			area += frm.rect.width*frm.rect.height;
 			//if(i==0 || frm.blend!=1) continue;
 			//var ob = new Uint8Array(
-			//console.log(frm.blend, frm.dispose, frm.rect);
 		}
-		//if(area!=0) console.log(area);
 		return frms;
 	}
 	function _updateFrame(bufs, w,h, frms, i, r, evenCrd) {
@@ -928,7 +908,6 @@ if(G>r)r=G;i++}while(i<y){A[i<<1]=0;A[(i<<1)+1]=0;i++}return r}return v}();
 			//var sz = UZIP.F.deflate(data, nimg);  fls.push(nimg.slice(0,sz));
 			//var dfl = pako["deflate"](data), dl=dfl.length-4;
 			//var crc = (dfl[dl+3]<<24)|(dfl[dl+2]<<16)|(dfl[dl+1]<<8)|(dfl[dl+0]<<0);
-			//console.log(crc, UZIP.adler(data,2,data.length-6));
 			fls.push(CMPR["deflate"](data,opts));
 		}
 		
@@ -974,8 +953,6 @@ if(G>r)r=G;i++}while(i<y){A[i<<1]=0;A[(i<<1)+1]=0;i++}return r}return v}();
 		var KD = getKDtree(tb, ps);
 		var root = KD[0], leafs = KD[1], K=leafs.length;
 		
-		//console.log(Date.now()-time, "tree made");  time = Date.now();
-		
 		var cl32 = new Uint32Array(K), clr8=new Uint8Array(cl32.buffer);
 		for(var i=0; i<K; i++) cl32[i]=leafs[i].est.rgba;
 		
@@ -999,17 +976,15 @@ if(G>r)r=G;i++}while(i<y){A[i<<1]=0;A[(i<<1)+1]=0;i++}return r}return v}();
 				inds[i>>2] = nd.ind;  tb32[i>>2] = nd.est.rgba;
 			}
 			
-		//console.log(Date.now()-time, "nearest found");  time = Date.now();
 		
 		if(doKmeans || sb.length*K<10*4e6) {
 			var le = 1e9;
 			for(var i=0; i<10; i++) {
-				var ce = kmeans(sb, inds, clr8);  //console.log(i,ce);
+				var ce = kmeans(sb, inds, clr8);
 				if(ce/le>0.997) break;  le=ce;
 			}
 			for(var i=0; i<K; i++) leafs[i].est.rgba = cl32[i];
 			remap(inds,tb32,cl32);
-			//console.log(Date.now()-time, "k-means");
 		}
 		
 		return {  abuf:tb.buffer, inds:inds, plte:leafs  };
@@ -1082,7 +1057,6 @@ if(G>r)r=G;i++}while(i<y){A[i<<1]=0;A[(i<<1)+1]=0;i++}return r}return v}();
 			
 			var s0 = splitPixels(nimg,nimg32, node.i0, node.i1, node.est.e, node.est.eMq255);
 			var s0wrong = (node.i0>=s0 || node.i1<=s0);
-			//console.log(maxL, leafs.length, mi);
 			if(s0wrong) {  node.est.L=0;  continue;  }
 			
 			

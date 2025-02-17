@@ -722,3 +722,7 @@ function canvasCordFromsPartRelativeVector(part, vec) {
 	let distance_vector = rotatePartRelativeVector(vec, part)
 	return convertCoordinatesToCanvas([distance_vector[0]+part.Location[0], distance_vector[1]+part.Location[1]])
 }
+
+function getShipScreenshot() {
+	return canvas.toDataURL('image/png')
+}

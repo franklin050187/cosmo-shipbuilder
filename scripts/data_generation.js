@@ -7,6 +7,10 @@ function generatePart(id, location=[0,0], rotation=0, flipX=false) {//Example: "
     }
 }
 
+function generateDoor(location=[0,0], orientation=0) {//Example: {"Cell": [${location}], "ID": "cosmoteer.door", "Orientation": ${(sprite.Rotation + 1) % 2}}
+   return {"Cell": location, "ID": "cosmoteer.door", "Orientation": orientation}
+}
+
 function partCopy(part) {
     return generatePart(part.ID, [...part.Location], part.Rotation, part.FlipX)
 }

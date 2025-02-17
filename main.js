@@ -7,6 +7,13 @@ function generateShip() {
 	// get the data
 	const json_to_post = document.getElementById("json_export").value;
 
+	canvas.toBlob(blob => {
+		console.log(blob)
+		writeShip(blob, json_to_post).then(newPngBuffer => {
+			console.log(newPngBuffer)
+	})
+	}, 'image/png')
+
 	const xhr = new XMLHttpRequest();
 	const url =
 		"https://cosmo-api-git-docker-franklin050187s-projects.vercel.app/generate";
@@ -43,7 +50,6 @@ function get_json() {//Gets the json from a picture with the url in the url text
 
 async function getJsonFromPic(file) {
 	const shipData = await parseShip(file)
-	console.log(shipData)
 	loadJson(JSON.stringify(shipData))
 }
 

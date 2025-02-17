@@ -70,7 +70,6 @@ const picture_browse_button = document.getElementById("file-button");
 
 function handleFileUpload(files) {
     if (files.length > 0) {
-        console.log("Files selected:", files);
         getJsonFromPic(files[0]); 
     }
 }
