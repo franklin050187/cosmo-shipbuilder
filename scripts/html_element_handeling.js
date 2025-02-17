@@ -122,6 +122,8 @@ document.addEventListener("DOMContentLoaded", () => {
 //The tab bar above the canvas
 const canvasContainer = document.getElementById('canvas-container');
 const canvasAltContainer = document.getElementById('canvas-alt-container');
+const logContainer = document.getElementById('message-log');
+
 document.querySelectorAll('.tab').forEach(tab => {
   tab.addEventListener('click', () => {
    	selectTab(tab)

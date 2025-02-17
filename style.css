@@ -2,6 +2,11 @@ canvas {
   border: 1px solid #000;
 }
 
+#message-log p {
+  margin: 0 0; /* Adjust as needed */
+  padding: 0;
+}
+
 #previewSprite {
   position: absolute;
   opacity: 0.7;

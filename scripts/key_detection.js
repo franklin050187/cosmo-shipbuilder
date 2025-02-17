@@ -251,6 +251,7 @@ function getMultiplier(event) {
 }
 
 function undo() {
+    log("undone")
     if (ship_action_history_depth <= ship_action_history.length && ship_action_history.length>0) {
         excecuteAction(inverseAction(getCurrentLastAction()))
         ship_action_history_depth = Math.min(ship_action_history_depth + 1, ship_action_history.length)
@@ -258,6 +259,7 @@ function undo() {
 }
 
 function redo() {
+    log("redone")
     if (ship_action_history_depth <= ship_action_history.length && ship_action_history.length>0) {
         ship_action_history_depth = Math.max(ship_action_history_depth - 1, 0)
         excecuteAction(getCurrentLastAction())
@@ -272,6 +274,7 @@ function cut() {
 }
 
 function copy() {
+    log("parts copied")
     let copied_parts = partsCopy(global_selected_sprites) //the selected parts
     global_copied_parts = repositionPartsAbsolute([...copied_parts, ...generateDoorsAsParts(getDoorsOfParts(copied_parts))]) //The doors (which are attached to the selected parts) get converted into parts and get appended to the coppied parts
     console.log(global_copied_parts)

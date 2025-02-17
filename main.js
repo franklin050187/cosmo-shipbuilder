@@ -17,6 +17,7 @@ let global_sprites_to_delete = [] //Saves the sprites that are drawn to which sh
 let global_doors_to_draw = [] //Saves the doors that are yet to be drawn
 let global_doors_to_delete = [] //Saves the doors that are drawn to which should be deleted
 let global_recently_placed = [] //Saves recently placed parts
+let global_log = {0:"", 1:"", 2:""}
 
 let global_copied_parts = []
 let global_copied_doors = []
@@ -391,5 +392,11 @@ function changeMirrorMode(mode) {
 	handleMirrorSelectionChange()
 }
 
+function log(string) {
+	global_log[2] = global_log[1]
+	global_log[1] = global_log[0]
+	global_log[0] = string
+	logContainer.innerHTML = `<p>${global_log[2]}</p> <p>${global_log[1]}</p> <p>${global_log[0]}</p>`
+}
 
 
