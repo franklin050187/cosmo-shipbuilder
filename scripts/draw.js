@@ -141,6 +141,65 @@ function updateCanvas() {
 	draw_resources(global_resources, resource_canvas);
 }
 
+function sprite_position(part) {
+	position = [...(part.Location ?? part.Cell)]
+	const sprite_size =
+		spriteData[part.ID].sprite_size || spriteData[part.ID].size;
+	const part_size = spriteData[part.ID].size;
+	const part_rotation = part.Rotation;
+
+	if (part_rotation === 0 && upTurrets.includes(part.ID)) {
+		position[1] -= sprite_size[1] - part_size[1];
+	} else if (part_rotation === 3 && upTurrets.includes(part.ID)) {
+		position[0] -= sprite_size[1] - part_size[1];
+	} else if (part_rotation === 1 && downTurrets.includes(part.ID)) {
+		position[0] -= sprite_size[1] - part_size[1];
+	} else if (part_rotation === 2 && downTurrets.includes(part.ID)) {
+		position[1] -= sprite_size[1] - part_size[1];
+	} else if (multiple_turrets.includes(part.ID)) {
+		if (part.ID === "cosmoteer.thruster_small_2way") {
+			if (part_rotation === 1) {
+				position[0] -= 1;
+			}
+			if (part_rotation === 2) {
+				position[0] -= 1;
+				position[1] -= 1;
+			}
+			if (part_rotation === 3) {
+				position[1] -= 1;
+			}
+			if (part_rotation === 1) {
+				position[0] -= 1;
+			}
+		} else if (part.ID === "cosmoteer.thruster_small_3way") {
+			if (part_rotation === 2) {
+				if (part_rotation === 3) {
+					position[1] -= 1;
+				}
+			}
+		}
+	}
+	if (
+		part.ID === "cosmoteer.missile_launcher" &&
+		getPartDataMap(part).get("missile_type") !== 0
+	) {
+		if (part_rotation === 0) {
+			position[1] -= 1;
+		}
+		if (part_rotation === 3) {
+			position[0] -= 1;
+		}
+	}
+	if (part.ID === "cosmoteer.door") {
+		if (part.Orientation === 0) {
+			position[1] -= 0.5;
+		} else {
+			position[0] -= 0.5;
+		}
+	}
+	return position;
+}
+
 function redrawEntireCanvas() {
 	for (let c of global_canvases) {
 		clearLayer(c.getContext("2d"))
