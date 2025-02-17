@@ -77,3 +77,11 @@ function generateRoleSource(part, role) {//Example: {"Key": {"FlipX": false, "ID
 function generateDoorAsPart(door) {
     return generatePart(door.ID, door.Cell, door.Rotation)
 }
+
+function generateDoorsAsParts(doors) {
+    parts = []
+    for (let door of doors) {
+        parts.push(generateDoorAsPart(door))
+    }
+    return parts
+}

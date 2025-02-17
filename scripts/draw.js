@@ -47,53 +47,26 @@ function update_doors() {
 		clearPoly(door_canvas, [[x1,y1],[x2,y2],[x3,y3],[x4,y4]])
 	}
 	global_doors_to_delete = []
-	for (const door of global_doors_to_draw) {
-		const img = new Image();
-
-		img.src = "./sprites/parts/door.png";
-
-		img.onload = () => {
-			rotation = (door.Orientation + 1) % 2;
-			const location = sprite_position(door);
-			x = location[0];
-			y = location[1];
-			const angle = rotation;
-
-			const rotatedImage = rotate_img(img, angle, false);
-			ctx.drawImage(
-				rotatedImage,
-				(x - minX) * gridSize + 1,
-				(y - minY) * gridSize + 1,
-				rotatedImage.width*gridSize/64 - 2,
-				rotatedImage.height*gridSize/64 - 2,
-			);
-		};
-	}
+	drawDoors(global_doors_to_draw)
 	global_doors_to_draw = []
 }
 
 function drawDoors(doors) {
+	const img = spriteCache["door"];
+	const scaleFactor = gridSize / 64;
+
 	for (const door of doors) {
-		const img = new Image();
+		const location = sprite_position(door);
+		const angle = (door.Orientation + 1) % 2;
+		const rotatedImage = rotate_img(img, angle, false);
 
-		img.src = "./sprites/parts/door.png";
-
-		img.onload = () => {
-			rotation = (door.Orientation + 1) % 2;
-			const location = sprite_position(door);
-			x = location[0];
-			y = location[1];
-			const angle = rotation;
-
-			const rotatedImage = rotate_img(img, angle, false);
-			ctx.drawImage(
-				rotatedImage,
-				(x - minX) * gridSize + 1,
-				(y - minY) * gridSize + 1,
-				rotatedImage.width*gridSize/64 - 2,
-				rotatedImage.height*gridSize/64 - 2,
-			);
-		};
+		ctx.drawImage(
+			rotatedImage,
+			(location[0] - minX) * gridSize + 1,
+			(location[1] - minY) * gridSize + 1,
+			rotatedImage.width * scaleFactor - 2,
+			rotatedImage.height * scaleFactor - 2
+		);
 	}
 }
 
@@ -118,34 +91,28 @@ function updateCanvas() {
 	global_sprites_to_delete = []
 	// Draw new sprites
 	for (const sprite of global_sprites_to_draw) {
-		const imageName = sprite.ID.replace("cosmoteer.", "");
-		const partData = getPartDataMap(sprite);
-		const missileType = Number.parseInt(partData.get("missile_type"));
+		const imageName = sprite.ID.replace("cosmoteer.", "")
+		const partData = getPartDataMap(sprite)
+		const missileType = Number.parseInt(partData.get("missile_type"))
 
 		let img;
 		if (missileType === 2) {
-			img = spriteCache.nuke_launcher;
+			img = spriteCache.nuke_launcher
 		} else if (missileType === 1) {
-			img = spriteCache.emp_launcher;
+			img = spriteCache.emp_launcher
 		} else if (missileType === 3) {
-			img = spriteCache.mine_launcher;
+			img = spriteCache.mine_launcher
 		} else {
-			img = spriteCache[imageName];
+			img = spriteCache[imageName]
 		}
 
 		if (img) {
-			const [x, y] = convertCoordinatesToCanvas(sprite_position(sprite));
-			const rotatedImage = rotate_img(img, sprite.Rotation, sprite.FlipX);
-			ctx.drawImage(
-				rotatedImage,
-				x,
-				y,
-				rotatedImage.width*gridSize/64 - 2,
-				rotatedImage.height*gridSize/64 - 2,
-			);
-			sprite.width = rotatedImage.width*gridSize/64;
-			sprite.height = rotatedImage.height*gridSize/64;
-			square_map(sprite);
+			const [x, y] = convertCoordinatesToCanvas(sprite_position(sprite))
+			const rotatedImage = rotate_img(img, sprite.Rotation, sprite.FlipX)
+			drawPartImage(ctx, rotatedImage, x, y)
+			sprite.width = rotatedImage.width*gridSize/64
+			sprite.height = rotatedImage.height*gridSize/64
+			square_map(sprite)
 		}
 	}
 	global_sprites_to_draw = []
@@ -394,7 +361,7 @@ function drawSupplyChains() {
 }
 
 function drawPreview(inputparts, inputresources) {
-	const parts = mirroredParts(repositionPartsRalative(inputparts))
+	const parts = mirroredParts(repositionPartsRelative(inputparts))
 	const canvas = document.getElementById("previewCanvas");
 	const ctx = canvas.getContext("2d");
 	clearLayer(ctx);
@@ -413,19 +380,23 @@ function drawPreview(inputparts, inputresources) {
 			part.Rotation,
 			part.FlipX,
 		);
-		ctx.drawImage(
-			rotatedImage,
-			x,
-			y,
-			rotatedImage.width*gridSize/64 - 2,
-			rotatedImage.height*gridSize/64 - 2,
-		);
+		drawPartImage(ctx, rotatedImage, x, y)
 	}
 	if (inputresources) {
 		const resources = mirroredResources(inputresources)
 		draw_resources(resources, canvas)
 	}
 	ctx.globalAlpha = 1.0;
+}
+
+function drawPartImage(ctx, img, x, y) {
+	ctx.drawImage(
+		img,
+		x,
+		y,
+		img.width*gridSize/64 - 2,
+		img.height*gridSize/64 - 2,
+	);
 }
 
 function clearPreview() {

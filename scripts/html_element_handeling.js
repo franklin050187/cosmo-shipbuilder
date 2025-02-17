@@ -423,5 +423,5 @@ function placeArmorShell(thickness) {
 		let part = generatePart("cosmoteer.armor", tile)
 		parts.push(part)
 	}
-	place_sprites(absoluteToRalativePartCoordinates(parts))
+	place_sprites(repositionPartsRelative(parts))
 }

@@ -17,7 +17,10 @@ let global_sprites_to_delete = [] //Saves the sprites that are drawn to which sh
 let global_doors_to_draw = [] //Saves the doors that are yet to be drawn
 let global_doors_to_delete = [] //Saves the doors that are drawn to which should be deleted
 let global_recently_placed = [] //Saves recently placed parts
+
 let global_copied_parts = []
+let global_copied_doors = []
+
 let global_previous_mirror_mode = "vertical"
 let sprites = []; // To store the sprites
 let all_ship_stats = undefined
@@ -84,26 +87,10 @@ function get_json() {//Gets the json from a picture with the url in the url text
 }
 
 async function getJsonFromPic(file) {
-    const jsonInput = document.getElementById("b64_input");
-    const xhr = new XMLHttpRequest();
-    const b64input = await fileToBase64(file);
-	const url = `https://cosmo-api-git-docker-franklin050187s-projects.vercel.app/edit?url=${b64input}`;
+	const arrayBuffer = await file.arrayBuffer();
+	const shipData = await parseShipFile(file);
 
-    xhr.open("POST", url, true);
-    xhr.setRequestHeader("Content-Type", "application/json");
-
-    xhr.onload = () => {
-        console.log("new2");
-        if (xhr.status === 200) {
-            jsonInput.value = xhr.responseText;
-            loadJson();
-            console.log("ship loaded");
-        } else {
-            console.log(xhr.responseText);
-        }
-    };
-
-    xhr.send();
+	console.log(shipData)
 }
 
 function fileToBase64(file) {
@@ -369,7 +356,7 @@ function square_map(sprite) {
 }
 
 function place_sprites(sprites_to_place, modify_action_history = true) {//Places the first sprites with absolute coordinates and the ones after with relative ones
-	let new_parts = mirroredParts(repositionPartsRalative(sprites_to_place))
+	let new_parts = mirroredParts(repositionPartsRelative(sprites_to_place))
 	let placed_parts = []
 	if (overlappingParts(new_parts, global_recently_placed).length==0 || !global_left_mousdown_toggle) {
 		for (let sprite of new_parts){
@@ -571,7 +558,7 @@ function overlappingParts(parts1, parts2) {
 	return overlapping_parts
 }
 
-function repositionPartsRalative(parts) { //Uses the first part as reference and places all following parts interpreting thir location as being ralative to the first parts location
+function repositionPartsRelative(parts) { //Uses the first part as reference and places all following parts interpreting thir location as being ralative to the first parts location
 	let base = [0,0]
 	toggle = true
 	let new_parts = []
@@ -589,7 +576,7 @@ function repositionPartsRalative(parts) { //Uses the first part as reference and
 	return new_parts
 }
 
-function absoluteToRalativePartCoordinates(parts) { //Uses the first part as reference and places all following parts interpreting thir location as being ralative to the first parts location
+function repositionPartsAbsolute(parts) { //Uses the first part as reference and places all following parts interpreting their location as being ralative to the first parts location
 	let base = [0,0]
 	toggle = true
 	let new_parts = []
@@ -864,3 +851,27 @@ function rotateParts(parts, rotation) {
 	}
 }
 
+function getDoorsOfParts(parts) {
+	let tiles = new Set(getAlllocations(parts).map(tile => tile.join(',')));
+
+    return global_doors.filter(door => tiles.has(door.Cell.join(',')));
+}
+
+function deleteIllegalDoors() {
+	let doors = getDoorsOfParts(sprites)
+	const seen = new Set()
+	console.log(...global_doors)
+	global_doors = doors.reduce((newList, obj) => {
+        if (obj.ID === "cosmoteer.door") {
+            const key = obj.Cell.join(',')
+            if (!seen.has(key)) {
+                seen.add(key)
+                newList.push(obj)
+            }
+        } else {
+            newList.push(obj)
+        }
+        return newList
+    }, [])
+	console.log(...global_doors)
+}
