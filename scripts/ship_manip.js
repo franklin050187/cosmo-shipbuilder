@@ -399,13 +399,13 @@ function removePartsFromKeyList(parts, list) {
 
 function removePartsFromKey0List(parts, list) {
 	for (let part of parts) {
-		for (let i=0;i<list.length;i++) {
+		for (let i = list.length - 1; i >= 0; i--) {
 			if (isSameSprite(part, list[i].Key[0])) {
-				list.splice(i,1)
+				list.splice(i, 1)
 			}
 		}
 	}
-}
+  }
 
 function rotateParts(parts, rotation) {
 	for (let part of parts) {

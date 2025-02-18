@@ -120,6 +120,7 @@ function updateCanvas() {
 	for (let sprite of sprites) {
 		drawPartIndicators(sprite)
 	}
+	drawSelectedPartIndicators(global_selected_sprites)
 	if (cursorMode === "Select" || cursorMode === "Supply")  {
 		clearPreview()
 		drawSelectionindicators(global_selected_sprites)
@@ -146,7 +147,7 @@ function drawSelectedPartIndicators(selected_parts) {
 	for (let part of selected_parts) {
 		for (let i=0;i<global_weapon_targetes.length;i++) {
 			if (isSameSprite(part, global_weapon_targetes[i].Key[0])) {
-				let [x,y] = global_weapon_targetes[i].Value
+				let [x,y] = convertCoordinatesToCanvas(global_weapon_targetes[i].Value)
 				ctx.beginPath()
 				ctx.arc(x, y, 5, 0, Math.PI * 2)
 				ctx.fill()
@@ -356,25 +357,6 @@ function convertCanvasToCoordinates(canvasX, canvasY) {
 	const y = (canvasY - rect.top) * scaleY
 	const mouseX = Math.floor(x / gridSize) 
 	const mouseY = Math.floor(y / gridSize) 
-	const canvasPositionX = mouseX  + minX
-	const canvasPositionY = mouseY  + minY
-	const result = [canvasPositionX, canvasPositionY]
-
-    return result;
-}
-
-function convertCanvasToDescreteCoordinates(canvasX, canvasY) {
-	const rect = canvas.getBoundingClientRect();
-
-	// Calculate scaling factors between the canvas's original size and its displayed size
-	const scaleX = canvas.width / rect.width;
-	const scaleY = canvas.height / rect.height;
-
-	// Calculate mouse position relative to the canvas, taking into account the scaling
-	const x = (canvasX - rect.left) * scaleX
-	const y = (canvasY - rect.top) * scaleY
-	const mouseX = x / gridSize 
-	const mouseY = y / gridSize
 	const canvasPositionX = mouseX  + minX
 	const canvasPositionY = mouseY  + minY
 	const result = [canvasPositionX, canvasPositionY]

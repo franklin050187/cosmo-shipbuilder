@@ -191,7 +191,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (event.button === 2) {
             global_right_mousdown_toggle = true
         }
-        if ((cursorMode === "Select" || cursorMode === "Supply") && event.button === 0) { 
+        if ((cursorMode === "Select" || cursorMode === "Supply") && event.button === 0 && (!global_weapon_target_selection_toggle)) { 
             startSelectionBox(mousePos(event))
         }
     });
@@ -202,7 +202,8 @@ document.addEventListener("DOMContentLoaded", () => {
         if (event.button === 2) {
             global_right_mousdown_toggle = false
         }
-        if ((cursorMode === "Select" || cursorMode === "Supply" && event.button === 0)) { 
+        if ((cursorMode === "Select" || cursorMode === "Supply") && event.button === 0 && (!global_weapon_target_selection_toggle)) {
+            console.log(global_weapon_target_selection_toggle) 
             endSelectionBox(mousePos(event), event)
         }
     });
@@ -381,7 +382,6 @@ function handleSingleCanvasClick(event) {
     }
     // move sprite
     if (cursorMode === "Move") {
-        const pos = mousePos(event);
         if (global_sprites_to_place.length === 0) {
             doIfCursorOverPart(event, (part) => {
                 switchPartsToPlace([partCopy(part)])
@@ -396,12 +396,14 @@ function handleSingleCanvasClick(event) {
     // select sprite
     if (cursorMode === "Select") {
         if (global_weapon_target_selection_toggle) {
-            let cords = convertCanvasToDescreteCoordinates(pos[0], pos[1])
+            //console.log(global_weapon_target_selection_toggle) 
+            let cords = mousePos(event, false)
             removePartsFromKey0List(global_selected_sprites, global_weapon_targetes)
-            global_weapon_targetes.push(generatePartsTargets(global_selected_sprites, cords))
+            global_weapon_targetes.push(...generatePartsTargets(global_selected_sprites, cords))
             updateCanvas()
             global_weapon_target_selection_toggle = false
             log(`Target set at ${cords}`)
+            //console.log(global_weapon_target_selection_toggle) 
         } else {
             doIfCursorOverPart(event, part => selectParts(existingMirroredParts([part], sprites), [part]));
         }

@@ -7,13 +7,6 @@ function generateShip() {
 	// get the data
 	const json_to_post = document.getElementById("json_export").value;
 
-	canvas.toBlob(blob => {
-		console.log(blob)
-		writeShip(blob, json_to_post).then(newPngBuffer => {
-			console.log(newPngBuffer)
-	})
-	}, 'image/png')
-
 	const xhr = new XMLHttpRequest();
 	const url =
 		"https://cosmo-api-git-docker-franklin050187s-projects.vercel.app/generate";
@@ -131,7 +124,7 @@ function export_json() {
 	for ([key, value] of getShipDataMap()) {
 		shipdata[key] = value;
 	}
-
+	console.log(shipdata)
 	// convert shipdata to json
 	const json = JSON.stringify(shipdata);
 	// clear textarea
@@ -249,23 +242,33 @@ function selectParts(parts, unmirrored_parts_in) {
 	updateSpriteSelection();
 }
 
-function mousePos(event) {
+function mousePos(event, do_floor = true) {
 	let transform = canvas.getContext("2d").getTransform()
-	return mousePosConverter(event.clientX-transform.e, event.clientY-transform.f);
+	return mousePosConverter(event.clientX-transform.e, event.clientY-transform.f, do_floor)
 }
 
-function mousePosConverter(canvasX, canvasY) {
-	const rect = canvas.getBoundingClientRect();
+function mousePosConverter(canvasX, canvasY, do_floor = true) {
+	const rect = canvas.getBoundingClientRect()
 
 	// Adjust for canvas transformations
-	const transformedX = (canvasX - rect.left) / getScalor()[0];
-	const transformedY = (canvasY - rect.top) / getScalor()[1];
+	const transformedX = (canvasX - rect.left) / getScalor()[0]
+	const transformedY = (canvasY - rect.top) / getScalor()[1]
 
-	// Map to logical grid coordinates
-	const logicalX = Math.floor(transformedX / gridSize) + minX;
-	const logicalY = Math.floor(transformedY / gridSize) + minY;
 
-	return [logicalX, logicalY];
+	let logicalX = 0
+	let  logicalY = 0
+
+	if (do_floor) {
+		// Map to logical grid coordinates
+		logicalX = Math.floor(transformedX / gridSize) + minX
+		logicalY = Math.floor(transformedY / gridSize) + minY
+	} else {
+		logicalX = transformedX / gridSize + minX
+		logicalY = transformedY / gridSize + minY
+	}
+	
+
+	return [logicalX, logicalY]
 }
 
 function doIfCursorOverPart(event, code) {

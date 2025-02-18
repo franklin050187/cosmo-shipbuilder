@@ -121,7 +121,7 @@ const spriteData = {
 		sprite_size: [2, 2.5],
 		real_size: [2,2],
 		cost: 5,
-		tags: ["energy weapon", "on_off"],
+		tags: ["energy weapon", "on_off", "weapon"],
 		cp_cost: 2,
 		hitboxes: [circle([1, 1], 0.75)],
 	},
@@ -814,11 +814,11 @@ const toggleData = {
 		option: [["toggle_power_distribution_off", 0], ["toggle_power_distribution_on", 1]]
 	},
 	"target_prism": {
-		option: [],
+		option: [["target_prism", 0]],
 		isTargeter: true
 	},
 	"target_chaingun": {
-		option: [],
+		option: [["target_chaingun", 0]],
 		isTargeter: true
 	},
 }

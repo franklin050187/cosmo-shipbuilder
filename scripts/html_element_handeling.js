@@ -240,7 +240,6 @@ function loadToggles(parts) {
 			include_toggle = true
 		}
 	}
-	console.log(...toggles)
 	for (let toggle of toggles) {
 		togglesContainerOuter.classList.add("part-toggle")
 		const button = document.createElement("button")
@@ -257,6 +256,7 @@ function loadToggles(parts) {
 		let pic_name = getOption(value)
 
 		button.innerHTML = `<img src="sprites/toggles/${pic_name}.png" alt="${name}">`
+		
 
 		if (!toggle_data.isTargeter) {
 			button.addEventListener("click", () => {
@@ -264,9 +264,7 @@ function loadToggles(parts) {
 				for (let i=0; i<options.length; i++) {
 					let option_name = options[i][0]
 					togglesContainerInner.classList.add("part-toggle")
-					const button = document.createElement("button")
-					button.classList.add("part-button")
-					button.innerHTML = `<img src="sprites/toggles/${option_name}.png" alt="${name}">`
+					
 					button.addEventListener("click", () => {
 						for (let toggle2 of all_toggles) {
 							if (toggle2.Key[1] === name) {
