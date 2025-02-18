@@ -21,12 +21,17 @@
                 <button onclick="displayHelp()">Show Help</button>
             </fieldset>
             <fieldset>
-                <legend>Load a ship</legend>
+                <legend>Import/Export your ship</legend>
                 <div>
                     <div id="drop-zone" style="width: 200px; height: 75px; border: 2px dashed #000; display: flex; align-items: center; justify-content: center; flex-direction: column; transition: background 0.2s;">
                         <p>Drop your .ship.png file here!</p>
                         <button id="file-button">Browse</button>
                         <input type="file" id="file-input" style="display: none;">
+                        
+                    </div>
+                    <div>
+                        <button id="post_json">Generate Ship File</button>
+                        <a href="" target="_blank" id="ship_link" style="display: none">Generated Ship, click here</a>
                     </div>
                 </div>
             </fieldset>
@@ -113,18 +118,6 @@
                 </div>
                 <div>
                     <label id="shipStatsLabel">Ship Stats: </label>
-                </div>
-            </fieldset>
-
-            <fieldset>
-                <legend>Export Ship</legend>
-                <div>
-                    <button id="exportButton">Export json</button>
-                    <textarea name="json_export" id="json_export" disabled width="200" height="200"></textarea>
-                </div>
-                <div>
-                    <a href="" id="ship_link" style="display: none">Generated Ship, click here</a>
-                    <button id="post_json">Generate Ship File</button>
                 </div>
             </fieldset>
 

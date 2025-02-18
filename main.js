@@ -2,18 +2,13 @@
 
 function generateShip() {
 	// send post request to generate ship
-	// use export json function to get shipdata
-	export_json();
-	// get the data
-	const json_to_post = document.getElementById("json_export").value;
+	const json_to_post = JSON.stringify(getJson());
 
 	const xhr = new XMLHttpRequest();
 	const url =
 		"https://cosmo-api-git-docker-franklin050187s-projects.vercel.app/generate";
-	// const url = 'http://127.0.0.1:8001/generate';
 
 	xhr.open("POST", url, true);
-	// xhr.setRequestHeader('Content-Type', 'application/json');
 	xhr.send(json_to_post);
 
 	xhr.onload = () => {
@@ -26,7 +21,7 @@ function generateShip() {
 	};
 }
 
-function get_json() {//Gets the json from a picture with the url in the url text field
+function getJson() {//Gets the json from a picture with the url in the url text field
 	const b64Input = document.getElementById("b64_input")
 	const encodedB64 = b64Input.value.replace(/-/g, "+").replace(/_/g, "/")
 	const jsonInput = document.getElementById("b64_input")
@@ -100,7 +95,7 @@ function handleCursorModeChange() {
 	updateCanvas()
 }
 
-function export_json() {
+function getJson() {
 	// get shipdata, update shipdata.parts with sprites then export
 	// drop "width" and "height" from sprite data
 	new_parts = [];
@@ -126,11 +121,7 @@ function export_json() {
 	}
 	console.log(shipdata)
 	// convert shipdata to json
-	const json = JSON.stringify(shipdata);
-	// clear textarea
-	document.getElementById("json_export").value = "";
-	// fill textarea id="json_export" with json string
-	document.getElementById("json_export").value = json;
+	return shipdata
 }
 
 function loadJson(json) {

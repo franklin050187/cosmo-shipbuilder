@@ -2,7 +2,6 @@
 
 const cursor_mode = document.getElementsByName("cursor_mode");
 const load_json_button = document.getElementById("loadButton");
-const export_json_button = document.getElementById("exportButton");
 
 const partsContainer = document.getElementById("parts-container");
 const categoryButtons = document.querySelectorAll(".category-btn");
@@ -98,7 +97,6 @@ picture_input.addEventListener("change", (event) => {
 
 //ensures these are loaded after the corresponding functions in main.js
 document.addEventListener("DOMContentLoaded", () => {
-	export_json_button.addEventListener("click", export_json);
 	apply_ship_property_button.addEventListener("click", applyShipProperty);
 	recalculate_stats_button.addEventListener("click", handleRecalculateStats);
 	generate_ship.addEventListener("click", generateShip);
