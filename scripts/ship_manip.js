@@ -51,7 +51,11 @@ function place_sprites(sprites_to_place, modify_action_history = true) {//Places
 				global_part_properties.push(...prop)
 			}
 		}
-		applyproperties(repositionPropertiesRelative(global_properties_to_apply, sprites_to_place[0].Location))
+		applyproperties(repositionThingWithKey0Relative(global_properties_to_apply, sprites_to_place[0].Location, propertyCopy))
+		const chains = repositionSupplyChainRelative(global_supply_chains_to_apply, sprites_to_place[0].Location)
+		for (let chain of chains) {
+			addSupplyChains(chain.Key, chain.Value, true)
+		}
 		global_recently_placed = [...new_parts]
 	}
 	if (modify_action_history && !(placed_parts.length === 0)) {
@@ -225,10 +229,28 @@ function repositionPartsAbsolute(parts) { //Uses the first part as reference and
 	return new_parts
 }
 
-function repositionPropertiesRelative(properties, pos) { //Uses the first part as reference and places all following parts interpreting thir location as being ralative to the first parts location
+function repositionSupplyChainRelative(chains, pos) { //Uses the first part as reference and places all following parts interpreting thir location as being ralative to the first parts location
+	let new_properties = []
+	for (let chain of chains){
+		let new_chain = supplyChainCopy(chain)
+
+		new_chain.Key.Location[0] = pos[0]-new_chain.Key.Location[0]
+		new_chain.Key.Location[1] = pos[1]-new_chain.Key.Location[1]
+
+		for (let part of new_chain.Value) {
+			part.Location[0] = pos[0]-part.Location[0]
+			part.Location[1] = pos[1]-part.Location[1]
+		}
+		
+		new_properties.push(new_chain)
+	}
+	return new_properties
+}
+
+function repositionThingWithKey0Relative(properties, pos, copy_function) { //Uses the first part as reference and places all following parts interpreting thir location as being ralative to the first parts location
 	let new_properties = []
 	for (let property of properties){
-		let new_property = propertyCopy(property)
+		let new_property = copy_function(property)
 
 		new_property.Key[0].Location[0] = pos[0]-new_property.Key[0].Location[0]
 		new_property.Key[0].Location[1] = pos[1]-new_property.Key[0].Location[1]
@@ -389,9 +411,9 @@ function addCrewSource(partsin, role) {
 
 function removePartsFromKeyList(parts, list) {
 	for (let part of parts) {
-		for (let i=0;i<list.length;i++) {
+		for (let i = list.length - 1; i >= 0; i--) {
 			if (isSameSprite(part, list[i].Key)) {
-				list.splice(i,1)
+				list.splice(i, 1)
 			}
 		}
 	}
@@ -405,7 +427,19 @@ function removePartsFromKey0List(parts, list) {
 			}
 		}
 	}
-  }
+}
+
+function getThingsFromKeyList(parts, list) {
+	let newlist = []
+	for (let part of parts) {
+		for (let i = list.length - 1; i >= 0; i--) {
+			if (isSameSprite(part, list[i].Key)) {
+				newlist.push(list[i])
+			}
+		}
+	}
+	return newlist
+}
 
 function rotateParts(parts, rotation) {
 	for (let part of parts) {
@@ -445,6 +479,7 @@ function deleteIllegalDoors() {
 }
 
 function switchPartsToPlace(parts) {
+	global_supply_chains_to_apply = []
 	global_properties_to_apply = []
 	global_sprites_to_place = parts
 }
@@ -458,4 +493,62 @@ function applyproperties(properties) {
 		)
 		return match || a
 	})
+}
+/*
+function addSupplyChains(part2, parts) {
+	let part2Data = spriteData[part2.ID];
+	for (let part1 of parts) {
+		let part1Data = spriteData[part1.ID];
+
+		// No chain from a part to itself
+		if (!isSameSprite(part1, part2)) {
+			if (part1Data.tags.includes("crew") || part2Data.tags.includes("crew")) {
+				const foundItem = global_crew_assignments.find(item => isSameSprite(item.Key, part1));
+				const value = foundItem ? foundItem.Value : null;
+				if (value === null) {
+					global_crew_assignments.push(generateSupplyChain(part1, part2));
+				} else if (!value.some(sprite => isSameSprite(sprite, part2))) {//No duplicate chains
+					value.push(part2);
+				}
+			} else {
+				const foundItem = global_supply_chains.find(item => isSameSprite(item.Key, part1));
+				const value = foundItem ? foundItem.Value : null;
+				if (value === null) {
+					global_supply_chains.push(generateSupplyChain(part1, part2));
+				} else if (!value.some(sprite => isSameSprite(sprite, part2))) {//No duplicate chains
+					value.push(part2);
+				}
+			}
+		}
+	}
+	updateCanvas();
+}*/
+
+function addSupplyChains(part2, parts, invert_chain_direction = false) { 
+	let part2Data = spriteData[part2.ID]
+	for (let part1 of parts) {
+		let part1Data = spriteData[part1.ID]
+		if (!isSameSprite(part1, part2)) {
+			let key = invert_chain_direction ? part2 : part1
+			let valueItem = invert_chain_direction ? part1 : part2
+			if (part1Data.tags.includes("crew") || part2Data.tags.includes("crew")) {
+				const foundItem = global_crew_assignments.find(item => isSameSprite(item.Key, key))
+				const value = foundItem ? foundItem.Value : null
+				if (value === null) {
+					global_crew_assignments.push(generateSupplyChain(key, valueItem))
+				} else if (!value.some(sprite => isSameSprite(sprite, valueItem))) {
+					value.push(valueItem)
+				}
+			} else {
+				const foundItem = global_supply_chains.find(item => isSameSprite(item.Key, key))
+				const value = foundItem ? foundItem.Value : null
+				if (value === null) {
+					global_supply_chains.push(generateSupplyChain(key, valueItem))
+				} else if (!value.some(sprite => isSameSprite(sprite, valueItem))) {
+					value.push(valueItem)
+				}
+			}
+		}
+	}
+	updateCanvas()
 }

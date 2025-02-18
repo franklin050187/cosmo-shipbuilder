@@ -35,6 +35,10 @@ function propertiesCopy(properties) {
     return list
 }
 
+function supplyChainCopy(chain) {
+    return {Key: partCopy(chain.Key), Value: partsCopy(chain.Value)} 
+}
+
 function generatePropertiesForPart(part) {
     properties = []
     if (spriteData[part.ID].tags.includes("on_off")) {

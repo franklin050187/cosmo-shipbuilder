@@ -278,12 +278,14 @@ function copy() {
     log("parts copied")
     let copied_parts = partsCopy(global_selected_sprites) //the selected parts
     global_copied_parts = repositionPartsAbsolute([...copied_parts, ...generateDoorsAsParts(getDoorsOfParts(copied_parts))]) //The doors (which are attached to the selected parts) get converted into parts and get appended to the coppied parts
-    global_copied_properties = repositionPropertiesRelative(getPartData(copied_parts), copied_parts[0].Location)
+    global_copied_properties = repositionThingWithKey0Relative(getPartData(copied_parts), copied_parts[0].Location, propertyCopy)
+    global_copied_supply_chains = repositionSupplyChainRelative(getThingsFromKeyList(copied_parts, global_supply_chains), copied_parts[0].Location)
 }
 
 function paste() {
     switchPartsToPlace(global_copied_parts)
     global_properties_to_apply = global_copied_properties
+    global_supply_chains_to_apply = global_copied_supply_chains
     ChangeCursorMode("Place")
 }
 
