@@ -395,7 +395,16 @@ function handleSingleCanvasClick(event) {
     }
     // select sprite
     if (cursorMode === "Select") {
-        doIfCursorOverPart(event, part => selectParts(existingMirroredParts([part], sprites), [part]));
+        if (global_weapon_target_selection_toggle) {
+            let cords = convertCanvasToDescreteCoordinates(pos[0], pos[1])
+            removePartsFromKey0List(global_selected_sprites, global_weapon_targetes)
+            global_weapon_targetes.push(generatePartsTargets(global_selected_sprites, cords))
+            updateCanvas()
+            global_weapon_target_selection_toggle = false
+            log(`Target set at ${cords}`)
+        } else {
+            doIfCursorOverPart(event, part => selectParts(existingMirroredParts([part], sprites), [part]));
+        }
     }
     if (cursorMode === "Supply") {
         doIfCursorOverPart(event, part => selectParts(existingMirroredParts([part], sprites), [part]));

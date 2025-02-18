@@ -90,3 +90,27 @@ canvas {
 .tab.active {
   background-color: #fff;
 }
+
+.categories {
+  display: flex;
+  gap: 1px;
+  flex-wrap: wrap;
+  margin-top: 1px;
+}
+
+.category-btn {
+  width: 40px;
+  height: 40px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: white;
+  border: 1px solid #111;
+  border-radius: 5px;
+}
+
+.category-btn img {
+  transform: scale(0.5);
+  transform-origin: center;
+}

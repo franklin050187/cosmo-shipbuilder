@@ -126,6 +126,7 @@ function export_json() {
 	shipdata.PartControlGroups = global_control_groups
 	shipdata.Roles = global_crew_roles
 	shipdata.CrewSourceRoles = global_crew_role_sources
+	shipdata.WeaponShipRelativeTargets = global_weapon_targetes
 
 	for ([key, value] of getShipDataMap()) {
 		shipdata[key] = value;

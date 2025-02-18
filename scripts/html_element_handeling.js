@@ -240,40 +240,58 @@ function loadToggles(parts) {
 			include_toggle = true
 		}
 	}
-	
+	console.log(...toggles)
 	for (let toggle of toggles) {
 		togglesContainerOuter.classList.add("part-toggle")
 		const button = document.createElement("button")
 		button.classList.add("part-button")
+		
 
 		let name = toggle.Key[1]
 		let value = toggle.Value
-		let options = toggleData[name].option
+		let toggle_data = toggleData[name]
+		let options = toggle_data.option
+		
 		const optionMap = Object.fromEntries(options.map(([name, key]) => [key, name]));
 		const getOption = key => optionMap[key] || null;
 		let pic_name = getOption(value)
 
 		button.innerHTML = `<img src="sprites/toggles/${pic_name}.png" alt="${name}">`
 
-		button.addEventListener("click", () => {
-			togglesContainerInner.innerHTML = ""
-			for (let i=0; i<options.length; i++) {
-				let option_name = options[i][0]
-				togglesContainerInner.classList.add("part-toggle")
-				const button = document.createElement("button")
-				button.classList.add("part-button")
-				button.innerHTML = `<img src="sprites/toggles/${option_name}.png" alt="${name}">`
-				button.addEventListener("click", () => {
-					for (let toggle2 of all_toggles) {
-						if (toggle2.Key[1] === name) {
-							toggle2.Value = options[i][1]
+		if (!toggle_data.isTargeter) {
+			button.addEventListener("click", () => {
+				togglesContainerInner.innerHTML = ""
+				for (let i=0; i<options.length; i++) {
+					let option_name = options[i][0]
+					togglesContainerInner.classList.add("part-toggle")
+					const button = document.createElement("button")
+					button.classList.add("part-button")
+					button.innerHTML = `<img src="sprites/toggles/${option_name}.png" alt="${name}">`
+					button.addEventListener("click", () => {
+						for (let toggle2 of all_toggles) {
+							if (toggle2.Key[1] === name) {
+								toggle2.Value = options[i][1]
+							}
 						}
-					}
-					loadToggles(global_selected_sprites)
-				})
-				togglesContainerInner.appendChild(button)
-			}
-		})
+						loadToggles(global_selected_sprites)
+					})
+					togglesContainerInner.appendChild(button)
+				}
+			})
+		} else {
+			button.addEventListener("click", () => {
+				togglesContainerInner.innerHTML = ""
+				
+				if (global_weapon_target_selection_toggle) {
+					log("Targeting canceled")
+					global_weapon_target_selection_toggle = false
+				} else {
+					log("Click on the canvas to target weapon")
+					global_weapon_target_selection_toggle = true
+				}
+				
+			})
+		}
 		togglesContainerOuter.appendChild(button)
 	}
 }
@@ -363,9 +381,10 @@ function resetPlacementCategories() {
     // Populate the container with parts for all categories
     categories.forEach(({ category, label }) => {
         const button = document.createElement('button');
+		button.innerHTML = `<img src="sprites/cathegories/${category}.png" alt="${label}">`;
         button.classList.add('category-btn');
         button.dataset.category = category;
-        button.textContent = label;
+        //button.textContent = label;
         categoriesContainer.appendChild(button);
     });
 

@@ -18,9 +18,12 @@ let global_sprites_to_delete = [] //Saves the sprites that are drawn to which sh
 let global_doors_to_draw = [] //Saves the doors that are yet to be drawn
 let global_doors_to_delete = [] //Saves the doors that are drawn to which should be deleted
 let global_recently_placed = [] //Saves recently placed parts
+let global_weapon_targetes = []
+let global_weapon_target_selection_toggle = false
 let global_log = {0:"", 1:"", 2:""}
 
 let global_copied_parts = []
+let global_copied_supply_chains = []
 let global_copied_doors = []
 let global_copied_properties = []
 

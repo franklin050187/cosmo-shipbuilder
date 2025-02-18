@@ -55,6 +55,10 @@ function generatePropertiesForPart(part) {
         properties.push({"Key": [{"FlipX": false, "ID": "cosmoteer.engine_room", "Location": [...part.Location], "Rotation": part.Rotation}, "distribute_power"], "Value": 1})
     } else  if (part.ID === "cosmoteer.tractor_beam_emitter") {
         properties.push({"Key": [{"FlipX": false, "ID": "cosmoteer.tractor_beam_emitter", "Location": [...part.Location], "Rotation": part.Rotation}, "tractor_mode"], "Value": 0})
+    } else  if (part.ID === "cosmoteer.ion_beam_prism") {
+        properties.push({"Key": [{"FlipX": false, "ID": "cosmoteer.ion_beam_prism", "Location": [...part.Location], "Rotation": part.Rotation}, "target_prism"], "Value": 0})
+    } else  if (part.ID === "cosmoteer.chaingun") {
+        properties.push({"Key": [{"FlipX": false, "ID": "cosmoteer.chaingun", "Location": [...part.Location], "Rotation": part.Rotation}, "target_chaingun"], "Value": 0})
     }
     if (spriteData[part.ID].tags.includes("fire_pref")) {
         properties.push({"Key": [{"FlipX": false, "ID": part.ID, "Location": [...part.Location], "Rotation": part.Rotation}, "fire_pref"], "Value": 0})
@@ -68,6 +72,26 @@ function generatePropertiesForParts(parts) {
         properties.push(...generatePropertiesForPart(part))
     }
     return properties
+}
+
+function generatePartsTargets(parts, target_pos) {
+    let targets = []
+    for (let part of parts) {
+        let id = part.ID
+        let location = part.Location
+        let rotation = part.Rotation
+        
+        if (id === "cosmoteer.ion_beam_prism") {
+            targets.push({"Key": [{"FlipX": false, "ID": id, "Location": location, "Rotation": 0}, "Turret"], "Value": target_pos})
+            targets.push({"Key": [{"FlipX": false, "ID": id, "Location": location, "Rotation": rotation}, "IonBeamChainToggle"], "Value": target_pos})
+            
+        } else if (id === "cosmoteer.chaingun") {
+            targets.push({"Key": [{"FlipX": false, "ID": id, "Location": location, "Rotation": 0}, "Turret"], "Value": target_pos})
+            targets.push({"Key": [{"FlipX": false, "ID": id, "Location": location, "Rotation": rotation}, "IonBeamChainToggle"], "Value": target_pos})
+
+        }
+    }
+    return targets
 }
 
 function generateSupplyChain(part1, part2) {//Example: [{"Key": {"FlipX": false, "ID": "cosmoteer.crew_quarters_med", "Location": [4, 10], "Rotation": 0}, "Value": [{"FlipX": false, "ID": "cosmoteer.point_defense", "Location": [4, 9], "Rotation": 0}]}], 
