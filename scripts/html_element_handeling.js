@@ -43,6 +43,8 @@ const ship_stats_label = document.getElementById("shipStatsLabel");
 const coordinates_label = document.getElementById("coord_on_canvas");
 
 const hitbox_checkbox = document.getElementById("hitboxCheckbox");
+const overwrite_ship_checkbox = document.getElementById("overwriteShipCheckbox");
+
 hitbox_checkbox.addEventListener("change", () => {
 	updateCanvas()
   });
@@ -69,7 +71,11 @@ const picture_browse_button = document.getElementById("file-button");
 
 function handleFileUpload(files) {
     if (files.length > 0) {
-        getJsonFromPic(files[0]); 
+		if (overwrite_ship_checkbox.checked) {
+			loadJsonFromPic(files[0]); 
+		} else {
+			loadPartialJsonFromPic(files[0])
+		}
     }
 }
 
@@ -262,7 +268,11 @@ function loadToggles(parts) {
 				for (let i=0; i<options.length; i++) {
 					let option_name = options[i][0]
 					togglesContainerInner.classList.add("part-toggle")
-					
+
+					const button = document.createElement("button")
+					button.classList.add("part-button")
+					button.innerHTML = `<img src="sprites/toggles/${option_name}.png" alt="${option_name}">`
+
 					button.addEventListener("click", () => {
 						for (let toggle2 of all_toggles) {
 							if (toggle2.Key[1] === name) {

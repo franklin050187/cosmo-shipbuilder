@@ -790,28 +790,36 @@ const mergingParts = [
 ]
 const toggleData = {
 	"on_off": {
-		option: [["toggle_power_off", 0], ["toggle_power_on", 1]]
+		option: [["toggle_power_off", 0], ["toggle_power_on", 1]],
+		isTargeter: false
 	},
 	"fire_mode": {
 		option: [["toggle_fire_hold", -1], ["toggle_fire_at_target", 0], ["toggle_fire_at_will", 1], ["toggle_fire_auto", 2]],
+		isTargeter: false
 	},
 	"missile_type": {
-		option: [["missile_type_he", 0], ["missile_type_emp", 1], ["missile_type_nuke", 2], ["missile_type_mine", 3]]
+		option: [["missile_type_he", 0], ["missile_type_emp", 1], ["missile_type_nuke", 2], ["missile_type_mine", 3]],
+		isTargeter: false
 	},
 	"fire_pref": {
-		option: [["fire_pref_attack", 0], ["fire_pref_defend", 1], ["fire_pref_both", 2]]
+		option: [["fire_pref_attack", 0], ["fire_pref_defend", 1], ["fire_pref_both", 2]],
+		isTargeter: false
 	},
 	"fire_alternating": {
-		option: [["toggle_alternating_off", 0], ["toggle_alternating_on", 1]]
+		option: [["toggle_alternating_off", 0], ["toggle_alternating_on", 1]],
+		isTargeter: false
 	},
 	"tractor_mode": {
-		option: [["tractor_beam_auto", 0], ["tractor_beam_pull", 1], ["tractor_beam_push", 2]]
+		option: [["tractor_beam_auto", 0], ["tractor_beam_pull", 1], ["tractor_beam_push", 2]],
+		isTargeter: false
 	},
 	"light_strength": {
-		option: [["toggle_lights_low", 0], ["toggle_lights_med", 1], ["toggle_lights_high", 2]]
+		option: [["toggle_lights_low", 0], ["toggle_lights_med", 1], ["toggle_lights_high", 2]],
+		isTargeter: false
 	},
 	"distribute_power": {
-		option: [["toggle_power_distribution_off", 0], ["toggle_power_distribution_on", 1]]
+		option: [["toggle_power_distribution_off", 0], ["toggle_power_distribution_on", 1]],
+		isTargeter: false
 	},
 	"target_prism": {
 		option: [["target_prism", 0]],

@@ -21,24 +21,20 @@ function generateShip() {
 	};
 }
 
-function getJson() {//Gets the json from a picture with the url in the url text field
-	const b64Input = document.getElementById("b64_input")
-	const encodedB64 = b64Input.value.replace(/-/g, "+").replace(/_/g, "/")
-	const jsonInput = document.getElementById("b64_input")
-	const xhr = new XMLHttpRequest()
-	const url = `https://cosmo-api-git-docker-franklin050187s-projects.vercel.app/edit?url=${encodedB64}`
-	xhr.open("GET", url, true)
-	xhr.onload = () => {
-		if (xhr.status === 200) {
-			jsonInput.value = xhr.responseText
-			loadJson()
-		}
-	};
-}
-
-async function getJsonFromPic(file) {
+async function loadJsonFromPic(file) {
 	const shipData = await parseShip(file)
 	loadJson(JSON.stringify(shipData))
+}
+
+async function loadPartialJsonFromPic(file) {
+	const shipData = await parseShip(file)
+	let parts = shipData.Parts === "Unset" ? [] : shipData.Parts
+	let doors = generateDoorsAsParts(shipData.Doors === "Unset" ? [] : shipData.Doors)
+	let toggles = shipData.PartUIToggleStates === "Unset" ? [] : shipData.PartUIToggleStates
+	let chains = [...(shipData.CrewSourceTargets === "Unset" ? [] : shipData.CrewSourceTargets), ...(shipData.CrewSourceTargets === "Unset" ? [] : shipData.CrewSourceTargets)]
+	
+	copySpecified(parts, doors, toggles, chains)
+	log("Ship copied to clipboard")
 }
 
 function fileToBase64(file) {
@@ -119,7 +115,6 @@ function getJson() {
 	for ([key, value] of getShipDataMap()) {
 		shipdata[key] = value;
 	}
-	console.log(shipdata)
 	// convert shipdata to json
 	return shipdata
 }

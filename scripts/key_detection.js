@@ -203,7 +203,6 @@ document.addEventListener("DOMContentLoaded", () => {
             global_right_mousdown_toggle = false
         }
         if ((cursorMode === "Select" || cursorMode === "Supply") && event.button === 0 && (!global_weapon_target_selection_toggle)) {
-            console.log(global_weapon_target_selection_toggle) 
             endSelectionBox(mousePos(event), event)
         }
     });
@@ -277,9 +276,14 @@ function cut() {
 function copy() {
     log("parts copied")
     let copied_parts = partsCopy(global_selected_sprites) //the selected parts
-    global_copied_parts = repositionPartsAbsolute([...copied_parts, ...generateDoorsAsParts(getDoorsOfParts(copied_parts))]) //The doors (which are attached to the selected parts) get converted into parts and get appended to the coppied parts
-    global_copied_properties = repositionThingWithKey0Relative(getPartData(copied_parts), copied_parts[0].Location, propertyCopy)
-    global_copied_supply_chains = repositionSupplyChainRelative(getThingsFromKeyList(copied_parts, global_supply_chains), copied_parts[0].Location)
+    copySpecified(partsCopy(global_selected_sprites), generateDoorsAsParts(getDoorsOfParts(copied_parts)), getPartData(copied_parts), getThingsFromKeyList(copied_parts, global_supply_chains))
+}
+
+function copySpecified(parts, doors, properties, supply_chains) {
+    let copied_parts = partsCopy(parts) //the selected parts
+    global_copied_parts = repositionPartsAbsolute([...copied_parts, ...doors]) //The doors (which are attached to the selected parts) get converted into parts and get appended to the coppied parts
+    global_copied_properties = repositionThingWithKey0Relative(properties, copied_parts[0].Location, propertyCopy)
+    global_copied_supply_chains = repositionSupplyChainRelative(supply_chains, copied_parts[0].Location)
 }
 
 function paste() {
@@ -398,14 +402,12 @@ function handleSingleCanvasClick(event) {
     // select sprite
     if (cursorMode === "Select") {
         if (global_weapon_target_selection_toggle) {
-            //console.log(global_weapon_target_selection_toggle) 
             let cords = mousePos(event, false)
             removePartsFromKey0List(global_selected_sprites, global_weapon_targetes)
             global_weapon_targetes.push(...generatePartsTargets(global_selected_sprites, cords))
             updateCanvas()
             global_weapon_target_selection_toggle = false
             log(`Target set at ${cords}`)
-            //console.log(global_weapon_target_selection_toggle) 
         } else {
             doIfCursorOverPart(event, part => selectParts(existingMirroredParts([part], sprites), [part]));
         }
