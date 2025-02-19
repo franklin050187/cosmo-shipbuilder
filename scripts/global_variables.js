@@ -22,6 +22,7 @@ let global_recently_placed = [] //Saves recently placed parts
 let global_weapon_targetes = []
 let global_weapon_target_selection_toggle = false
 let global_log = {0:"", 1:"", 2:""}
+let global_module_names = ["6 missile 2", "Deck gun storage"]
 
 let global_copied_parts = []
 let global_copied_supply_chains = []

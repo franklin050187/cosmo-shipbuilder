@@ -127,27 +127,56 @@ const logContainer = document.getElementById('message-log');
 
 document.querySelectorAll('.tab').forEach(tab => {
   tab.addEventListener('click', () => {
-   	selectTab(tab)
+   	selectTab(tab.textContent.trim())
   });
 });
 
-function selectTab(tab) {
-	document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    tab.classList.add('active');
+function selectTab(tabname) {
+	document.querySelectorAll('.tab').forEach(tab => {
+		if (tab.textContent.trim() === tabname) {
+		  tab.classList.add('active')
+		} else {
+		  tab.classList.remove('active')
+		}
+	  })
 
-    if (tab.textContent.trim() === 'Canvas') {
-		canvasContainer.style.display = 'block';
-		canvasAltContainer.style.display = 'none';
-    } else if (tab.textContent.trim() === 'Analysis') {
-		canvasContainer.style.display = 'none';
-		canvasAltContainer.style.display = 'block';
-		canvasAltContainer.innerHTML = '<div class="canvas-alt-container">Not implemented yet</div>';
-    } else if (tab.textContent.trim() === 'Modules') {
-		canvasContainer.style.display = 'none';
-		canvasAltContainer.style.display = 'block';
-		canvasAltContainer.innerHTML = '<div class="canvas-alt-container">Also not implemented yet :(</div>';
+    if (tabname === 'Canvas') {
+		canvasContainer.style.display = 'block'
+		canvasAltContainer.style.display = 'none'
+    } else if (tabname === 'Analysis') {
+		canvasContainer.style.display = 'none'
+		canvasAltContainer.style.display = 'block'
+		canvasAltContainer.innerHTML = '<div class="canvas-alt-container">Not implemented yet</div>'
+    } else if (tabname === 'Modules') {
+		canvasContainer.style.display = 'none'
+		canvasAltContainer.style.display = 'block'
+		canvasAltContainer.innerHTML = ''
+		const partDiv = document.createElement("div")
+		for (let pic_name of global_module_names) {
+			partDiv.classList.add("module-item");
+
+			const button = document.createElement("button");
+			button.classList.add("part-button")
+			let src = "./ships/modules/" + pic_name + ".ship.png"
+
+			button.innerHTML = `<img src="${src}" alt="${pic_name}"> <div>${pic_name}</div>`
+			button.addEventListener("click", async () => {
+				const file = await fetchImageBuffer(src)
+				loadPartialJsonFromPic(file)
+				paste()
+				selectTab('Canvas')
+			});
+			partDiv.appendChild(button);
+			canvasAltContainer.appendChild(partDiv);
+		}
 	} 
 }
+
+async function fetchImageBuffer(url) {
+	const response = await fetch(url)
+	if (!response.ok) throw new Error('Network error: ' + response.status)
+	return response.arrayBuffer()
+  }
 
 // Function to load parts based on category
 function loadParts(category) {

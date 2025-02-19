@@ -34,7 +34,8 @@ async function loadPartialJsonFromPic(file) {
 	let chains = [...(shipData.CrewSourceTargets === "Unset" ? [] : shipData.CrewSourceTargets), ...(shipData.CrewSourceTargets === "Unset" ? [] : shipData.CrewSourceTargets)]
 	
 	copySpecified(parts, doors, toggles, chains)
-	log("Ship copied to clipboard")
+	paste()
+	log("Ship ready to be pasted")
 }
 
 function fileToBase64(file) {
