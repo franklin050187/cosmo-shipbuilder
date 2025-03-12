@@ -6,6 +6,8 @@ const gridMap = {}; // To store the grid map
 let sprite_delete_mode = []; // To store the sprite delete mode
 let global_sprites_to_place = [generatePart("cosmoteer.corridor")]; // To store the sprites to place
 let global_properties_to_apply = []
+let global_resources_to_apply = []
+let global_crew_roles_to_apply = []
 let global_supply_chains_to_apply = []
 let global_selected_sprites = []
 let global_unmirrored_selected_sprites = []
@@ -28,6 +30,8 @@ let global_copied_parts = []
 let global_copied_supply_chains = []
 let global_copied_doors = []
 let global_copied_properties = []
+let global_copied_resources = []
+let global_copied_crew_roles = []
 
 let global_previous_mirror_mode = "vertical"
 let sprites = []; // To store the sprites

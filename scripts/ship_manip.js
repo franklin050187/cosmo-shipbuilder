@@ -51,8 +51,10 @@ function place_sprites(sprites_to_place, modify_action_history = true) {//Places
 				global_part_properties.push(...prop)
 			}
 		}
-		applyproperties(repositionThingWithKey0Relative(global_properties_to_apply, sprites_to_place[0].Location, propertyCopy))
-		const chains = repositionSupplyChainRelative(global_supply_chains_to_apply, sprites_to_place[0].Location)
+		applyproperties(...repositionThingWithKey0Relative(global_properties_to_apply, sprites_to_place[0].Location, propertyCopy))
+		global_resources.push(...repositionResourceRelative(global_resources_to_apply, sprites_to_place[0].Location, resourceCopy))
+		global_crew_role_sources.push(...repositionThingWithKeyRelative(global_crew_roles_to_apply, sprites_to_place[0].Location, roleSourceCopy))
+		const chains = repositionSupplyChainRelative(global_supply_chains_to_apply, sprites_to_place[0].Location, supplyChainCopy)
 		for (let chain of chains) {
 			addSupplyChains(chain.Key, chain.Value, true)
 		}
@@ -258,6 +260,34 @@ function repositionThingWithKey0Relative(properties, pos, copy_function) { //Use
 		new_properties.push(new_property)
 	}
 	return new_properties
+}
+
+function repositionThingWithKeyRelative(properties, pos, copy_function) { //Uses the first part as reference and places all following parts interpreting thir location as being ralative to the first parts location
+	let new_properties = []
+	
+	for (let property of properties){
+		let new_property = copy_function(property)
+		console.log(properties)
+
+		new_property.Key.Location[0] = pos[0]-new_property.Key.Location[0]
+		new_property.Key.Location[1] = pos[1]-new_property.Key.Location[1]
+		
+		new_properties.push(new_property)
+	}
+	return new_properties
+}
+
+function repositionResourceRelative(resources, pos, copy_function) { //Uses the first part as reference and places all following parts interpreting thir location as being ralative to the first parts location
+	let new_resources = []
+	for (let property of resources){
+		let new_resource = copy_function(property)
+
+		new_resource.Key[0] = pos[0]-new_resource.Key[0]
+		new_resource.Key[1] = pos[1]-new_resource.Key[1]
+		
+		new_resources.push(new_resource)
+	}
+	return new_resources
 }
 
 function mirroredParts(parts, also_adds_base_parts = true) {//This code is a fucking mess (but Im not gonna clean it up)
@@ -494,35 +524,6 @@ function applyproperties(properties) {
 		return match || a
 	})
 }
-/*
-function addSupplyChains(part2, parts) {
-	let part2Data = spriteData[part2.ID];
-	for (let part1 of parts) {
-		let part1Data = spriteData[part1.ID];
-
-		// No chain from a part to itself
-		if (!isSameSprite(part1, part2)) {
-			if (part1Data.tags.includes("crew") || part2Data.tags.includes("crew")) {
-				const foundItem = global_crew_assignments.find(item => isSameSprite(item.Key, part1));
-				const value = foundItem ? foundItem.Value : null;
-				if (value === null) {
-					global_crew_assignments.push(generateSupplyChain(part1, part2));
-				} else if (!value.some(sprite => isSameSprite(sprite, part2))) {//No duplicate chains
-					value.push(part2);
-				}
-			} else {
-				const foundItem = global_supply_chains.find(item => isSameSprite(item.Key, part1));
-				const value = foundItem ? foundItem.Value : null;
-				if (value === null) {
-					global_supply_chains.push(generateSupplyChain(part1, part2));
-				} else if (!value.some(sprite => isSameSprite(sprite, part2))) {//No duplicate chains
-					value.push(part2);
-				}
-			}
-		}
-	}
-	updateCanvas();
-}*/
 
 function addSupplyChains(part2, parts, invert_chain_direction = false) { 
 	let part2Data = spriteData[part2.ID]

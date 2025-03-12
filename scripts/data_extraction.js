@@ -13,6 +13,33 @@ function getPartData(parts) {
 	return data;
 }
 
+function getPartResources(parts) {
+	data = []
+	for (let part of parts) {
+		for (const entry of global_resources) {
+			const key = entry.Key || {};
+			if (sameTile(part.Location, key)) {
+				data.push(entry)
+			}
+		}
+	}
+	return data;
+}
+
+function getPartRoleSources(parts) {
+	data = []
+	
+	for (let part of parts) {
+		for (const entry of global_crew_role_sources) {
+			const key = entry.Key || {};
+			if (isSameSprite(part, key)) {
+				data.push(entry)
+			}
+		}
+	}
+	return data;
+}
+
 function getShipDataMap() {
 	const filtered_ship_data = new Map()
 

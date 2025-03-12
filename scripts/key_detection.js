@@ -276,20 +276,25 @@ function cut() {
 function copy() {
     log("parts copied")
     let copied_parts = partsCopy(global_selected_sprites) //the selected parts
-    copySpecified(partsCopy(global_selected_sprites), generateDoorsAsParts(getDoorsOfParts(copied_parts)), getPartData(copied_parts), getThingsFromKeyList(copied_parts, global_supply_chains))
+    copySpecified(partsCopy(global_selected_sprites), generateDoorsAsParts(getDoorsOfParts(copied_parts)), getPartData(copied_parts), getThingsFromKeyList(copied_parts, global_supply_chains), getPartResources(copied_parts), getPartRoleSources(copied_parts))
 }
 
-function copySpecified(parts, doors, properties, supply_chains) {
+function copySpecified(parts, doors, properties, supply_chains, resources, crew_roles) {
     let copied_parts = partsCopy(parts) //the selected parts
     global_copied_parts = repositionPartsAbsolute([...copied_parts, ...doors]) //The doors (which are attached to the selected parts) get converted into parts and get appended to the coppied parts
     global_copied_properties = repositionThingWithKey0Relative(properties, copied_parts[0].Location, propertyCopy)
-    global_copied_supply_chains = repositionSupplyChainRelative(supply_chains, copied_parts[0].Location)
+    global_copied_supply_chains = repositionSupplyChainRelative(supply_chains, copied_parts[0].Location, supplyChainCopy)
+    global_copied_resources = repositionResourceRelative(resources, copied_parts[0].Location, resourceCopy)
+    global_copied_crew_roles = repositionThingWithKeyRelative(crew_roles, copied_parts[0].Location, roleSourceCopy)
 }
 
 function paste() {
     switchPartsToPlace(global_copied_parts)
     global_properties_to_apply = global_copied_properties
     global_supply_chains_to_apply = global_copied_supply_chains
+    global_resources_to_apply = global_copied_resources
+    global_crew_roles_to_apply = global_copied_crew_roles
+    console.log(global_copied_crew_roles)
     ChangeCursorMode("Place")
 }
 

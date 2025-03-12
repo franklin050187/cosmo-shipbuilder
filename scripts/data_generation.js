@@ -27,6 +27,10 @@ function propertyCopy(property) {
     return {"Key": [{"FlipX": property.Key[0].FlipX, "ID": property.Key[0].ID, "Location": [...property.Key[0].Location], "Rotation": property.Key[0].Rotation}, property.Key[1]], "Value": property.Value}
 }
 
+function roleSourceCopy(source) {
+    return {"Key": partCopy(source.Key), "Value": source.Value}
+}
+
 function propertiesCopy(properties) {
     let list = []
     for (let property of properties) {

@@ -371,13 +371,7 @@ function convertLengthToCanvas(length) {
 function partSprite(part) {
 	const selectedSprite = part.ID;
 	const imageName = selectedSprite.replace("cosmoteer.", "");
-	let image = new Image();
-	image.src = `./sprites/parts/${imageName}.png`;
-
-	image.onload = () => {
-		isPreviewSpriteLoaded = true;
-	};
-	return image
+	return spriteCache[imageName]
 }
 
 function drawMirrorAxis() {

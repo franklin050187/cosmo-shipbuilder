@@ -32,8 +32,10 @@ async function loadPartialJsonFromPic(file) {
 	let doors = generateDoorsAsParts(shipData.Doors === "Unset" ? [] : shipData.Doors)
 	let toggles = shipData.PartUIToggleStates === "Unset" ? [] : shipData.PartUIToggleStates
 	let chains = [...(shipData.CrewSourceTargets === "Unset" ? [] : shipData.CrewSourceTargets), ...(shipData.CrewSourceTargets === "Unset" ? [] : shipData.CrewSourceTargets)]
+	let resources = shipData.NewFlexResourceGridTypes === "Unset" ? [] : shipData.NewFlexResourceGridTypes
+	let crew_sources = shipData.CrewSourceRoles === "Unset" ? [] : shipData.CrewSourceRoles
 	
-	copySpecified(parts, doors, toggles, chains)
+	copySpecified(parts, doors, toggles, chains, resources, crew_sources)
 	paste()
 	log("Ship ready to be pasted")
 }
