@@ -51,7 +51,8 @@ function place_sprites(sprites_to_place, modify_action_history = true) {//Places
 				global_part_properties.push(...prop)
 			}
 		}
-		applyproperties(...repositionThingWithKey0Relative(global_properties_to_apply, sprites_to_place[0].Location, propertyCopy))
+		console.log(...global_properties_to_apply)
+		applyproperties(repositionThingWithKey0Relative(global_properties_to_apply, sprites_to_place[0].Location, propertyCopy))
 		global_resources.push(...repositionResourceRelative(global_resources_to_apply, sprites_to_place[0].Location, resourceCopy))
 		global_crew_role_sources.push(...repositionThingWithKeyRelative(global_crew_roles_to_apply, sprites_to_place[0].Location, roleSourceCopy))
 		const chains = repositionSupplyChainRelative(global_supply_chains_to_apply, sprites_to_place[0].Location, supplyChainCopy)
