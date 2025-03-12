@@ -41,10 +41,7 @@ function getSmallShipStats(ship, stats = {}) {
     stats.lighnessCoeff = shipLightnessCoeff(stats)
     stats.crew = crewCount(stats)
     stats.weight = shipWeight(stats)
-    stats.thrust = shipThrustVector(stats)
-    stats.acceleration = shipAcceleration(stats, 0)
     stats.com = ship_com_location(stats)
-    stats.speed = shipMaxSpeed(stats, 0)
     stats.inertia = momentOfInertiaShip(stats)
     stats.hyperdrive_efficiency = getShipHyperdriveEfficiency(stats)
     return stats
