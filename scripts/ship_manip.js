@@ -512,6 +512,8 @@ function deleteIllegalDoors() {
 function switchPartsToPlace(parts) {
 	global_supply_chains_to_apply = []
 	global_properties_to_apply = []
+	global_resources_to_apply = []
+	global_crew_roles_to_apply = []
 	global_sprites_to_place = parts
 }
 
